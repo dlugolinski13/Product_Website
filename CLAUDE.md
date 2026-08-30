@@ -1,0 +1,105 @@
+# Product ordering site — project brief
+
+## What this is
+A Vue.js site with two audiences:
+- **Admins**: manage the product catalog
+- **Customers**: log in, view current products, place and reload orders
+
+## Stack decisions
+- **Frontend**: Vue 3 + Vite
+- **Backend**: Azure Functions (Node.js) — lives in an `/api` folder alongside the Vue app
+- **Hosting**: Azure Static Web Apps — hosts the built Vue frontend and the `/api` functions together as one resource, deploys automatically via GitHub Actions on push to `main`
+- **Database**: Azure SQL Database (T-SQL)
+- **Auth**: Custom JWT-based auth. A `users` table stores email/password hash/role. The API issues a JWT on login; the frontend reads the role claim to show the admin UI vs the customer UI; the API re-checks role on every product-management request.
+- **Repo**: GitHub, opened in VS Code
+
+## Data model
+
+Products reference two lookup tables (`product_groups`, `product_classes`) so the four-letter group code + name and the class number + detail stay consistent across products instead of being retyped. Terms and conditions (freight terms, payment terms, FOB point) also live in their own lookup table since the same terms are usually reused across many products.
+
+```sql
+CREATE TABLE users (
+  id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+  email NVARCHAR(255) NOT NULL UNIQUE,
+  password_hash NVARCHAR(255) NOT NULL,
+  role NVARCHAR(20) NOT NULL CHECK (role IN ('admin','customer')),
+  full_name NVARCHAR(200),
+  created_at DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
+);
+
+CREATE TABLE product_groups (
+  code CHAR(4) PRIMARY KEY,          -- four-letter abbreviation
+  name NVARCHAR(100) NOT NULL        -- full group name
+);
+
+CREATE TABLE product_classes (
+  class_number INT PRIMARY KEY,
+  detail NVARCHAR(200) NOT NULL
+);
+
+CREATE TABLE terms_and_conditions (
+  id INT IDENTITY PRIMARY KEY,
+  freight_terms NVARCHAR(50) NOT NULL,   -- e.g. COLLECT, PREPAID
+  payment_terms NVARCHAR(200) NOT NULL,  -- e.g. "Net 30 days with credit approval"
+  fob_point NVARCHAR(200)                -- freight originating location
+);
+
+CREATE TABLE products (
+  id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+  item_number NVARCHAR(50) NOT NULL UNIQUE,  -- mixed letters/numbers, customer-facing
+  upc NVARCHAR(14),                          -- rendered as a scannable barcode client-side
+  name NVARCHAR(200) NOT NULL,
+  description NVARCHAR(MAX),
+  image_url NVARCHAR(500),
+  shipping_method NVARCHAR(20) NOT NULL CHECK (shipping_method IN ('drop_ship','delivered')),
+  group_code CHAR(4) NOT NULL REFERENCES product_groups(code),
+  class_number INT NOT NULL REFERENCES product_classes(class_number),
+  terms_id INT REFERENCES terms_and_conditions(id),
+  activation_date DATE,
+  pack_amount INT,               -- quantity per pack
+  pack_unit NVARCHAR(50),
+  cases_per_pack INT,            -- ⚠️ confirm direction: may need to be packs_per_case instead
+  case_weight DECIMAL(10,2),     -- for shipping calculations
+  case_length DECIMAL(10,2),
+  case_width DECIMAL(10,2),
+  case_height DECIMAL(10,2),
+  company_price DECIMAL(10,2) NOT NULL,
+  retail_price DECIMAL(10,2) NOT NULL,
+  comments NVARCHAR(MAX),            -- internal/admin-only notes
+  customer_comments NVARCHAR(MAX),   -- shown to customers
+  is_active BIT NOT NULL DEFAULT 1
+);
+
+CREATE TABLE orders (
+  id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+  customer_id UNIQUEIDENTIFIER NOT NULL REFERENCES users(id),
+  status NVARCHAR(20) NOT NULL DEFAULT 'draft' CHECK (status IN ('draft','submitted','completed','cancelled')),
+  created_at DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+  submitted_at DATETIME2
+);
+
+CREATE TABLE order_items (
+  id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+  order_id UNIQUEIDENTIFIER NOT NULL REFERENCES orders(id),
+  product_id UNIQUEIDENTIFIER NOT NULL REFERENCES products(id),
+  quantity INT NOT NULL CHECK (quantity > 0),
+  unit_price DECIMAL(10,2) NOT NULL,
+  notes NVARCHAR(MAX)
+);
+```
+
+Order carryover (copying items from a past order into a new one) needs no extra schema — it's app logic: read `order_items` from a chosen past `order_id` and let the customer pick which lines to bring into a new draft order.
+
+## Environment setup steps
+1. Create the GitHub repo (e.g. `product-ordering-site`) with a Node `.gitignore`.
+2. Scaffold Vue 3 with Vite: `npm create vite@latest -- --template vue`, commit, push.
+3. Add an `/api` folder using Azure Functions Core Tools (`func init`), one function per route (products, orders, etc). Static Web Apps auto-detects this as the backend.
+4. In the Azure portal, create a SQL Database (Basic or Serverless tier) + SQL Server. Note the connection string, add your local IP to the firewall.
+5. In the Azure portal, create a Static Web App linked to the GitHub repo — this auto-adds a GitHub Actions workflow that builds/deploys on every push to `main`.
+6. Add the SQL connection string as an application setting on the Static Web App (never commit it to git).
+7. In VS Code, install the Azure Static Web Apps and Azure Functions extensions to run (`swa start`) and debug locally.
+
+## Open questions to confirm
+- `cases_per_pack`: does a pack contain multiple cases, or does a case contain multiple packs? Field may need renaming to `packs_per_case`.
+- `customer_comments`: assumed to be an admin-entered note shown to customers (not a customer-submitted review) — confirm.
+- Exact role/permission rules (what a customer can vs can't do) still need to be defined.
