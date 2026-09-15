@@ -8,8 +8,11 @@ function signToken(user) {
   );
 }
 
+// Azure Static Web Apps overwrites the standard "Authorization" header on managed
+// Functions requests with its own token, so the JWT is sent as "X-Authorization" instead.
+// See https://github.com/Azure/static-web-apps/issues/158
 function verifyRequest(request) {
-  const authHeader = request.headers.get('authorization') || '';
+  const authHeader = request.headers.get('x-authorization') || '';
   const [scheme, token] = authHeader.split(' ');
   if (scheme !== 'Bearer' || !token) {
     return null;

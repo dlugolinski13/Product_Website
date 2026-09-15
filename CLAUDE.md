@@ -11,7 +11,7 @@ A Vue.js site with two audiences:
 - **Hosting**: Azure Static Web Apps — hosts the built Vue frontend and the `/api` functions together as one resource, deploys automatically via GitHub Actions on push to `main`
 - **Database**: Azure SQL Database (T-SQL)
 - **Image storage**: Azure Blob Storage — product images are uploaded to a blob container by the API, not linked from arbitrary external URLs; the database stores only the blob name and the API resolves it to a URL on read
-- **Auth**: Custom JWT-based auth. A `users` table stores email/password hash/role. The API issues a JWT on login; the frontend reads the role claim to show the admin UI vs the customer UI; the API re-checks role on every product-management request.
+- **Auth**: Custom JWT-based auth. A `users` table stores email/password hash/role. The API issues a JWT on login; the frontend reads the role claim to show the admin UI vs the customer UI; the API re-checks role on every product-management request. The frontend must send the JWT as `X-Authorization: Bearer <token>`, not the standard `Authorization` header — Azure Static Web Apps overwrites `Authorization` on managed Functions requests with its own token (see api/src/lib/auth.js).
 - **Repo**: GitHub, opened in VS Code
 
 ## Data model
