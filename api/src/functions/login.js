@@ -1,7 +1,7 @@
-const { app } = require('@azure/functions');
-const bcrypt = require('bcryptjs');
-const { sql, getPool } = require('../lib/db');
-const { signToken } = require('../lib/auth');
+import { app } from '@azure/functions';
+import bcrypt from 'bcryptjs';
+import { sql, getPool } from '../lib/db.js';
+import { signToken } from '../lib/auth.js';
 
 app.http('login', {
   methods: ['POST'],

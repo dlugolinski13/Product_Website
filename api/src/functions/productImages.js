@@ -1,8 +1,8 @@
-const { app } = require('@azure/functions');
-const crypto = require('crypto');
-const { sql, getPool } = require('../lib/db');
-const { requireRole } = require('../lib/auth');
-const { uploadImage, deleteImage, getImageUrl } = require('../lib/blobStorage');
+import { app } from '@azure/functions';
+import crypto from 'crypto';
+import { sql, getPool } from '../lib/db.js';
+import { requireRole } from '../lib/auth.js';
+import { uploadImage, deleteImage, getImageUrl } from '../lib/blobStorage.js';
 
 app.http('addProductImage', {
   methods: ['POST'],

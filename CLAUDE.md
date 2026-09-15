@@ -14,6 +14,13 @@ A Vue.js site with two audiences:
 - **Auth**: Custom JWT-based auth. A `users` table stores email/password hash/role. The API issues a JWT on login; the frontend reads the role claim to show the admin UI vs the customer UI; the API re-checks role on every product-management request. The frontend must send the JWT as `X-Authorization: Bearer <token>`, not the standard `Authorization` header — Azure Static Web Apps overwrites `Authorization` on managed Functions requests with its own token (see api/src/lib/auth.js).
 - **Repo**: GitHub, opened in VS Code
 
+## Testing & CI
+- **Test runner**: Vitest for both the frontend (`vitest.config.js`, jsdom environment, `@vue/test-utils`) and the API (`api/vitest.config.js`, node environment) — kept as two separate Vitest projects since they run in different environments, each scoped to its own `src/**` via `test.include` so `npm test` at the root never picks up API test files and vice versa.
+- **API module system**: `/api` is ESM (`"type": "module"` in `api/package.json`). This is required for `vi.mock()` to reliably intercept dependencies (`mssql`, `@azure/storage-blob`, `@azure/functions`) — Vitest's mocking does not reliably intercept `require()` calls made from inside a CommonJS module.
+- **Testing Azure Functions handlers**: `@azure/functions` is mocked so `app.http(name, { handler })` just records the handler in a `Map` instead of registering with the real runtime; tests pull the handler out of that map and invoke it directly with a fake `request`/`context`. See `api/src/functions/*.test.js` for the pattern.
+- **Coverage gate**: both Vitest configs enforce an 85% threshold (lines/functions/branches/statements) via `coverage.thresholds`; `npm run test:coverage` fails the build below that. Run at both the repo root and in `/api`.
+- **CI**: `.github/workflows/ci.yml` runs on every push and on PRs into `main`/`dev_branch` — separate from `azure-static-web-apps-*.yml`, which only builds+deploys (no tests) on push/PR to `main`. Two jobs, frontend and API, each `npm ci` + build/test with coverage.
+
 ## Data model
 
 Products reference two lookup tables (`product_groups`, `product_classes`) so the four-letter group code + name and the class number + detail stay consistent across products instead of being retyped. Terms and conditions (freight terms, payment terms, FOB point) also live in their own lookup table since the same terms are usually reused across many products. Product images live in their own `product_images` table (one product → many images), ordered by `display_order` for display, since a product can have more than one photo.
