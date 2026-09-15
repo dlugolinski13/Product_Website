@@ -33,7 +33,6 @@ CREATE TABLE products (
   upc NVARCHAR(14),                          -- rendered as a scannable barcode client-side
   name NVARCHAR(200) NOT NULL,
   description NVARCHAR(MAX),
-  image_url NVARCHAR(500),
   shipping_method NVARCHAR(20) NOT NULL CHECK (shipping_method IN ('drop_ship','delivered')),
   group_code CHAR(4) NOT NULL REFERENCES product_groups(code),
   class_number INT NOT NULL REFERENCES product_classes(class_number),
@@ -51,6 +50,13 @@ CREATE TABLE products (
   comments NVARCHAR(MAX),            -- internal/admin-only notes
   customer_comments NVARCHAR(MAX),   -- shown to customers
   is_active BIT NOT NULL DEFAULT 1
+);
+
+CREATE TABLE product_images (
+  id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+  product_id UNIQUEIDENTIFIER NOT NULL REFERENCES products(id),
+  blob_name NVARCHAR(500) NOT NULL,      -- path within the product-images blob container
+  display_order INT NOT NULL DEFAULT 0   -- lowest is shown first / used as the thumbnail
 );
 
 CREATE TABLE orders (

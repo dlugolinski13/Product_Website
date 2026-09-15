@@ -10,12 +10,13 @@ A Vue.js site with two audiences:
 - **Backend**: Azure Functions (Node.js) — lives in an `/api` folder alongside the Vue app
 - **Hosting**: Azure Static Web Apps — hosts the built Vue frontend and the `/api` functions together as one resource, deploys automatically via GitHub Actions on push to `main`
 - **Database**: Azure SQL Database (T-SQL)
+- **Image storage**: Azure Blob Storage — product images are uploaded to a blob container by the API, not linked from arbitrary external URLs; the database stores only the blob name and the API resolves it to a URL on read
 - **Auth**: Custom JWT-based auth. A `users` table stores email/password hash/role. The API issues a JWT on login; the frontend reads the role claim to show the admin UI vs the customer UI; the API re-checks role on every product-management request.
 - **Repo**: GitHub, opened in VS Code
 
 ## Data model
 
-Products reference two lookup tables (`product_groups`, `product_classes`) so the four-letter group code + name and the class number + detail stay consistent across products instead of being retyped. Terms and conditions (freight terms, payment terms, FOB point) also live in their own lookup table since the same terms are usually reused across many products.
+Products reference two lookup tables (`product_groups`, `product_classes`) so the four-letter group code + name and the class number + detail stay consistent across products instead of being retyped. Terms and conditions (freight terms, payment terms, FOB point) also live in their own lookup table since the same terms are usually reused across many products. Product images live in their own `product_images` table (one product → many images), ordered by `display_order` for display, since a product can have more than one photo.
 
 ```sql
 CREATE TABLE users (
@@ -50,7 +51,6 @@ CREATE TABLE products (
   upc NVARCHAR(14),                          -- rendered as a scannable barcode client-side
   name NVARCHAR(200) NOT NULL,
   description NVARCHAR(MAX),
-  image_url NVARCHAR(500),
   shipping_method NVARCHAR(20) NOT NULL CHECK (shipping_method IN ('drop_ship','delivered')),
   group_code CHAR(4) NOT NULL REFERENCES product_groups(code),
   class_number INT NOT NULL REFERENCES product_classes(class_number),
@@ -68,6 +68,13 @@ CREATE TABLE products (
   comments NVARCHAR(MAX),            -- internal/admin-only notes
   customer_comments NVARCHAR(MAX),   -- shown to customers
   is_active BIT NOT NULL DEFAULT 1
+);
+
+CREATE TABLE product_images (
+  id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+  product_id UNIQUEIDENTIFIER NOT NULL REFERENCES products(id),
+  blob_name NVARCHAR(500) NOT NULL,      -- path within the product-images blob container
+  display_order INT NOT NULL DEFAULT 0   -- lowest is shown first / used as the thumbnail
 );
 
 CREATE TABLE orders (
