@@ -13,19 +13,23 @@ app.http('login', {
       return { status: 400, jsonBody: { error: 'email and password are required' } };
     }
 
-    // TODO: this hits a real users table — needs SQL_CONNECTION_STRING configured to run.
-    const pool = await getPool();
-    const result = await pool
-      .request()
-      .input('email', sql.NVarChar, email)
-      .query('SELECT id, email, password_hash, role FROM users WHERE email = @email');
+    try {
+      const pool = await getPool();
+      const result = await pool
+        .request()
+        .input('email', sql.NVarChar, email)
+        .query('SELECT id, email, password_hash, role FROM users WHERE email = @email');
 
-    const user = result.recordset[0];
-    if (!user || !(await bcrypt.compare(password, user.password_hash))) {
-      return { status: 401, jsonBody: { error: 'Invalid credentials' } };
+      const user = result.recordset[0];
+      if (!user || !(await bcrypt.compare(password, user.password_hash))) {
+        return { status: 401, jsonBody: { error: 'Invalid credentials' } };
+      }
+
+      const token = signToken(user);
+      return { jsonBody: { token, role: user.role } };
+    } catch (err) {
+      context.error('login failed', err);
+      return { status: 500, jsonBody: { error: err.message } };
     }
-
-    const token = signToken(user);
-    return { jsonBody: { token, role: user.role } };
   },
 });

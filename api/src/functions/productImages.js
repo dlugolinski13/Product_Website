@@ -18,21 +18,25 @@ app.http('addProductImage', {
     const blobName = `${productId}/${crypto.randomUUID()}.${extension}`;
     const buffer = Buffer.from(await request.arrayBuffer());
 
-    // TODO: needs AZURE_STORAGE_CONNECTION_STRING / SQL_CONNECTION_STRING configured to run.
-    await uploadImage(blobName, buffer, contentType);
+    try {
+      await uploadImage(blobName, buffer, contentType);
 
-    const pool = await getPool();
-    const result = await pool
-      .request()
-      .input('productId', sql.UniqueIdentifier, productId)
-      .input('blobName', sql.NVarChar, blobName)
-      .query(`
-        INSERT INTO product_images (product_id, blob_name, display_order)
-        OUTPUT INSERTED.id
-        VALUES (@productId, @blobName, 0)
-      `);
+      const pool = await getPool();
+      const result = await pool
+        .request()
+        .input('productId', sql.UniqueIdentifier, productId)
+        .input('blobName', sql.NVarChar, blobName)
+        .query(`
+          INSERT INTO product_images (product_id, blob_name, display_order)
+          OUTPUT INSERTED.id
+          VALUES (@productId, @blobName, 0)
+        `);
 
-    return { status: 201, jsonBody: { id: result.recordset[0].id, url: getImageUrl(blobName) } };
+      return { status: 201, jsonBody: { id: result.recordset[0].id, url: getImageUrl(blobName) } };
+    } catch (err) {
+      context.error('addProductImage failed', err);
+      return { status: 500, jsonBody: { error: err.message } };
+    }
   },
 });
 
@@ -46,19 +50,23 @@ app.http('deleteProductImage', {
 
     const { imageId } = request.params;
 
-    // TODO: needs SQL_CONNECTION_STRING configured to run.
-    const pool = await getPool();
-    const existing = await pool
-      .request()
-      .input('imageId', sql.UniqueIdentifier, imageId)
-      .query('SELECT blob_name FROM product_images WHERE id = @imageId');
+    try {
+      const pool = await getPool();
+      const existing = await pool
+        .request()
+        .input('imageId', sql.UniqueIdentifier, imageId)
+        .query('SELECT blob_name FROM product_images WHERE id = @imageId');
 
-    const row = existing.recordset[0];
-    if (!row) return { status: 404 };
+      const row = existing.recordset[0];
+      if (!row) return { status: 404 };
 
-    await deleteImage(row.blob_name);
-    await pool.request().input('imageId', sql.UniqueIdentifier, imageId).query('DELETE FROM product_images WHERE id = @imageId');
+      await deleteImage(row.blob_name);
+      await pool.request().input('imageId', sql.UniqueIdentifier, imageId).query('DELETE FROM product_images WHERE id = @imageId');
 
-    return { status: 204 };
+      return { status: 204 };
+    } catch (err) {
+      context.error('deleteProductImage failed', err);
+      return { status: 500, jsonBody: { error: err.message } };
+    }
   },
 });
