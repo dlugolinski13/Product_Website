@@ -29,14 +29,14 @@ describe('products', () => {
       nodeRequire,
       {
         '@azure/functions': { app: { http: (name, options) => routes.set(name, options) } },
-        '../lib/db': {
+        '../../src/lib/db': {
           sql: { NVarChar: 'NVarChar', Char: () => 'Char', Int: 'Int', Date: 'Date', Decimal: () => 'Decimal' },
           getPool: (...args) => getPoolMock(...args),
         },
-        '../lib/auth': { requireRole: (...args) => requireRoleMock(...args) },
-        '../lib/blobStorage': { getImageUrl: (...args) => getImageUrlMock(...args) },
+        '../../src/lib/auth': { requireRole: (...args) => requireRoleMock(...args) },
+        '../../src/lib/blobStorage': { getImageUrl: (...args) => getImageUrlMock(...args) },
       },
-      './products.js'
+      '../../src/functions/products.js'
     );
     listHandler = routes.get('listProducts').handler;
     createHandler = routes.get('createProduct').handler;

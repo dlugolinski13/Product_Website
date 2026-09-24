@@ -7,7 +7,7 @@ const nodeRequire = createRequire(import.meta.url);
 const connectMock = vi.fn();
 
 function loadDb() {
-  return loadWithMocks(nodeRequire, { mssql: { connect: (...args) => connectMock(...args) } }, './db.js');
+  return loadWithMocks(nodeRequire, { mssql: { connect: (...args) => connectMock(...args) } }, '../../src/lib/db.js');
 }
 
 describe('db', () => {

@@ -18,7 +18,7 @@ function loadBlobStorage() {
   return loadWithMocks(
     nodeRequire,
     { '@azure/storage-blob': { BlobServiceClient: { fromConnectionString: (...args) => fromConnectionStringMock(...args) } } },
-    './blobStorage.js'
+    '../../src/lib/blobStorage.js'
   );
 }
 

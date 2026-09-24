@@ -3,7 +3,7 @@ import { createRequire } from 'node:module';
 import jwt from 'jsonwebtoken';
 
 const nodeRequire = createRequire(import.meta.url);
-const { signToken, verifyRequest, requireRole } = nodeRequire('./auth.js');
+const { signToken, verifyRequest, requireRole } = nodeRequire('../../src/lib/auth.js');
 
 function requestWithHeader(value) {
   return { headers: { get: (name) => (name === 'x-authorization' ? value : undefined) } };
