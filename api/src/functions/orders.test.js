@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest';
+import { createRequire } from 'node:module';
+import { loadWithMocks } from '../testUtils/mockRequire.js';
+
+const nodeRequire = createRequire(import.meta.url);
 
 const routes = new Map();
-vi.mock('@azure/functions', () => ({
-  app: { http: (name, options) => routes.set(name, options) },
-}));
-
 const listQueryMock = vi.fn();
 const listRequestMock = vi.fn(() => ({ input: vi.fn().mockReturnThis(), query: listQueryMock }));
 const getPoolMock = vi.fn(async () => ({ request: listRequestMock }));
@@ -35,22 +35,7 @@ class RequestMock {
   }
 }
 
-vi.mock('../lib/db.js', () => ({
-  sql: {
-    UniqueIdentifier: 'UniqueIdentifier',
-    Int: 'Int',
-    NVarChar: 'NVarChar',
-    Decimal: () => 'Decimal',
-    Transaction: TransactionMock,
-    Request: RequestMock,
-  },
-  getPool: (...args) => getPoolMock(...args),
-}));
-
 const requireRoleMock = vi.fn();
-vi.mock('../lib/auth.js', () => ({
-  requireRole: (...args) => requireRoleMock(...args),
-}));
 
 function fakeContext() {
   return { error: vi.fn() };
@@ -64,8 +49,26 @@ describe('orders', () => {
   let listHandler;
   let createHandler;
 
-  beforeAll(async () => {
-    await import('./orders.js');
+  beforeAll(() => {
+    loadWithMocks(
+      nodeRequire,
+      {
+        '@azure/functions': { app: { http: (name, options) => routes.set(name, options) } },
+        '../lib/db': {
+          sql: {
+            UniqueIdentifier: 'UniqueIdentifier',
+            Int: 'Int',
+            NVarChar: 'NVarChar',
+            Decimal: () => 'Decimal',
+            Transaction: TransactionMock,
+            Request: RequestMock,
+          },
+          getPool: (...args) => getPoolMock(...args),
+        },
+        '../lib/auth': { requireRole: (...args) => requireRoleMock(...args) },
+      },
+      './orders.js'
+    );
     listHandler = routes.get('listOrders').handler;
     createHandler = routes.get('createOrder').handler;
   });

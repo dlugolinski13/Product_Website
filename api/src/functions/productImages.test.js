@@ -1,32 +1,18 @@
 import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest';
+import { createRequire } from 'node:module';
+import { loadWithMocks } from '../testUtils/mockRequire.js';
+
+const nodeRequire = createRequire(import.meta.url);
 
 const routes = new Map();
-vi.mock('@azure/functions', () => ({
-  app: { http: (name, options) => routes.set(name, options) },
-}));
-
 const queryMock = vi.fn();
 const inputMock = vi.fn().mockReturnThis();
 const requestMock = vi.fn(() => ({ input: inputMock, query: queryMock }));
 const getPoolMock = vi.fn(async () => ({ request: requestMock }));
-vi.mock('../lib/db.js', () => ({
-  sql: { UniqueIdentifier: 'UniqueIdentifier', NVarChar: 'NVarChar' },
-  getPool: (...args) => getPoolMock(...args),
-}));
-
 const requireRoleMock = vi.fn();
-vi.mock('../lib/auth.js', () => ({
-  requireRole: (...args) => requireRoleMock(...args),
-}));
-
 const uploadImageMock = vi.fn();
 const deleteImageMock = vi.fn();
 const getImageUrlMock = vi.fn((blobName) => `https://blob.example.com/${blobName}`);
-vi.mock('../lib/blobStorage.js', () => ({
-  uploadImage: (...args) => uploadImageMock(...args),
-  deleteImage: (...args) => deleteImageMock(...args),
-  getImageUrl: (...args) => getImageUrlMock(...args),
-}));
 
 function fakeContext() {
   return { error: vi.fn() };
@@ -48,8 +34,21 @@ describe('productImages', () => {
   let addHandler;
   let deleteHandler;
 
-  beforeAll(async () => {
-    await import('./productImages.js');
+  beforeAll(() => {
+    loadWithMocks(
+      nodeRequire,
+      {
+        '@azure/functions': { app: { http: (name, options) => routes.set(name, options) } },
+        '../lib/db': { sql: { UniqueIdentifier: 'UniqueIdentifier', NVarChar: 'NVarChar' }, getPool: (...args) => getPoolMock(...args) },
+        '../lib/auth': { requireRole: (...args) => requireRoleMock(...args) },
+        '../lib/blobStorage': {
+          uploadImage: (...args) => uploadImageMock(...args),
+          deleteImage: (...args) => deleteImageMock(...args),
+          getImageUrl: (...args) => getImageUrlMock(...args),
+        },
+      },
+      './productImages.js'
+    );
     addHandler = routes.get('addProductImage').handler;
     deleteHandler = routes.get('deleteProductImage').handler;
   });

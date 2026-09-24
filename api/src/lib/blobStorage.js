@@ -1,4 +1,4 @@
-import { BlobServiceClient } from '@azure/storage-blob';
+const { BlobServiceClient } = require('@azure/storage-blob');
 
 let containerClient;
 
@@ -28,4 +28,4 @@ function getImageUrl(blobName) {
   return getContainerClient().getBlockBlobClient(blobName).url;
 }
 
-export { uploadImage, deleteImage, getImageUrl };
+module.exports = { uploadImage, deleteImage, getImageUrl };

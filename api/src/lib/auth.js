@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+const jwt = require('jsonwebtoken');
 
 function signToken(user) {
   return jwt.sign(
@@ -32,4 +32,4 @@ function requireRole(request, role) {
   return { ok: true, claims };
 }
 
-export { signToken, verifyRequest, requireRole };
+module.exports = { signToken, verifyRequest, requireRole };

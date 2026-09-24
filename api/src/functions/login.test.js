@@ -1,23 +1,15 @@
 import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest';
+import { createRequire } from 'node:module';
 import bcrypt from 'bcryptjs';
+import { loadWithMocks } from '../testUtils/mockRequire.js';
+
+const nodeRequire = createRequire(import.meta.url);
 
 const routes = new Map();
-vi.mock('@azure/functions', () => ({
-  app: { http: (name, options) => routes.set(name, options) },
-}));
-
 const queryMock = vi.fn();
 const requestMock = vi.fn(() => ({ input: vi.fn().mockReturnThis(), query: queryMock }));
 const getPoolMock = vi.fn(async () => ({ request: requestMock }));
-vi.mock('../lib/db.js', () => ({
-  sql: { NVarChar: 'NVarChar' },
-  getPool: (...args) => getPoolMock(...args),
-}));
-
 const signTokenMock = vi.fn(() => 'signed-jwt');
-vi.mock('../lib/auth.js', () => ({
-  signToken: (...args) => signTokenMock(...args),
-}));
 
 function fakeContext() {
   return { error: vi.fn() };
@@ -30,8 +22,16 @@ function fakeRequest(body) {
 describe('login', () => {
   let handler;
 
-  beforeAll(async () => {
-    await import('./login.js');
+  beforeAll(() => {
+    loadWithMocks(
+      nodeRequire,
+      {
+        '@azure/functions': { app: { http: (name, options) => routes.set(name, options) } },
+        '../lib/db': { sql: { NVarChar: 'NVarChar' }, getPool: (...args) => getPoolMock(...args) },
+        '../lib/auth': { signToken: (...args) => signTokenMock(...args) },
+      },
+      './login.js'
+    );
     handler = routes.get('login').handler;
   });
 
