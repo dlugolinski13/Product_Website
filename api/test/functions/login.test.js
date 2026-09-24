@@ -27,10 +27,10 @@ describe('login', () => {
       nodeRequire,
       {
         '@azure/functions': { app: { http: (name, options) => routes.set(name, options) } },
-        '../lib/db': { sql: { NVarChar: 'NVarChar' }, getPool: (...args) => getPoolMock(...args) },
-        '../lib/auth': { signToken: (...args) => signTokenMock(...args) },
+        '../../src/lib/db': { sql: { NVarChar: 'NVarChar' }, getPool: (...args) => getPoolMock(...args) },
+        '../../src/lib/auth': { signToken: (...args) => signTokenMock(...args) },
       },
-      './login.js'
+      '../../src/functions/login.js'
     );
     handler = routes.get('login').handler;
   });

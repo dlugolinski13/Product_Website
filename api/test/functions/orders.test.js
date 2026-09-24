@@ -54,7 +54,7 @@ describe('orders', () => {
       nodeRequire,
       {
         '@azure/functions': { app: { http: (name, options) => routes.set(name, options) } },
-        '../lib/db': {
+        '../../src/lib/db': {
           sql: {
             UniqueIdentifier: 'UniqueIdentifier',
             Int: 'Int',
@@ -65,9 +65,9 @@ describe('orders', () => {
           },
           getPool: (...args) => getPoolMock(...args),
         },
-        '../lib/auth': { requireRole: (...args) => requireRoleMock(...args) },
+        '../../src/lib/auth': { requireRole: (...args) => requireRoleMock(...args) },
       },
-      './orders.js'
+      '../../src/functions/orders.js'
     );
     listHandler = routes.get('listOrders').handler;
     createHandler = routes.get('createOrder').handler;

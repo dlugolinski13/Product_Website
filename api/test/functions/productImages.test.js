@@ -39,15 +39,15 @@ describe('productImages', () => {
       nodeRequire,
       {
         '@azure/functions': { app: { http: (name, options) => routes.set(name, options) } },
-        '../lib/db': { sql: { UniqueIdentifier: 'UniqueIdentifier', NVarChar: 'NVarChar' }, getPool: (...args) => getPoolMock(...args) },
-        '../lib/auth': { requireRole: (...args) => requireRoleMock(...args) },
-        '../lib/blobStorage': {
+        '../../src/lib/db': { sql: { UniqueIdentifier: 'UniqueIdentifier', NVarChar: 'NVarChar' }, getPool: (...args) => getPoolMock(...args) },
+        '../../src/lib/auth': { requireRole: (...args) => requireRoleMock(...args) },
+        '../../src/lib/blobStorage': {
           uploadImage: (...args) => uploadImageMock(...args),
           deleteImage: (...args) => deleteImageMock(...args),
           getImageUrl: (...args) => getImageUrlMock(...args),
         },
       },
-      './productImages.js'
+      '../../src/functions/productImages.js'
     );
     addHandler = routes.get('addProductImage').handler;
     deleteHandler = routes.get('deleteProductImage').handler;
