@@ -6,6 +6,10 @@ api/node_modules/
 dist/
 dist-ssr/
 
+# Test coverage reports
+coverage/
+api/coverage/
+
 # Azure Functions local settings (contains secrets)
 api/local.settings.json
 api/bin/

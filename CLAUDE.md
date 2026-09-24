@@ -12,7 +12,16 @@ A Vue.js site with two audiences:
 - **Database**: Azure SQL Database (T-SQL)
 - **Image storage**: Azure Blob Storage — product images are uploaded to a blob container by the API, not linked from arbitrary external URLs; the database stores only the blob name and the API resolves it to a URL on read
 - **Auth**: Custom JWT-based auth. A `users` table stores email/password hash/role. The API issues a JWT on login; the frontend reads the role claim to show the admin UI vs the customer UI; the API re-checks role on every product-management request. The frontend must send the JWT as `X-Authorization: Bearer <token>`, not the standard `Authorization` header — Azure Static Web Apps overwrites `Authorization` on managed Functions requests with its own token (see api/src/lib/auth.js).
+- **Frontend structure**: `vue-router` with hash history (deep links work on Static Web Apps without fallback config). `src/api.js` wraps `fetch` to `/api` and sends the JWT as `X-Authorization`; `src/auth.js` holds the token (a ref persisted to localStorage). `/products` requires a token — `src/router.js` redirects to `/login?redirect=…` when there isn't one, and `ProductsView` logs out and redirects on a 401.
+- **Sample data**: `database/seed.sql` (idempotent, run after `schema.sql`) inserts four Champion luggage sets copied from the Mazel catalog, plus the `LUGG` group, class 12 and COLLECT/Net 30 terms they reference.
 - **Repo**: GitHub, opened in VS Code
+
+## Testing & CI
+- **Test runner**: Vitest for both the frontend (`vitest.config.js`, jsdom environment, `@vue/test-utils`) and the API (`api/vitest.config.js`, node environment) — kept as two separate Vitest projects since they run in different environments, each scoped to its own `src/**` via `test.include` so `npm test` at the root never picks up API test files and vice versa.
+- **API module system**: `/api` is ESM (`"type": "module"` in `api/package.json`). This is required for `vi.mock()` to reliably intercept dependencies (`mssql`, `@azure/storage-blob`, `@azure/functions`) — Vitest's mocking does not reliably intercept `require()` calls made from inside a CommonJS module.
+- **Testing Azure Functions handlers**: `@azure/functions` is mocked so `app.http(name, { handler })` just records the handler in a `Map` instead of registering with the real runtime; tests pull the handler out of that map and invoke it directly with a fake `request`/`context`. See `api/src/functions/*.test.js` for the pattern.
+- **Coverage gate**: both Vitest configs enforce an 85% threshold (lines/functions/branches/statements) via `coverage.thresholds`; `npm run test:coverage` fails the build below that. Run at both the repo root and in `/api`.
+- **CI**: `.github/workflows/ci.yml` runs on every push and on PRs into `main`/`dev_branch` — separate from `azure-static-web-apps-*.yml`, which only builds+deploys (no tests) on push/PR to `main`. Two jobs, frontend and API, each `npm ci` + build/test with coverage.
 
 ## Data model
 

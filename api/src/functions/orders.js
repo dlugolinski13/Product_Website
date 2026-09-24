@@ -1,6 +1,6 @@
-const { app } = require('@azure/functions');
-const { sql, getPool } = require('../lib/db');
-const { requireRole } = require('../lib/auth');
+import { app } from '@azure/functions';
+import { sql, getPool } from '../lib/db.js';
+import { requireRole } from '../lib/auth.js';
 
 app.http('listOrders', {
   methods: ['GET'],
