@@ -1,4 +1,4 @@
-import sql from 'mssql';
+const sql = require('mssql');
 
 let poolPromise;
 
@@ -13,4 +13,4 @@ function getPool() {
   return poolPromise;
 }
 
-export { sql, getPool };
+module.exports = { sql, getPool };

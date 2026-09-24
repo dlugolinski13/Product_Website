@@ -1,4 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { createRequire } from 'node:module';
+import { loadWithMocks } from '../testUtils/mockRequire.js';
+
+const nodeRequire = createRequire(import.meta.url);
 
 const uploadDataMock = vi.fn();
 const deleteIfExistsMock = vi.fn();
@@ -10,16 +14,19 @@ const getBlockBlobClientMock = vi.fn(() => ({
 const getContainerClientMock = vi.fn(() => ({ getBlockBlobClient: getBlockBlobClientMock }));
 const fromConnectionStringMock = vi.fn(() => ({ getContainerClient: getContainerClientMock }));
 
-vi.mock('@azure/storage-blob', () => ({
-  BlobServiceClient: { fromConnectionString: (...args) => fromConnectionStringMock(...args) },
-}));
+function loadBlobStorage() {
+  return loadWithMocks(
+    nodeRequire,
+    { '@azure/storage-blob': { BlobServiceClient: { fromConnectionString: (...args) => fromConnectionStringMock(...args) } } },
+    './blobStorage.js'
+  );
+}
 
 describe('blobStorage', () => {
   const originalConnectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
   const originalContainerName = process.env.AZURE_STORAGE_CONTAINER_NAME;
 
   beforeEach(() => {
-    vi.resetModules();
     uploadDataMock.mockReset();
     deleteIfExistsMock.mockReset();
     getBlockBlobClientMock.mockClear();
@@ -32,10 +39,10 @@ describe('blobStorage', () => {
     process.env.AZURE_STORAGE_CONTAINER_NAME = originalContainerName;
   });
 
-  it('throws when storage settings are not configured', async () => {
+  it('throws when storage settings are not configured', () => {
     delete process.env.AZURE_STORAGE_CONNECTION_STRING;
     delete process.env.AZURE_STORAGE_CONTAINER_NAME;
-    const { getImageUrl } = await import('./blobStorage.js');
+    const { getImageUrl } = loadBlobStorage();
     expect(() => getImageUrl('blob.png')).toThrow(
       'AZURE_STORAGE_CONNECTION_STRING / AZURE_STORAGE_CONTAINER_NAME is not set'
     );
@@ -44,7 +51,7 @@ describe('blobStorage', () => {
   it('uploads image data with the given content type', async () => {
     process.env.AZURE_STORAGE_CONNECTION_STRING = 'conn-string';
     process.env.AZURE_STORAGE_CONTAINER_NAME = 'product-images';
-    const { uploadImage } = await import('./blobStorage.js');
+    const { uploadImage } = loadBlobStorage();
 
     const buffer = Buffer.from('fake-bytes');
     const url = await uploadImage('abc/img.png', buffer, 'image/png');
@@ -59,7 +66,7 @@ describe('blobStorage', () => {
   it('deletes an image blob if it exists', async () => {
     process.env.AZURE_STORAGE_CONNECTION_STRING = 'conn-string';
     process.env.AZURE_STORAGE_CONTAINER_NAME = 'product-images';
-    const { deleteImage } = await import('./blobStorage.js');
+    const { deleteImage } = loadBlobStorage();
 
     await deleteImage('abc/img.png');
 
@@ -67,18 +74,18 @@ describe('blobStorage', () => {
     expect(deleteIfExistsMock).toHaveBeenCalled();
   });
 
-  it('resolves the public url for a blob name', async () => {
+  it('resolves the public url for a blob name', () => {
     process.env.AZURE_STORAGE_CONNECTION_STRING = 'conn-string';
     process.env.AZURE_STORAGE_CONTAINER_NAME = 'product-images';
-    const { getImageUrl } = await import('./blobStorage.js');
+    const { getImageUrl } = loadBlobStorage();
 
     expect(getImageUrl('abc/img.png')).toBe('https://storage.example.com/container/blob.png');
   });
 
-  it('reuses the same container client across calls', async () => {
+  it('reuses the same container client across calls', () => {
     process.env.AZURE_STORAGE_CONNECTION_STRING = 'conn-string';
     process.env.AZURE_STORAGE_CONTAINER_NAME = 'product-images';
-    const { getImageUrl } = await import('./blobStorage.js');
+    const { getImageUrl } = loadBlobStorage();
 
     getImageUrl('a.png');
     getImageUrl('b.png');

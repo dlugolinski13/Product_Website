@@ -1,34 +1,16 @@
 import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest';
+import { createRequire } from 'node:module';
+import { loadWithMocks } from '../testUtils/mockRequire.js';
+
+const nodeRequire = createRequire(import.meta.url);
 
 const routes = new Map();
-vi.mock('@azure/functions', () => ({
-  app: { http: (name, options) => routes.set(name, options) },
-}));
-
 const queryMock = vi.fn();
 const inputMock = vi.fn().mockReturnThis();
 const requestMock = vi.fn(() => ({ input: inputMock, query: queryMock }));
 const getPoolMock = vi.fn(async () => ({ request: requestMock }));
-vi.mock('../lib/db.js', () => ({
-  sql: {
-    NVarChar: 'NVarChar',
-    Char: () => 'Char',
-    Int: 'Int',
-    Date: 'Date',
-    Decimal: () => 'Decimal',
-  },
-  getPool: (...args) => getPoolMock(...args),
-}));
-
 const requireRoleMock = vi.fn();
-vi.mock('../lib/auth.js', () => ({
-  requireRole: (...args) => requireRoleMock(...args),
-}));
-
 const getImageUrlMock = vi.fn((blobName) => `https://blob.example.com/${blobName}`);
-vi.mock('../lib/blobStorage.js', () => ({
-  getImageUrl: (...args) => getImageUrlMock(...args),
-}));
 
 function fakeContext() {
   return { error: vi.fn() };
@@ -42,8 +24,20 @@ describe('products', () => {
   let listHandler;
   let createHandler;
 
-  beforeAll(async () => {
-    await import('./products.js');
+  beforeAll(() => {
+    loadWithMocks(
+      nodeRequire,
+      {
+        '@azure/functions': { app: { http: (name, options) => routes.set(name, options) } },
+        '../lib/db': {
+          sql: { NVarChar: 'NVarChar', Char: () => 'Char', Int: 'Int', Date: 'Date', Decimal: () => 'Decimal' },
+          getPool: (...args) => getPoolMock(...args),
+        },
+        '../lib/auth': { requireRole: (...args) => requireRoleMock(...args) },
+        '../lib/blobStorage': { getImageUrl: (...args) => getImageUrlMock(...args) },
+      },
+      './products.js'
+    );
     listHandler = routes.get('listProducts').handler;
     createHandler = routes.get('createProduct').handler;
   });

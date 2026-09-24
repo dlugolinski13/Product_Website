@@ -1,6 +1,9 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { createRequire } from 'node:module';
 import jwt from 'jsonwebtoken';
-import { signToken, verifyRequest, requireRole } from './auth.js';
+
+const nodeRequire = createRequire(import.meta.url);
+const { signToken, verifyRequest, requireRole } = nodeRequire('./auth.js');
 
 function requestWithHeader(value) {
   return { headers: { get: (name) => (name === 'x-authorization' ? value : undefined) } };

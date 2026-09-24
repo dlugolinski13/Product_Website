@@ -1,7 +1,7 @@
-import { app } from '@azure/functions';
-import { sql, getPool } from '../lib/db.js';
-import { requireRole } from '../lib/auth.js';
-import { getImageUrl } from '../lib/blobStorage.js';
+const { app } = require('@azure/functions');
+const { sql, getPool } = require('../lib/db');
+const { requireRole } = require('../lib/auth');
+const { getImageUrl } = require('../lib/blobStorage');
 
 app.http('listProducts', {
   methods: ['GET'],
