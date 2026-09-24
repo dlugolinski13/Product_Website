@@ -12,6 +12,8 @@ A Vue.js site with two audiences:
 - **Database**: Azure SQL Database (T-SQL)
 - **Image storage**: Azure Blob Storage — product images are uploaded to a blob container by the API, not linked from arbitrary external URLs; the database stores only the blob name and the API resolves it to a URL on read
 - **Auth**: Custom JWT-based auth. A `users` table stores email/password hash/role. The API issues a JWT on login; the frontend reads the role claim to show the admin UI vs the customer UI; the API re-checks role on every product-management request. The frontend must send the JWT as `X-Authorization: Bearer <token>`, not the standard `Authorization` header — Azure Static Web Apps overwrites `Authorization` on managed Functions requests with its own token (see api/src/lib/auth.js).
+- **Frontend structure**: `vue-router` with hash history (deep links work on Static Web Apps without fallback config). `src/api.js` wraps `fetch` to `/api` and sends the JWT as `X-Authorization`; `src/auth.js` holds the token (a ref persisted to localStorage). `/products` requires a token — `src/router.js` redirects to `/login?redirect=…` when there isn't one, and `ProductsView` logs out and redirects on a 401.
+- **Sample data**: `database/seed.sql` (idempotent, run after `schema.sql`) inserts four Champion luggage sets copied from the Mazel catalog, plus the `LUGG` group, class 12 and COLLECT/Net 30 terms they reference.
 - **Repo**: GitHub, opened in VS Code
 
 ## Testing & CI
