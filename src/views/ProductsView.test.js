@@ -12,6 +12,7 @@ async function mountView() {
     history: createMemoryHistory(),
     routes: [
       { path: '/products', component: ProductsView },
+      { path: '/products/:id', component: { template: '<div />' } },
       { path: '/login', component: { template: '<div />' } },
     ],
   });
@@ -28,7 +29,7 @@ describe('ProductsView', () => {
     token.value = 'tok';
   });
 
-  it('renders each product with name, item number, price and first image', async () => {
+  it('renders each product with description, price, first image, and a link to detail', async () => {
     fetchProducts.mockResolvedValue([
       { id: '1', name: 'Widget', item_number: 'W-1', description: 'A widget', company_price: 95, images: ['https://img/1.png'] },
       { id: '2', name: 'Gadget', item_number: 'G-1', description: 'A gadget', company_price: '5.5', images: [] },
@@ -38,10 +39,10 @@ describe('ProductsView', () => {
     await wrapper.find('.show-all-btn').trigger('click');
     const items = wrapper.findAll('.product');
     expect(items).toHaveLength(2);
-    expect(items[0].text()).toContain('Widget');
-    expect(items[0].text()).toContain('W-1');
+    expect(items[0].text()).toContain('A widget');
     expect(items[0].text()).toContain('$95.00');
     expect(items[0].find('img').attributes('src')).toBe('https://img/1.png');
+    expect(items[0].find('a').attributes('href')).toContain('1');
     expect(items[1].find('img').exists()).toBe(false);
     expect(items[1].text()).toContain('$5.50');
   });

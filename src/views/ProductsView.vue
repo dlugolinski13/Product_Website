@@ -1,12 +1,11 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, RouterLink } from 'vue-router';
 import { fetchProducts } from '../api';
 import { token, logout } from '../auth';
 
 const router = useRouter();
 const products = ref([]);
-const loading = ref(true);
 const error = ref('');
 const search = ref('');
 const selectedCategory = ref('');
@@ -42,8 +41,6 @@ onMounted(async () => {
       return;
     }
     error.value = err.message;
-  } finally {
-    loading.value = false;
   }
 });
 </script>
@@ -64,20 +61,17 @@ onMounted(async () => {
       </select>
       <button type="button" class="show-all-btn" @click="showAll = true">Show All</button>
     </div>
-    <p v-if="loading">Loading…</p>
-    <p v-else-if="error" class="error" role="alert">{{ error }}</p>
-    <p v-else-if="!hasInteracted">Search or click "Show All" to browse products.</p>
+    <p v-if="error" class="error" role="alert">{{ error }}</p>
+    <p v-else-if="!hasInteracted">Select a category or search for a product.</p>
     <p v-else-if="products.length === 0">No products available yet.</p>
     <p v-else-if="filteredProducts.length === 0">No products match your search.</p>
     <ul v-else class="product-list">
       <li v-for="product in filteredProducts" :key="product.id" class="product">
-        <img v-if="product.images.length" :src="product.images[0]" :alt="product.name" />
-        <div>
-          <h2>{{ product.name }}</h2>
-          <p class="item-number">{{ product.item_number }}</p>
+        <RouterLink :to="'/products/' + product.id">
+          <img v-if="product.images.length" :src="product.images[0]" :alt="product.name" />
           <p>{{ product.description }}</p>
           <p class="price">${{ Number(product.company_price).toFixed(2) }}</p>
-        </div>
+        </RouterLink>
       </li>
     </ul>
   </section>
