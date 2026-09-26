@@ -9,15 +9,27 @@ const products = ref([]);
 const loading = ref(true);
 const error = ref('');
 const search = ref('');
+const selectedCategory = ref('');
+const showAll = ref(false);
+
+const categories = computed(() => {
+  const codes = [...new Set(products.value.map(p => p.group_code).filter(Boolean))];
+  return codes.sort();
+});
+
+const hasInteracted = computed(() => showAll.value || !!search.value.trim() || !!selectedCategory.value);
 
 const filteredProducts = computed(() => {
+  if (!hasInteracted.value) return [];
   const q = search.value.trim().toLowerCase();
-  if (!q) return products.value;
-  return products.value.filter(p =>
-    p.item_number?.toLowerCase().includes(q) ||
-    p.name?.toLowerCase().includes(q) ||
-    p.description?.toLowerCase().includes(q)
-  );
+  return products.value.filter(p => {
+    const matchesSearch = !q ||
+      p.item_number?.toLowerCase().includes(q) ||
+      p.name?.toLowerCase().includes(q) ||
+      p.description?.toLowerCase().includes(q);
+    const matchesCategory = !selectedCategory.value || p.group_code === selectedCategory.value;
+    return matchesSearch && matchesCategory;
+  });
 });
 
 onMounted(async () => {
@@ -25,7 +37,6 @@ onMounted(async () => {
     products.value = await fetchProducts(token.value);
   } catch (err) {
     if (err.status === 401) {
-      // expired or invalid token — send the user back to log in
       logout();
       router.push({ path: '/login', query: { redirect: '/products' } });
       return;
@@ -40,14 +51,22 @@ onMounted(async () => {
 <template>
   <section>
     <h1>Products</h1>
-    <input
-      v-model="search"
-      type="search"
-      placeholder="Search by name, item number, or description…"
-      class="search-input"
-    />
+    <div class="search-controls">
+      <input
+        v-model="search"
+        type="search"
+        placeholder="Search by name, item number, or description…"
+        class="search-input"
+      />
+      <select v-model="selectedCategory" class="category-select">
+        <option value="">All categories</option>
+        <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
+      </select>
+      <button type="button" class="show-all-btn" @click="showAll = true">Show All</button>
+    </div>
     <p v-if="loading">Loading…</p>
     <p v-else-if="error" class="error" role="alert">{{ error }}</p>
+    <p v-else-if="!hasInteracted">Search or click "Show All" to browse products.</p>
     <p v-else-if="products.length === 0">No products available yet.</p>
     <p v-else-if="filteredProducts.length === 0">No products match your search.</p>
     <ul v-else class="product-list">
