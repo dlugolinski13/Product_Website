@@ -31,3 +31,6 @@ npm-debug.log*
 
 # SWA CLI
 .swa/
+
+# Source product images (already uploaded to Blob Storage; not needed to run the app)
+database/images/

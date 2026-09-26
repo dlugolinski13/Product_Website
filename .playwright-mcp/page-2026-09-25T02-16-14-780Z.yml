@@ -1,0 +1,380 @@
+- generic [ref=f15e2]:
+  - banner [ref=f15e4]:
+    - generic [ref=f15e5]:
+      - generic [ref=f15e6]:
+        - button "Main menu" [ref=f15e7] [cursor=pointer]
+        - link "Google Voice" [ref=f15e12] [cursor=pointer]:
+          - /url: /u/0/
+          - generic [ref=f15e14]: Voice
+      - generic [ref=f15e15]:
+        - search [ref=f15e17]:
+          - combobox "Search" [ref=f15e19]
+          - button "Search" [ref=f15e20] [cursor=pointer]
+        - generic [ref=f15e24]:
+          - button "Call Availability settings Receiving calls" [ref=f15e27]:
+            - generic [ref=f15e28]: Call Availability settings
+            - img [aria-hidden] [ref=f15e29]: phone_callback
+            - generic [ref=f15e30]: Receiving calls
+            - img [aria-hidden] [ref=f15e32]: arrow_drop_down
+          - generic [ref=f15e34]:
+            - link "Upgrade Voice and get 50% off" [ref=f15e35] [cursor=pointer]:
+              - /url: https://workspace.google.com/u/0/signup/voice?source=voice-web-promo&uj=src:voice-web-promo
+              - generic: Upgrade
+            - button "Audio settings" [ref=f15e40] [cursor=pointer]:
+              - img [aria-hidden] [ref=f15e41]: headset_mic
+            - button "Help" [ref=f15e46] [cursor=pointer]:
+              - img [aria-hidden] [ref=f15e47]: help
+            - button "Settings" [ref=f15e52] [cursor=pointer]:
+              - img [aria-hidden] [ref=f15e53]: settings
+      - generic [ref=f15e57]:
+        - button "Google apps" [ref=f15e61] [cursor=pointer]
+        - 'button "Google Account: Christopher Dlugolinski (dlugolinski13@gmail.com)" [ref=f15e67] [cursor=pointer]'
+  - generic [ref=f15e78]:
+    - generic [ref=f15e81]:
+      - generic [ref=f15e83]:
+        - img [aria-hidden] [ref=f15e84]: notifications
+        - generic [ref=f15e85]:
+          - heading "Try one-click dialing" [level=2] [ref=f15e86]
+          - paragraph [ref=f15e87]: Register Google Voice so it can make calls in your browser when you click a phone number link
+          - generic [ref=f15e88]:
+            - button "Register now" [ref=f15e89]
+            - button "Learn more about calling numbers linked in your browser" [ref=f15e93]:
+              - generic [ref=f15e94]: Learn more
+        - button "Remind me later about calling linked numbers" [ref=f15e98] [cursor=pointer]:
+          - img [aria-hidden] [ref=f15e99]: close
+      - separator [ref=f15e102]
+    - generic [ref=f15e103]:
+      - tablist [ref=f15e107]:
+        - tab "Calls" [ref=f15e108] [cursor=pointer]:
+          - img [aria-hidden] [ref=f15e109]: phone
+        - tab "Messages" [selected] [ref=f15e110] [cursor=pointer]:
+          - img [aria-hidden] [ref=f15e111]: chat
+        - 'tab "Voicemail: 118 unread" [ref=f15e112] [cursor=pointer]':
+          - img [aria-hidden] [ref=f15e113]:
+            - text: voicemail
+            - generic [aria-hidden]: "118"
+          - generic: Voicemail
+        - tab "Archive" [ref=f15e115] [cursor=pointer]:
+          - img [aria-hidden] [ref=f15e116]: archive
+        - tab "Spam" [ref=f15e117] [cursor=pointer]:
+          - img [aria-hidden] [ref=f15e118]: report
+      - main [ref=f15e1508]:
+        - generic [ref=f15e1509]:
+          - button "Send new message" [ref=f15e1511] [cursor=pointer]:
+            - img [aria-hidden] [ref=f15e1512]: add_2
+          - separator [ref=f15e1514]
+          - region [ref=f15e1516]:
+            - heading "Latest messages" [level=3] [ref=f15e1517]
+            - paragraph [active] [ref=f15e1519]: No messages
+        - generic [ref=f15e1527]:
+          - heading "Hi Christopher!" [level=2] [ref=f15e1528]
+          - paragraph [ref=f15e1529]: You have 99+ new voicemails
+      - region "Call panel" [ref=f15e1064]:
+        - generic [ref=f15e1067]:
+          - generic [ref=f15e1074]:
+            - generic [ref=f15e1075]: Call as
+            - generic [ref=f15e1076]:
+              - generic [ref=f15e1077]: 2 1 6 3 9 5 7 6 8 1
+              - text: ‪(216) 395-7681‬
+          - separator [ref=f15e1078]
+          - generic [ref=f15e1079]:
+            - generic [ref=f15e1080]:
+              - generic [ref=f15e1081]: Enter a name or number
+              - textbox "Enter a name or number" [ref=f15e1082]
+            - button "No contact selected" [disabled]:
+              - img [aria-hidden]: call
+          - separator [ref=f15e1083]
+          - region [ref=f15e1086]:
+            - heading "Suggestions" [level=3] [ref=f15e1087]
+            - list "Suggestions" [ref=f15e1088]:
+              - listitem [ref=f15e1089]:
+                - button "Contact Pete Guinto Recruiter mobile • 2 1 6 3 7 4 9 3 1 8" [ref=f15e1091] [cursor=pointer]:
+                  - generic [ref=f15e1092]: P
+                  - generic [ref=f15e1096]:
+                    - generic [ref=f15e1097]:
+                      - generic [ref=f15e1098]: Contact Pete Guinto Recruiter
+                      - generic [aria-hidden] [ref=f15e1099]: Pete Guinto Recruiter
+                    - generic [ref=f15e1100]: mobile • 2 1 6 3 7 4 9 3 1 8
+                    - generic [aria-hidden] [ref=f15e1101]:
+                      - generic [ref=f15e1102]: ‪(216) 374-9318‬
+                      - generic [ref=f15e1103]: •
+                      - generic [ref=f15e1104]: mobile
+              - listitem [ref=f15e1105]:
+                - button "Contact Voice Mail mobile • 8 0 5 6 3 7 7 2 4 3" [ref=f15e1107] [cursor=pointer]:
+                  - generic [ref=f15e1108]: V
+                  - generic [ref=f15e1112]:
+                    - generic [ref=f15e1113]:
+                      - generic [ref=f15e1114]: Contact Voice Mail
+                      - generic [aria-hidden] [ref=f15e1115]: Voice Mail
+                    - generic [ref=f15e1116]: mobile • 8 0 5 6 3 7 7 2 4 3
+                    - generic [aria-hidden] [ref=f15e1117]:
+                      - generic [ref=f15e1118]: ‪(805) 637-7243‬
+                      - generic [ref=f15e1119]: •
+                      - generic [ref=f15e1120]: mobile
+              - listitem [ref=f15e1121]:
+                - button "Contact Jury Duty 2 1 6 6 9 8 2 9 7 7" [ref=f15e1123] [cursor=pointer]:
+                  - generic [ref=f15e1124]: J
+                  - generic [ref=f15e1128]:
+                    - generic [ref=f15e1129]:
+                      - generic [ref=f15e1130]: Contact Jury Duty
+                      - generic [aria-hidden] [ref=f15e1131]: Jury Duty
+                    - generic [ref=f15e1132]: 2 1 6 6 9 8 2 9 7 7
+                    - generic [ref=f15e1134]: ‪(216) 698-2977‬
+              - listitem [ref=f15e1135]:
+                - button "Contact Darrin main • 5 1 3 8 2 2 1 2 3 4" [ref=f15e1137] [cursor=pointer]:
+                  - generic [ref=f15e1138]: D
+                  - generic [ref=f15e1142]:
+                    - generic [ref=f15e1143]:
+                      - generic [ref=f15e1144]: Contact Darrin
+                      - generic [aria-hidden] [ref=f15e1145]: Darrin
+                    - generic [ref=f15e1146]: main • 5 1 3 8 2 2 1 2 3 4
+                    - generic [aria-hidden] [ref=f15e1147]:
+                      - generic [ref=f15e1148]: ‪(513) 822-1234‬
+                      - generic [ref=f15e1149]: •
+                      - generic [ref=f15e1150]: main
+              - listitem [ref=f15e1151]:
+                - button "Contact Chris Bidwell mobile • 8 6 0 9 1 7 0 5 5 2" [ref=f15e1153] [cursor=pointer]:
+                  - generic [ref=f15e1154]: C
+                  - generic [ref=f15e1158]:
+                    - generic [ref=f15e1159]:
+                      - generic [ref=f15e1160]: Contact Chris Bidwell
+                      - generic [aria-hidden] [ref=f15e1161]: Chris Bidwell
+                    - generic [ref=f15e1162]: mobile • 8 6 0 9 1 7 0 5 5 2
+                    - generic [aria-hidden] [ref=f15e1163]:
+                      - generic [ref=f15e1164]: ‪(860) 917-0552‬
+                      - generic [ref=f15e1165]: •
+                      - generic [ref=f15e1166]: mobile
+              - listitem [ref=f15e1167]:
+                - button "Contact Jakes Mom Lcr 2017 Diedre Is Her First Name home • 2 1 6 4 0 1 6 9 3 2" [ref=f15e1169] [cursor=pointer]:
+                  - generic [ref=f15e1170]: J
+                  - generic [ref=f15e1174]:
+                    - generic [ref=f15e1175]:
+                      - generic [ref=f15e1176]: Contact Jakes Mom Lcr 2017 Diedre Is Her First Name
+                      - generic [aria-hidden] [ref=f15e1177]: Jakes Mom Lcr 2017 Diedre Is Her First Name
+                    - generic [ref=f15e1178]: home • 2 1 6 4 0 1 6 9 3 2
+                    - generic [aria-hidden] [ref=f15e1179]:
+                      - generic [ref=f15e1180]: ‪(216) 401-6932‬
+                      - generic [ref=f15e1181]: •
+                      - generic [ref=f15e1182]: home
+              - listitem [ref=f15e1183]:
+                - button "Contact Guiseppes Mom 2022 Ips main • 4 4 0 4 7 8 5 5 0 0" [ref=f15e1185] [cursor=pointer]:
+                  - generic [ref=f15e1186]: G
+                  - generic [ref=f15e1190]:
+                    - generic [ref=f15e1191]:
+                      - generic [ref=f15e1192]: Contact Guiseppes Mom 2022 Ips
+                      - generic [aria-hidden] [ref=f15e1193]: Guiseppes Mom 2022 Ips
+                    - generic [ref=f15e1194]: main • 4 4 0 4 7 8 5 5 0 0
+                    - generic [aria-hidden] [ref=f15e1195]:
+                      - generic [ref=f15e1196]: ‪(440) 478-5500‬
+                      - generic [ref=f15e1197]: •
+                      - generic [ref=f15e1198]: main
+              - listitem [ref=f15e1199]:
+                - button "Contact Matt Koppe mobile • 4 0 7 5 6 9 7 6 3 6" [ref=f15e1201] [cursor=pointer]:
+                  - generic [ref=f15e1202]: M
+                  - generic [ref=f15e1206]:
+                    - generic [ref=f15e1207]:
+                      - generic [ref=f15e1208]: Contact Matt Koppe
+                      - generic [aria-hidden] [ref=f15e1209]: Matt Koppe
+                    - generic [ref=f15e1210]: mobile • 4 0 7 5 6 9 7 6 3 6
+                    - generic [aria-hidden] [ref=f15e1211]:
+                      - generic [ref=f15e1212]: ‪(407) 569-7636‬
+                      - generic [ref=f15e1213]: •
+                      - generic [ref=f15e1214]: mobile
+              - listitem [ref=f15e1215]:
+                - button "Contact David Carr mobile • 4 0 7 8 5 9 7 2 3 9" [ref=f15e1217] [cursor=pointer]:
+                  - generic [ref=f15e1218]: D
+                  - generic [ref=f15e1222]:
+                    - generic [ref=f15e1223]:
+                      - generic [ref=f15e1224]: Contact David Carr
+                      - generic [aria-hidden] [ref=f15e1225]: David Carr
+                    - generic [ref=f15e1226]: mobile • 4 0 7 8 5 9 7 2 3 9
+                    - generic [aria-hidden] [ref=f15e1227]:
+                      - generic [ref=f15e1228]: ‪(407) 859-7239‬
+                      - generic [ref=f15e1229]: •
+                      - generic [ref=f15e1230]: mobile
+              - listitem [ref=f15e1231]:
+                - button "Contact Vince Berry mobile • 2 1 6 5 0 2 6 9 7 7" [ref=f15e1233] [cursor=pointer]:
+                  - generic [ref=f15e1238]:
+                    - generic [ref=f15e1239]:
+                      - generic [ref=f15e1240]: Contact Vince Berry
+                      - generic [aria-hidden] [ref=f15e1241]: Vince Berry
+                    - generic [ref=f15e1242]: mobile • 2 1 6 5 0 2 6 9 7 7
+                    - generic [aria-hidden] [ref=f15e1243]:
+                      - generic [ref=f15e1244]: ‪(216) 502-6977‬
+                      - generic [ref=f15e1245]: •
+                      - generic [ref=f15e1246]: mobile
+              - listitem [ref=f15e1247]:
+                - button "Contact Jessica mobile • 3 2 1 2 7 1 6 2 5 2" [ref=f15e1249] [cursor=pointer]:
+                  - generic [ref=f15e1254]:
+                    - generic [ref=f15e1255]:
+                      - generic [ref=f15e1256]: Contact Jessica
+                      - generic [aria-hidden] [ref=f15e1257]: Jessica
+                    - generic [ref=f15e1258]: mobile • 3 2 1 2 7 1 6 2 5 2
+                    - generic [aria-hidden] [ref=f15e1259]:
+                      - generic [ref=f15e1260]: ‪(321) 271-6252‬
+                      - generic [ref=f15e1261]: •
+                      - generic [ref=f15e1262]: mobile
+              - listitem [ref=f15e1263]:
+                - button "Contact Jessica work • 2 1 6 2 8 7 4 8 3 7" [ref=f15e1265] [cursor=pointer]:
+                  - generic [ref=f15e1270]:
+                    - generic [ref=f15e1271]:
+                      - generic [ref=f15e1272]: Contact Jessica
+                      - generic [aria-hidden] [ref=f15e1273]: Jessica
+                    - generic [ref=f15e1274]: work • 2 1 6 2 8 7 4 8 3 7
+                    - generic [aria-hidden] [ref=f15e1275]:
+                      - generic [ref=f15e1276]: ‪(216) 287-4837‬
+                      - generic [ref=f15e1277]: •
+                      - generic [ref=f15e1278]: work
+              - listitem [ref=f15e1279]:
+                - button "Contact Jessica work • 2 1 6 4 4 4 4 7 3 9" [ref=f15e1281] [cursor=pointer]:
+                  - generic [ref=f15e1286]:
+                    - generic [ref=f15e1287]:
+                      - generic [ref=f15e1288]: Contact Jessica
+                      - generic [aria-hidden] [ref=f15e1289]: Jessica
+                    - generic [ref=f15e1290]: work • 2 1 6 4 4 4 4 7 3 9
+                    - generic [aria-hidden] [ref=f15e1291]:
+                      - generic [ref=f15e1292]: ‪(216) 444-4739‬
+                      - generic [ref=f15e1293]: •
+                      - generic [ref=f15e1294]: work
+              - listitem [ref=f15e1295]:
+                - button "Contact Mom home • 3 2 1 3 2 7 4 8 4 9" [ref=f15e1297] [cursor=pointer]:
+                  - generic [ref=f15e1302]:
+                    - generic [ref=f15e1303]:
+                      - generic [ref=f15e1304]: Contact Mom
+                      - generic [aria-hidden] [ref=f15e1305]: Mom
+                    - generic [ref=f15e1306]: home • 3 2 1 3 2 7 4 8 4 9
+                    - generic [aria-hidden] [ref=f15e1307]:
+                      - generic [ref=f15e1308]: ‪(321) 327-4849‬
+                      - generic [ref=f15e1309]: •
+                      - generic [ref=f15e1310]: home
+              - listitem [ref=f15e1311]:
+                - button "Contact Mom mobile • 3 2 1 6 2 6 7 8 3 1" [ref=f15e1313] [cursor=pointer]:
+                  - generic [ref=f15e1318]:
+                    - generic [ref=f15e1319]:
+                      - generic [ref=f15e1320]: Contact Mom
+                      - generic [aria-hidden] [ref=f15e1321]: Mom
+                    - generic [ref=f15e1322]: mobile • 3 2 1 6 2 6 7 8 3 1
+                    - generic [aria-hidden] [ref=f15e1323]:
+                      - generic [ref=f15e1324]: ‪(321) 626-7831‬
+                      - generic [ref=f15e1325]: •
+                      - generic [ref=f15e1326]: mobile
+              - listitem [ref=f15e1327]:
+                - button "Contact Mom work • 4 4 0 2 6 2 3 6 2 9" [ref=f15e1329] [cursor=pointer]:
+                  - generic [ref=f15e1334]:
+                    - generic [ref=f15e1335]:
+                      - generic [ref=f15e1336]: Contact Mom
+                      - generic [aria-hidden] [ref=f15e1337]: Mom
+                    - generic [ref=f15e1338]: work • 4 4 0 2 6 2 3 6 2 9
+                    - generic [aria-hidden] [ref=f15e1339]:
+                      - generic [ref=f15e1340]: ‪(440) 262-3629‬
+                      - generic [ref=f15e1341]: •
+                      - generic [ref=f15e1342]: work
+              - listitem [ref=f15e1343]:
+                - button "Contact Amy main • 3 3 0 3 2 2 6 7 1 9" [ref=f15e1345] [cursor=pointer]:
+                  - generic [ref=f15e1350]:
+                    - generic [ref=f15e1351]:
+                      - generic [ref=f15e1352]: Contact Amy
+                      - generic [aria-hidden] [ref=f15e1353]: Amy
+                    - generic [ref=f15e1354]: main • 3 3 0 3 2 2 6 7 1 9
+                    - generic [aria-hidden] [ref=f15e1355]:
+                      - generic [ref=f15e1356]: ‪(330) 322-6719‬
+                      - generic [ref=f15e1357]: •
+                      - generic [ref=f15e1358]: main
+              - listitem [ref=f15e1359]:
+                - button "Contact Amy home • 4 4 0 3 9 4 8 1 7 8" [ref=f15e1361] [cursor=pointer]:
+                  - generic [ref=f15e1366]:
+                    - generic [ref=f15e1367]:
+                      - generic [ref=f15e1368]: Contact Amy
+                      - generic [aria-hidden] [ref=f15e1369]: Amy
+                    - generic [ref=f15e1370]: home • 4 4 0 3 9 4 8 1 7 8
+                    - generic [aria-hidden] [ref=f15e1371]:
+                      - generic [ref=f15e1372]: ‪(440) 394-8178‬
+                      - generic [ref=f15e1373]: •
+                      - generic [ref=f15e1374]: home
+              - listitem [ref=f15e1375]:
+                - button "Contact Angie Conklyn mobile • 2 1 6 5 0 1 2 6 5 6" [ref=f15e1377] [cursor=pointer]:
+                  - generic [ref=f15e1382]:
+                    - generic [ref=f15e1383]:
+                      - generic [ref=f15e1384]: Contact Angie Conklyn
+                      - generic [aria-hidden] [ref=f15e1385]: Angie Conklyn
+                    - generic [ref=f15e1386]: mobile • 2 1 6 5 0 1 2 6 5 6
+                    - generic [aria-hidden] [ref=f15e1387]:
+                      - generic [ref=f15e1388]: ‪(216) 501-2656‬
+                      - generic [ref=f15e1389]: •
+                      - generic [ref=f15e1390]: mobile
+              - listitem [ref=f15e1391]:
+                - button "Contact Krzysztof mobile • 3 5 2 2 1 5 5 4 5 5" [ref=f15e1393] [cursor=pointer]:
+                  - generic [ref=f15e1398]:
+                    - generic [ref=f15e1399]:
+                      - generic [ref=f15e1400]: Contact Krzysztof
+                      - generic [aria-hidden] [ref=f15e1401]: Krzysztof
+                    - generic [ref=f15e1402]: mobile • 3 5 2 2 1 5 5 4 5 5
+                    - generic [aria-hidden] [ref=f15e1403]:
+                      - generic [ref=f15e1404]: ‪(352) 215-5455‬
+                      - generic [ref=f15e1405]: •
+                      - generic [ref=f15e1406]: mobile
+          - region [ref=f15e1409]:
+            - heading "Keypad" [level=3] [ref=f15e1410]
+            - grid "Keypad" [ref=f15e1411]:
+              - row [ref=f15e1412]:
+                - gridcell [ref=f15e1413]:
+                  - button "'1'" [ref=f15e1414]:
+                    - generic [aria-hidden] [ref=f15e1416]: "1"
+                - gridcell [ref=f15e1419]:
+                  - button "'2' 'a' 'b' 'c'" [ref=f15e1420]:
+                    - generic [ref=f15e1421]:
+                      - generic [aria-hidden] [ref=f15e1422]: "2"
+                      - generic [aria-hidden] [ref=f15e1423]: a b c
+                - gridcell [ref=f15e1426]:
+                  - button "'3' 'd' 'e' 'f'" [ref=f15e1427]:
+                    - generic [ref=f15e1428]:
+                      - generic [aria-hidden] [ref=f15e1429]: "3"
+                      - generic [aria-hidden] [ref=f15e1430]: d e f
+              - row [ref=f15e1433]:
+                - gridcell [ref=f15e1434]:
+                  - button "'4' 'g' 'h' 'i'" [ref=f15e1435]:
+                    - generic [ref=f15e1436]:
+                      - generic [aria-hidden] [ref=f15e1437]: "4"
+                      - generic [aria-hidden] [ref=f15e1438]: g h i
+                - gridcell [ref=f15e1441]:
+                  - button "'5' 'j' 'k' 'l'" [ref=f15e1442]:
+                    - generic [ref=f15e1443]:
+                      - generic [aria-hidden] [ref=f15e1444]: "5"
+                      - generic [aria-hidden] [ref=f15e1445]: j k l
+                - gridcell [ref=f15e1448]:
+                  - button "'6' 'm' 'n' 'o'" [ref=f15e1449]:
+                    - generic [ref=f15e1450]:
+                      - generic [aria-hidden] [ref=f15e1451]: "6"
+                      - generic [aria-hidden] [ref=f15e1452]: m n o
+              - row [ref=f15e1455]:
+                - gridcell [ref=f15e1456]:
+                  - button "'7' 'p' 'q' 'r' 's'" [ref=f15e1457]:
+                    - generic [ref=f15e1458]:
+                      - generic [aria-hidden] [ref=f15e1459]: "7"
+                      - generic [aria-hidden] [ref=f15e1460]: p q r s
+                - gridcell [ref=f15e1463]:
+                  - button "'8' 't' 'u' 'v'" [ref=f15e1464]:
+                    - generic [ref=f15e1465]:
+                      - generic [aria-hidden] [ref=f15e1466]: "8"
+                      - generic [aria-hidden] [ref=f15e1467]: t u v
+                - gridcell [ref=f15e1470]:
+                  - button "'9' 'w' 'x' 'y' 'z'" [ref=f15e1471]:
+                    - generic [ref=f15e1472]:
+                      - generic [aria-hidden] [ref=f15e1473]: "9"
+                      - generic [aria-hidden] [ref=f15e1474]: w x y z
+              - row [ref=f15e1477]:
+                - gridcell [ref=f15e1478]:
+                  - button "Star" [ref=f15e1479]:
+                    - generic [aria-hidden] [ref=f15e1481]: "*"
+                - gridcell [ref=f15e1484]:
+                  - button "'0'" [ref=f15e1485]:
+                    - generic [aria-hidden] [ref=f15e1487]: "0"
+                - gridcell [ref=f15e1490]:
+                  - button "Pound" [ref=f15e1491]:
+                    - generic [aria-hidden] [ref=f15e1493]: "#"
+          - generic [ref=f15e1496]:
+            - separator [ref=f15e1497]
+            - button "Hide keypad" [ref=f15e1499]:
+              - generic [ref=f15e1501]:
+                - img [aria-hidden] [ref=f15e1502]: unfold_less
+                - generic [ref=f15e1503]: Hide keypad
