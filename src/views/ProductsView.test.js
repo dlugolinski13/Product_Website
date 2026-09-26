@@ -35,6 +35,7 @@ describe('ProductsView', () => {
     ]);
     const { wrapper } = await mountView();
     expect(fetchProducts).toHaveBeenCalledWith('tok');
+    await wrapper.find('.show-all-btn').trigger('click');
     const items = wrapper.findAll('.product');
     expect(items).toHaveLength(2);
     expect(items[0].text()).toContain('Widget');
@@ -48,6 +49,7 @@ describe('ProductsView', () => {
   it('shows an empty state when there are no products', async () => {
     fetchProducts.mockResolvedValue([]);
     const { wrapper } = await mountView();
+    await wrapper.find('.show-all-btn').trigger('click');
     expect(wrapper.text()).toContain('No products available yet.');
   });
 
