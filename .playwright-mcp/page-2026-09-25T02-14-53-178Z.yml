@@ -1,0 +1,44 @@
+- generic [ref=f7e1]:
+  - generic [ref=f7e3]:
+    - generic [ref=f7e4]:
+      - generic [aria-hidden] [ref=f7e6]:
+        - generic [ref=f7e7]: Loading
+        - progressbar [aria-hidden] [ref=f7e8]
+      - main [ref=f7e83]:
+        - generic [ref=f7e88]:
+          - heading "Hi Christopher" [level=1] [ref=f7e89]
+          - link "dlugolinski13@gmail.com selected. Switch account" [ref=f7e91] [cursor=pointer]:
+            - generic [ref=f7e94]: dlugolinski13@gmail.com
+        - generic [ref=f7e102]:
+          - generic [ref=f7e109]:
+            - heading [level=2] [ref=f7e111]
+            - generic [ref=f7e115]: Select "Try another way" to use your passkey for an easier, more secure sign-in
+          - generic [ref=f7e121]:
+            - generic [ref=f7e129]:
+              - textbox "Enter your password" [active] [ref=f7e130]
+              - generic [aria-hidden]: Enter your password
+            - generic [ref=f7e137]:
+              - checkbox "Show password" [ref=f7e141] [cursor=pointer]
+              - generic [ref=f7e142]: Show password
+        - generic [ref=f7e146]:
+          - button "Next" [ref=f7e150]
+          - button "Try another way" [ref=f7e157]
+    - contentinfo [ref=f7e66]:
+      - combobox "Change language English (United States)" [ref=f7e70] [cursor=pointer]:
+        - generic [aria-hidden]:
+          - generic: English (United States)
+      - list [ref=f7e72]:
+        - listitem [ref=f7e73]:
+          - link "Open Google Account Help Center (external, opens in a new window)" [ref=f7e74] [cursor=pointer]:
+            - /url: https://support.google.com/accounts?hl=en-US&p=account_iph
+            - text: Help
+        - listitem [ref=f7e75]:
+          - link "Privacy Policy (external, opens in a new window)" [ref=f7e76] [cursor=pointer]:
+            - /url: https://accounts.google.com/TOS?loc=US&hl=en-US&privacy=true
+            - text: Privacy
+        - listitem [ref=f7e77]:
+          - link "Google Terms of Service (external, opens in a new window)" [ref=f7e78] [cursor=pointer]:
+            - /url: https://accounts.google.com/TOS?loc=US&hl=en-US
+            - text: Terms
+  - iframe [ref=f7e79]
+  - generic [ref=f7e162]: Hi Christopher

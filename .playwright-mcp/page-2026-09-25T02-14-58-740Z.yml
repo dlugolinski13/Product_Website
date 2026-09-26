@@ -1,0 +1,59 @@
+- generic [ref=f7e1]:
+  - generic [ref=f7e3]:
+    - generic [ref=f7e4]:
+      - generic [ref=f7e6]:
+        - generic [ref=f7e7]: Loading
+        - progressbar [active] [ref=f7e8]
+      - main [ref=f7e165]:
+        - generic [ref=f7e170]:
+          - heading "2-Step Verification" [level=1] [ref=f7e171]
+          - generic [ref=f7e172]: To help keep your account safe, Google wants to make sure it’s really you trying to sign in
+          - link "dlugolinski13@gmail.com selected. Switch account" [ref=f7e174] [cursor=pointer]:
+            - generic [ref=f7e177]: dlugolinski13@gmail.com
+        - generic [ref=f7e182]:
+          - generic [ref=f7e102]:
+            - generic [ref=f7e109]:
+              - heading [level=2] [ref=f7e111]
+              - generic [ref=f7e115]: Select "Try another way" to use your passkey for an easier, more secure sign-in
+            - generic [ref=f7e121]:
+              - generic [ref=f7e129]:
+                - textbox "Enter your password" [ref=f7e130]: 1313Je$$ica1313
+                - generic [aria-hidden]: Enter your password
+              - generic [ref=f7e137]:
+                - checkbox "Show password" [ref=f7e141] [cursor=pointer]
+                - generic [ref=f7e142]: Show password
+          - generic [ref=f7e188]:
+            - generic [ref=f7e189]:
+              - figure [ref=f7e191]
+              - generic [ref=f7e230]:
+                - heading "Check your Google Pixel 8 Pro" [level=2] [ref=f7e232]
+                - generic [ref=f7e236]:
+                  - text: Google sent a notification to your Google Pixel 8 Pro. Tap
+                  - strong [ref=f7e237]: "Yes"
+                  - text: on the notification to verify it’s you.
+            - generic [ref=f7e241]:
+              - checkbox "Don’t ask again on this device" [checked] [ref=f7e245] [cursor=pointer]
+              - generic [ref=f7e246]: Don’t ask again on this device
+        - generic [ref=f7e249]:
+          - timer [ref=f7e251]:
+            - generic [ref=f7e252]: Resend it
+          - button "Try another way" [ref=f7e258]
+    - contentinfo [ref=f7e66]:
+      - combobox "Change language English (United States)" [ref=f7e70] [cursor=pointer]:
+        - generic [aria-hidden]:
+          - generic: English (United States)
+      - list [ref=f7e72]:
+        - listitem [ref=f7e73]:
+          - link "Open Google Account Help Center (external, opens in a new window)" [ref=f7e74] [cursor=pointer]:
+            - /url: https://support.google.com/accounts?hl=en-US&p=account_iph
+            - text: Help
+        - listitem [ref=f7e75]:
+          - link "Privacy Policy (external, opens in a new window)" [ref=f7e76] [cursor=pointer]:
+            - /url: https://accounts.google.com/TOS?loc=US&hl=en-US&privacy=true
+            - text: Privacy
+        - listitem [ref=f7e77]:
+          - link "Google Terms of Service (external, opens in a new window)" [ref=f7e78] [cursor=pointer]:
+            - /url: https://accounts.google.com/TOS?loc=US&hl=en-US
+            - text: Terms
+  - iframe [ref=f7e79]
+  - generic [ref=f7e162]: 2-Step Verification To help keep your account safe, Google wants to make sure it’s really you trying to sign in

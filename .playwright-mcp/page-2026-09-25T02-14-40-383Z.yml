@@ -1,0 +1,811 @@
+- generic [active] [ref=f5e1]:
+  - generic [ref=f5e2]:
+    - banner [ref=f5e3]:
+      - generic [ref=f5e4]:
+        - text: expand_more expand_more expand_more expand_more expand_more expand_more expand_more expand_more expand_more expand_more expand_more expand_more
+        - link "Open the Google Workspace page" [ref=f5e6] [cursor=pointer]:
+          - /url: /
+        - navigation [ref=f5e15]:
+          - link "Skip to main content" [ref=f5e16] [cursor=pointer]:
+            - /url: "#main"
+          - group [ref=f5e17]:
+            - generic "Solutions" [ref=f5e18] [cursor=pointer]
+          - group [ref=f5e19]:
+            - generic "Products" [ref=f5e20] [cursor=pointer]
+          - group [ref=f5e21]:
+            - generic "Industries" [ref=f5e22] [cursor=pointer]
+          - link "Open the AI page" [ref=f5e24] [cursor=pointer]:
+            - /url: /solutions/ai/
+            - text: AI
+          - link "Open the Pricing page" [ref=f5e26] [cursor=pointer]:
+            - /url: https://workspace.google.com/pricing?source=gafb-voice-globalnav-en&hl=en&ga_region=amer&ga_country=us&ga_lang=en
+            - text: Pricing
+          - group [ref=f5e27]:
+            - generic "Resources" [ref=f5e28] [cursor=pointer]
+        - generic [ref=f5e29]:
+          - generic [ref=f5e30]:
+            - button "Open search" [ref=f5e31] [cursor=pointer]
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - search:
+                          - generic:
+                            - generic:
+                              - combobox "Search"
+                              - generic [aria-hidden]:
+                                - generic: Search
+                                - generic: resources
+                            - button "Close search"
+                        - listbox "Popular suggestions":
+                          - generic: Popular
+                        - status
+          - link "Contact the sales team at Google Workspace" [ref=f5e38] [cursor=pointer]:
+            - /url: /contact-form/voice/?source=gafb-voice-globalnav-en
+            - generic [ref=f5e39]: Contact sales
+          - link "Learn more about pricing plans" [ref=f5e41] [cursor=pointer]:
+            - /url: "#plans"
+            - generic [ref=f5e42]: Get started
+          - link "Sign in to use Google Voice" [ref=f5e44] [cursor=pointer]:
+            - /url: https://accounts.google.com/AccountChooser?continue=https://voice.google.com/landing
+            - generic [ref=f5e45]: Sign in
+    - main [ref=f5e46]:
+      - generic [ref=f5e52]:
+        - generic [ref=f5e53]:
+          - img "Google Voice product logo" [ref=f5e55]
+          - heading "A professional-grade phone plan that's easy to use" [level=1] [ref=f5e57]
+          - generic [ref=f5e58]:
+            - paragraph [ref=f5e59]: Stay connected and save time with a flexible cloud phone system for individuals and businesses of all sizes.
+            - generic [ref=f5e60]:
+              - link "Sign in to use Google Voice" [ref=f5e62] [cursor=pointer]:
+                - /url: https://accounts.google.com/AccountChooser?continue=https://voice.google.com/landing
+                - generic [ref=f5e63]: Sign in
+              - link "Learn more about pricing plans" [ref=f5e65] [cursor=pointer]:
+                - /url: "#plans"
+                - generic [ref=f5e66]: Get started
+        - img "Google Voice desktop and mobile views showing recent calls, messages, and a transcription." [ref=f5e69]
+      - list [ref=f5e75]:
+        - listitem [ref=f5e76]:
+          - option "Flexible" [selected] [ref=f5e77] [cursor=pointer]
+        - listitem [ref=f5e79]:
+          - option "Helpful" [ref=f5e80] [cursor=pointer]
+        - listitem [ref=f5e82]:
+          - option "Easy to manage" [ref=f5e83] [cursor=pointer]
+        - listitem [ref=f5e85]:
+          - option "Trusted" [ref=f5e86] [cursor=pointer]
+        - listitem [ref=f5e88]:
+          - option "Integrated" [ref=f5e89] [cursor=pointer]
+        - listitem [ref=f5e91]:
+          - option "Plans" [ref=f5e92] [cursor=pointer]
+      - generic [ref=f5e98]:
+        - img "A Google Voice desktop showing a group chat project deliverables. Beside it is a phone call on Google Voice to one of the people in the group chat." [ref=f5e101]
+        - generic [ref=f5e103]:
+          - heading "Flexible" [level=2] [ref=f5e105]
+          - paragraph [ref=f5e107]: Your Voice line works on mobile devices, laptops, and supported desk phones so you can stay connected at work, home, or on-the-go. You can even make and receive calls directly in Gmail.
+      - generic [ref=f5e113]:
+        - generic [ref=f5e115]:
+          - heading "Helpful" [level=2] [ref=f5e117]
+          - paragraph [ref=f5e119]: Voice uses Google AI to help save you time by blocking spam calls and transcribing voicemails to text automatically. Premium features, like integrations with Google Meet and Calendar, can help you focus on what's important.
+        - img "A Google Voice transcription preview of a voicemail from Laura to Eric. She asks if he can run through finance numbers in a morning call with their client tomorrow." [ref=f5e122]
+      - generic [ref=f5e128]:
+        - img "The Google Voice Admin interface." [ref=f5e131]
+        - generic [ref=f5e133]:
+          - heading "Easy to manage" [level=2] [ref=f5e135]
+          - paragraph [ref=f5e137]: The Voice Admin Console provides an intuitive interface to support growing organizations. Admins can manage their business’ connections with premium features, like number assignment, number porting, and billing, and they can configure ring groups and multi-level auto attendants to intelligently route calls to the correct person or device.
+      - generic [ref=f5e143]:
+        - generic [ref=f5e145]:
+          - heading "Trusted" [level=2] [ref=f5e147]
+          - paragraph [ref=f5e149]: Voice offers trusted security and a global infrastructure you can rely on with support for emergency dialing. Businesses can enable premium features, like automated call recording and Vault integration, to bring telephony records into a single discovery and retention system.
+        - img "A call keypad alongside a map of the world." [ref=f5e152]
+      - generic [ref=f5e158]:
+        - heading "Bring the best of Google Voice to your device" [level=2] [ref=f5e165]
+        - generic [ref=f5e172]:
+          - link "Download Google Voice on the App Store" [ref=f5e174] [cursor=pointer]:
+            - /url: https://apps.apple.com/us/app/google-voice/id318698524
+          - link "Download Google Voice on the Play Store" [ref=f5e186] [cursor=pointer]:
+            - /url: https://play.google.com/store/apps/details?id=com.google.android.apps.googlevoice
+      - generic [ref=f5e207]:
+        - heading "Unify your communications with Google Voice" [level=2] [ref=f5e208]
+        - paragraph [ref=f5e209]: Get more from Voice with these first and third-party integrations.
+      - generic [ref=f5e213]:
+        - generic [ref=f5e214]:
+          - generic [ref=f5e216]:
+            - heading "Extend your reach" [level=3] [ref=f5e217]
+            - paragraph [ref=f5e219]:
+              - link "Open the SIP Link page in a new tab" [ref=f5e221] [cursor=pointer]:
+                - /url: https://support.google.com/a/answer/11606486?hl=en
+                - text: SIP Link
+              - text: allows customers to connect PSTN services from any carrier to Google Voice through certified Session Border Controllers (SBCs).
+          - generic [ref=f5e223]:
+            - heading "Plug-and-ring devices" [level=3] [ref=f5e224]
+            - paragraph [ref=f5e226]:
+              - text: Set up and manage
+              - link "Open the HP Poly desk phones and devices page in a new tab" [ref=f5e228] [cursor=pointer]:
+                - /url: https://www.polycom.com/partners/find-a-partner/cloud-video-partner/google.html
+                - text: HP Poly desk phones and devices
+              - text: with zero touch provisioning in the admin console, enabling users to get started by just plugging in a device.
+          - generic [ref=f5e230]:
+            - heading "Works when and how you do" [level=3] [ref=f5e231]
+            - paragraph [ref=f5e233]:
+              - text: Automatically send calls to voicemail based on your working hours settings in
+              - link "Open the Google Calendar page" [ref=f5e235] [cursor=pointer]:
+                - /url: https://workspace.google.com/products/calendar/?from=gafb-voice-def-en
+                - text: Google Calendar
+              - text: ", and receive voicemails and SMS messages directly in"
+              - link "Open the Gmail page" [ref=f5e237] [cursor=pointer]:
+                - /url: https://workspace.google.com/products/gmail/?from=gafb-voice-def-en
+                - text: Gmail
+              - text: .
+        - text: arrow_forward arrow_forward
+      - generic [ref=f5e240]:
+        - heading "Choose a Voice plan for yourself or for your team" [level=3] [ref=f5e242]
+        - generic [ref=f5e245]:
+          - generic [ref=f5e246]:
+            - generic [ref=f5e247]:
+              - img "Google Voice product logo" [ref=f5e250]
+              - generic [ref=f5e251]:
+                - button "person Just for me" [ref=f5e252] [cursor=pointer]:
+                  - generic [ref=f5e253]: person
+                  - generic [ref=f5e254]: Just for me
+                - button "groups For my team" [ref=f5e255] [cursor=pointer]:
+                  - generic [ref=f5e256]: groups
+                  - generic [ref=f5e257]: For my team
+              - paragraph [ref=f5e261]: Available in the US
+            - generic [ref=f5e263]:
+              - generic [ref=f5e265]:
+                - generic [ref=f5e266]:
+                  - heading "Basic" [level=6] [ref=f5e267]
+                  - paragraph [ref=f5e269]: An easy-to-use, separate number for everyday calling and texting
+                  - generic [ref=f5e271]:
+                    - generic [ref=f5e272]: $0
+                    - generic [ref=f5e273]: / month
+                  - link "Open to sign up for the Google Voice Only Basic plan" [ref=f5e276] [cursor=pointer]:
+                    - /url: https://accounts.google.com/AccountChooser?continue=https%3A%2F%2Fworkspace.google.com%2Fsignup%2Fvoice%3Fsource%3Dvoice-ws-marketing%26sku%3Dvoicebasic%26uj%3Dsrc%253Avoice-ws-marketing
+                    - generic [ref=f5e277]: Get started
+                - generic [ref=f5e278]: "Includes:"
+                - generic [ref=f5e279]:
+                  - generic [ref=f5e280]: A single phone number for all your devices
+                  - generic [ref=f5e286]: Unlimited domestic calling and texting*
+                  - generic [ref=f5e292]: Existing mobile number required
+              - generic [ref=f5e299]:
+                - generic [ref=f5e300]:
+                  - heading "Starter" [level=6] [ref=f5e301]
+                  - paragraph [ref=f5e303]: Access professional calling features and 24/7 support
+                  - generic [ref=f5e305]:
+                    - generic [ref=f5e306]: $10
+                    - generic [ref=f5e307]: / month
+                  - link "Open to sign up for the Google Voice Only Starter plan" [ref=f5e310] [cursor=pointer]:
+                    - /url: https://accounts.google.com/AccountChooser?continue=https%3A%2F%2Fworkspace.google.com%2Fsignup%2Fvoice%3Fsource%3Dvoice-ws-marketing%26sku%3Dvoicestarter%26uj%3Dsrc%253Avoice-ws-marketing
+                    - generic [ref=f5e311]: Get started
+                - generic [ref=f5e312]: "All of Basic, plus:"
+                - generic [ref=f5e313]:
+                  - generic [ref=f5e314]:
+                    - img "Support agent icon" [ref=f5e316]
+                    - generic [ref=f5e317]: 24/7 access to Google Voice support
+                  - generic [ref=f5e319]:
+                    - img "Lock icon" [ref=f5e321]
+                    - generic [ref=f5e322]: Your number will not be reclaimed due to inactivity
+                  - generic [ref=f5e324]: Three-way calling, seamless call transfers, and easy call recording
+                  - generic [ref=f5e330]: Desk phone and ATA support
+              - generic [ref=f5e337]:
+                - generic [ref=f5e338]: Recommended
+                - generic [ref=f5e339]:
+                  - heading "Standard" [level=6] [ref=f5e340]
+                  - paragraph [ref=f5e342]: Scale your business and improve productivity with automated call handling
+                  - complementary [ref=f5e345]:
+                    - 'button "Open Tooltip: The 50% discount is applicable for 6 months from the start of the subscription. Price returns to $20/monthly after that. You can cancel at any time. Automatic monthly charge." [ref=f5e346]':
+                      - paragraph [ref=f5e348]: Save 50%
+                      - generic: help_outline
+                  - generic [ref=f5e350]:
+                    - generic [ref=f5e351]: $10
+                    - generic [ref=f5e352]: $20
+                    - generic [ref=f5e353]: / month
+                  - link "Open to sign up for the Google Voice Only Standard plan" [ref=f5e356] [cursor=pointer]:
+                    - /url: https://accounts.google.com/AccountChooser?continue=https%3A%2F%2Fworkspace.google.com%2Fsignup%2Fvoice%3Fsource%3Dvoice-ws-marketing%26sku%3Dvoicestandard%26uj%3Dsrc%253Avoice-ws-marketing
+                    - generic [ref=f5e357]: Get started
+                - generic [ref=f5e358]: "All of Starter, plus:"
+                - generic [ref=f5e359]:
+                  - generic [ref=f5e360]:
+                    - img "Golden Logo" [ref=f5e362]
+                    - paragraph [ref=f5e365]: Let Gemini take notes for you on calls**
+                  - generic [ref=f5e366]:
+                    - img "swap icon" [ref=f5e368]
+                    - generic [ref=f5e369]: Manage call routing with auto attendants
+            - generic [ref=f5e371]: All prices $USD
+          - generic [ref=f5e374]:
+            - paragraph [ref=f5e375]:
+              - text: "* Unlimited calling and texting in available markets, subject to the relevant acceptable use policy depending on your edition of Google Voice ("
+              - link "Open the Google Cloud Acceptable Use Policy page in a new tab" [ref=f5e377] [cursor=pointer]:
+                - /url: https://cloud.google.com/terms/aup
+                - text: Google Cloud Acceptable Use Policy
+              - text: for users on managed Workspace accounts and the
+              - link "Open the Voice Acceptable Use Policy page in a new tab" [ref=f5e379] [cursor=pointer]:
+                - /url: https://support.google.com/voice/answer/9230450?sjid=12382000526141931544-NA
+                - text: Voice Acceptable Use Policy
+              - text: "for all other users). Refer to the Voice rate card for a complete list of calling rates for your Voice number. Note: These rates are not available for SIP Link."
+            - paragraph [ref=f5e380]:
+              - text: "** AI notes are captured along with a phone recording and a transcription. Currently available in English."
+              - link "Open the page in a new tab" [ref=f5e382] [cursor=pointer]:
+                - /url: https://support.google.com/voice?p=voice_notes
+                - text: Learn more
+              - text: .
+            - paragraph [ref=f5e383]:
+              - text: Learn how
+              - link "Open the VoIP phone emergency features differ from traditional emergency calling service page in a new tab" [ref=f5e385] [cursor=pointer]:
+                - /url: https://support.google.com/voice/answer/9198172?hl=en
+                - text: VoIP phone emergency features differ from traditional emergency calling service
+              - text: .
+      - generic [ref=f5e401]:
+        - generic:
+          - generic:
+            - generic:
+              - img "Iron Mountain company logo"
+        - figure [ref=f5e403]:
+          - blockquote [ref=f5e404]:
+            - paragraph [ref=f5e405]: “Our sales team now uses Google Voice to call and text customers from their smartphones, tablets, and the web. And because it is considerably more affordable to operate than our legacy VoIP systems, we continue to steadily expand our usage of Google Voice.”
+          - generic [ref=f5e406]:
+            - strong [ref=f5e407]: Nerina Martinez
+            - text: ", Senior Director of Technology at Iron Mountain"
+      - generic [ref=f5e412]:
+        - heading "Get started" [level=2] [ref=f5e414]
+        - generic [ref=f5e417]:
+          - generic [ref=f5e418]:
+            - paragraph [ref=f5e420]: Add Voice to your Google Workspace account
+            - paragraph [ref=f5e422]: It’s easy to select a plan and add Voice for your organization directly in the Workspace Admin Console.
+            - link "Open the Get started page" [ref=f5e425] [cursor=pointer]:
+              - /url: "#pricing-plans"
+              - generic [ref=f5e426]: Get started
+          - generic [ref=f5e427]:
+            - paragraph [ref=f5e429]: Work with a specialist
+            - paragraph [ref=f5e431]: Ready for Voice, but have more questions? We've got you covered.
+            - link "Fill out the contact form for Google Voice" [ref=f5e434] [cursor=pointer]:
+              - /url: /contact-form/voice/?source=gafb-voice-body-en
+              - generic [ref=f5e435]: Contact sales
+    - generic [ref=f5e438]:
+      - generic:
+        - generic [ref=f5e441]:
+          - generic [ref=f5e442]:
+            - heading "Sign up for productivity, collaboration, and AI updates" [level=2] [ref=f5e444]
+            - generic [ref=f5e446]:
+              - button "1"
+              - button "2"
+          - generic [ref=f5e450]:
+            - generic [ref=f5e451]:
+              - generic [ref=f5e456]:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic [aria-hidden]: First name*
+                - generic [ref=f5e458]:
+                  - generic: First name*
+                  - textbox "First name" [ref=f5e461]
+              - generic [ref=f5e466]:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic [aria-hidden]: Last name*
+                - generic [ref=f5e468]:
+                  - generic: Last name*
+                  - textbox "Last name" [ref=f5e471]
+              - generic [ref=f5e476]:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic [aria-hidden]: Business email*
+                - generic [ref=f5e478]:
+                  - generic: Business email*
+                  - textbox "Business email" [ref=f5e481]
+              - generic [ref=f5e484]:
+                - combobox "Selected country" [ref=f5e486]:
+                  - generic [ref=f5e487]: United States +1
+                - textbox "201-555-0123" [ref=f5e491]
+            - button "Open the Continue page" [ref=f5e494] [cursor=pointer]:
+              - generic [ref=f5e495]: Continue
+        - contentinfo [ref=f5e497]:
+          - generic [ref=f5e498]:
+            - generic [ref=f5e499]:
+              - generic [ref=f5e500]:
+                - generic [ref=f5e501]:
+                  - paragraph [ref=f5e503]:
+                    - text: Follow our
+                    - link "Open the Blog page" [ref=f5e505] [cursor=pointer]:
+                      - /url: https://workspace.google.com/blog/
+                      - text: Blog
+                  - list [ref=f5e506]:
+                    - listitem [ref=f5e507]:
+                      - link "Open the footer social links X page in a new tab" [ref=f5e508] [cursor=pointer]:
+                        - /url: https://x.com/googleworkspace
+                        - img "Follow us on X" [ref=f5e510]
+                    - listitem [ref=f5e511]:
+                      - link "Open the footer social links YouTube page in a new tab" [ref=f5e512] [cursor=pointer]:
+                        - /url: https://www.youtube.com/channel/UCBmwzQnSoj9b6HzNmFrg_yw/
+                        - img "YouTube" [ref=f5e514]
+                    - listitem [ref=f5e515]:
+                      - link "Open the footer social links LinkedIn page in a new tab" [ref=f5e516] [cursor=pointer]:
+                        - /url: https://www.linkedin.com/showcase/googleworkspace/
+                        - img "LinkedIn" [ref=f5e518]
+                    - listitem [ref=f5e519]:
+                      - link "Open the footer social links Instagram page in a new tab" [ref=f5e520] [cursor=pointer]:
+                        - /url: https://www.instagram.com/googleworkspace/
+                        - img "Instagram" [ref=f5e522]
+                    - listitem [ref=f5e523]:
+                      - link "Open the footer social links Facebook page in a new tab" [ref=f5e524] [cursor=pointer]:
+                        - /url: https://www.facebook.com/googleworkspace/
+                        - img "Facebook" [ref=f5e526]
+                    - listitem [ref=f5e527]:
+                      - link "Open the footer social links TikTok page in a new tab" [ref=f5e528] [cursor=pointer]:
+                        - /url: https://goo.gle/3xj0b2F
+                        - img "TikTok" [ref=f5e530]
+                - textbox "Search this site" [ref=f5e532]
+              - generic [ref=f5e533]:
+                - list [ref=f5e534]:
+                  - listitem [ref=f5e535]:
+                    - link "Open the Included applications page" [ref=f5e537] [cursor=pointer]:
+                      - /url: /features/
+                      - text: Included applications
+                    - list [ref=f5e538]:
+                      - listitem [ref=f5e539]:
+                        - link "Open the Gmail page" [ref=f5e541] [cursor=pointer]:
+                          - /url: https://workspace.google.com/products/gmail/?from=gafb-voice-def-en
+                          - text: Gmail
+                      - listitem [ref=f5e542]:
+                        - link "Open the Meet page" [ref=f5e544] [cursor=pointer]:
+                          - /url: https://workspace.google.com/products/meet/?from=gafb-voice-def-en
+                          - text: Meet
+                      - listitem [ref=f5e545]:
+                        - link "Open the Chat page" [ref=f5e547] [cursor=pointer]:
+                          - /url: https://workspace.google.com/products/chat/?from=gafb-voice-def-en
+                          - text: Chat
+                      - listitem [ref=f5e548]:
+                        - link "Open the Calendar page" [ref=f5e550] [cursor=pointer]:
+                          - /url: https://workspace.google.com/products/calendar/?from=gafb-voice-def-en
+                          - text: Calendar
+                      - listitem [ref=f5e551]:
+                        - link "Open the Drive page" [ref=f5e553] [cursor=pointer]:
+                          - /url: https://workspace.google.com/products/drive/?from=gafb-voice-def-en
+                          - text: Drive
+                      - listitem [ref=f5e554]:
+                        - link "Open the Docs page" [ref=f5e556] [cursor=pointer]:
+                          - /url: https://workspace.google.com/products/docs/?from=gafb-voice-def-en
+                          - text: Docs
+                      - listitem [ref=f5e557]:
+                        - link "Open the Sheets page" [ref=f5e559] [cursor=pointer]:
+                          - /url: https://workspace.google.com/products/sheets/?from=gafb-voice-def-en
+                          - text: Sheets
+                      - listitem [ref=f5e560]:
+                        - link "Open the Slides page" [ref=f5e562] [cursor=pointer]:
+                          - /url: https://workspace.google.com/products/slides/?from=gafb-voice-def-en
+                          - text: Slides
+                      - listitem [ref=f5e563]:
+                        - link "Open the Vids page" [ref=f5e565] [cursor=pointer]:
+                          - /url: https://workspace.google.com/products/vids?from=gafb-voice-def-en
+                          - text: Vids
+                      - listitem [ref=f5e566]:
+                        - link "Open the Pics page" [ref=f5e568] [cursor=pointer]:
+                          - /url: https://workspace.google.com/products/pics/?from=gafb-voice-def-en
+                          - text: Pics
+                      - listitem [ref=f5e569]:
+                        - link "Open the Forms page" [ref=f5e571] [cursor=pointer]:
+                          - /url: https://workspace.google.com/products/forms/?from=gafb-voice-def-en
+                          - text: Forms
+                      - listitem [ref=f5e572]:
+                        - link "Open the Sites page" [ref=f5e574] [cursor=pointer]:
+                          - /url: https://workspace.google.com/products/sites/?from=gafb-voice-def-en
+                          - text: Sites
+                      - listitem [ref=f5e575]:
+                        - link "Open the Keep page" [ref=f5e577] [cursor=pointer]:
+                          - /url: https://workspace.google.com/products/keep/?from=gafb-voice-def-en
+                          - text: Keep
+                      - listitem [ref=f5e578]:
+                        - link "Open the Tasks page" [ref=f5e580] [cursor=pointer]:
+                          - /url: https://workspace.google.com/products/tasks/?from=gafb-voice-def-en
+                          - text: Tasks
+                      - listitem [ref=f5e581]:
+                        - link "Open the Studio page" [ref=f5e583] [cursor=pointer]:
+                          - /url: /studio/
+                          - text: Studio
+                      - listitem [ref=f5e584]:
+                        - link "Open the Gemini app page" [ref=f5e586] [cursor=pointer]:
+                          - /url: /solutions/ai/
+                          - text: Gemini app
+                      - listitem [ref=f5e587]:
+                        - link "Open the Gemini Notebook page" [ref=f5e589] [cursor=pointer]:
+                          - /url: https://workspace.google.com/products/gemini-notebook/?from=gafb-voice-def-en
+                          - text: Gemini Notebook
+                      - listitem [ref=f5e590]:
+                        - link "Open the Apps Script page" [ref=f5e592] [cursor=pointer]:
+                          - /url: https://workspace.google.com/products/apps-script/?from=gafb-voice-def-en
+                          - text: Apps Script
+                - list [ref=f5e593]:
+                  - listitem [ref=f5e594]:
+                    - link "Open the Security and management page" [ref=f5e596] [cursor=pointer]:
+                      - /url: /security/
+                      - text: Security and management
+                    - list [ref=f5e597]:
+                      - listitem [ref=f5e598]:
+                        - link "Open the Admin page" [ref=f5e600] [cursor=pointer]:
+                          - /url: https://workspace.google.com/products/admin/?from=gafb-voice-def-en
+                          - text: Admin
+                      - listitem [ref=f5e601]:
+                        - link "Open the Endpoint page" [ref=f5e603] [cursor=pointer]:
+                          - /url: https://workspace.google.com/products/admin/endpoint/?from=gafb-voice-def-en
+                          - text: Endpoint
+                      - listitem [ref=f5e604]:
+                        - link "Open the Vault page" [ref=f5e606] [cursor=pointer]:
+                          - /url: https://workspace.google.com/products/vault/?from=gafb-voice-def-en
+                          - text: Vault
+                      - listitem [ref=f5e607]:
+                        - link "Open the Work Insights page" [ref=f5e609] [cursor=pointer]:
+                          - /url: https://workspace.google.com/products/workinsights/?from=gafb-voice-def-en
+                          - text: Work Insights
+                  - listitem [ref=f5e610]:
+                    - generic [ref=f5e611]: Solutions
+                    - list [ref=f5e613]:
+                      - listitem [ref=f5e614]:
+                        - link "Open the New Business page" [ref=f5e616] [cursor=pointer]:
+                          - /url: /business/new-business/
+                          - text: New Business
+                      - listitem [ref=f5e617]:
+                        - link "Open the Small Business page" [ref=f5e619] [cursor=pointer]:
+                          - /url: /business/small-business/
+                          - text: Small Business
+                      - listitem [ref=f5e620]:
+                        - link "Open the Enterprise page" [ref=f5e622] [cursor=pointer]:
+                          - /url: /enterprise/
+                          - text: Enterprise
+                      - listitem [ref=f5e623]:
+                        - link "Open the Retail page" [ref=f5e625] [cursor=pointer]:
+                          - /url: /industries/retail/
+                          - text: Retail
+                      - listitem [ref=f5e626]:
+                        - link "Open the Manufacturing page" [ref=f5e628] [cursor=pointer]:
+                          - /url: /industries/manufacturing/
+                          - text: Manufacturing
+                      - listitem [ref=f5e629]:
+                        - link "Open the Professional Services page" [ref=f5e631] [cursor=pointer]:
+                          - /url: /industries/professional-services/
+                          - text: Professional Services
+                      - listitem [ref=f5e632]:
+                        - link "Open the Technology page" [ref=f5e634] [cursor=pointer]:
+                          - /url: /industries/technology/
+                          - text: Technology
+                      - listitem [ref=f5e635]:
+                        - link "Open the Healthcare page" [ref=f5e637] [cursor=pointer]:
+                          - /url: /industries/healthcare/
+                          - text: Healthcare
+                      - listitem [ref=f5e638]:
+                        - link "Open the Financial Services page" [ref=f5e640] [cursor=pointer]:
+                          - /url: /industries/finance/
+                          - text: Financial Services
+                      - listitem [ref=f5e641]:
+                        - link "Open the Government page" [ref=f5e643] [cursor=pointer]:
+                          - /url: /industries/government/
+                          - text: Government
+                      - listitem [ref=f5e644]:
+                        - link "Open the Education page in a new tab" [ref=f5e646] [cursor=pointer]:
+                          - /url: https://edu.google.com/workspace-for-education/editions/education-fundamentals/?hl=[lang]
+                          - text: Education
+                      - listitem [ref=f5e647]:
+                        - link "Open the Nonprofits page in a new tab" [ref=f5e649] [cursor=pointer]:
+                          - /url: https://www.google.com/intl/en/nonprofits
+                          - text: Nonprofits
+                      - listitem [ref=f5e650]:
+                        - link "Open the Artificial Intelligence page" [ref=f5e652] [cursor=pointer]:
+                          - /url: /solutions/ai/
+                          - text: Artificial Intelligence
+                - list [ref=f5e653]:
+                  - listitem [ref=f5e654]:
+                    - link "Open the Pricing page" [ref=f5e656] [cursor=pointer]:
+                      - /url: https://workspace.google.com/pricing/?hl=en&source=gafb-voice-footer-en&ga_region=amer&ga_country=us&ga_lang=en
+                      - text: Pricing
+                    - list [ref=f5e657]:
+                      - listitem [ref=f5e658]:
+                        - link "Open the Compare pricing plans page" [ref=f5e660] [cursor=pointer]:
+                          - /url: https://workspace.google.com/pricing?source=gafb-voice-footer-en&hl=en&ga_region=amer&ga_country=us&ga_lang=en
+                          - text: Compare pricing plans
+                  - listitem [ref=f5e661]:
+                    - generic [ref=f5e662]: Add-ons
+                    - list [ref=f5e664]:
+                      - listitem [ref=f5e665]:
+                        - link "Open the Meet hardware page" [ref=f5e667] [cursor=pointer]:
+                          - /url: https://workspace.google.com/products/meet-hardware/?from=gafb-voice-def-en
+                          - text: Meet hardware
+                      - listitem [ref=f5e668]:
+                        - link "Open the Google Voice page" [ref=f5e670] [cursor=pointer]:
+                          - /url: https://workspace.google.com/products/voice/?from=gafb-voice-def-en
+                          - text: Google Voice
+                      - listitem [ref=f5e671]:
+                        - link "Open the AppSheet page in a new tab" [ref=f5e673] [cursor=pointer]:
+                          - /url: https://about.appsheet.com/home/
+                          - text: AppSheet
+                - list [ref=f5e674]:
+                  - listitem [ref=f5e675]:
+                    - generic [ref=f5e676]: Resources
+                    - list [ref=f5e678]:
+                      - listitem [ref=f5e679]:
+                        - link "Open the AI learnings for work page" [ref=f5e681] [cursor=pointer]:
+                          - /url: https://workspace.google.com/learning/
+                          - text: AI learnings for work
+                      - listitem [ref=f5e682]:
+                        - link "Open the Security page" [ref=f5e684] [cursor=pointer]:
+                          - /url: /security/
+                          - text: Security
+                      - listitem [ref=f5e685]:
+                        - link "Open the Customer Stories page" [ref=f5e687] [cursor=pointer]:
+                          - /url: /customers/
+                          - text: Customer Stories
+                      - listitem [ref=f5e688]:
+                        - link "Open the FAQs page" [ref=f5e690] [cursor=pointer]:
+                          - /url: /faq/
+                          - text: FAQs
+                      - listitem [ref=f5e691]:
+                        - link "Open the Partners page in a new tab" [ref=f5e693] [cursor=pointer]:
+                          - /url: https://cloud.withgoogle.com/partners/?products=GOOGLE_WORKSPACE_PRODUCT
+                          - text: Partners
+                      - listitem [ref=f5e694]:
+                        - link "Open the Marketplace page" [ref=f5e696] [cursor=pointer]:
+                          - /url: https://workspace.google.com/marketplace/
+                          - text: Marketplace
+                      - listitem [ref=f5e697]:
+                        - link "Open the Integrations page" [ref=f5e699] [cursor=pointer]:
+                          - /url: https://workspace.google.com/integrations/
+                          - text: Integrations
+                      - listitem [ref=f5e700]:
+                        - link "Open the Training & Certification page" [ref=f5e702] [cursor=pointer]:
+                          - /url: /training/
+                          - text: Training & Certification
+                      - listitem [ref=f5e703]:
+                        - link "Open the Refer Google Workspace page" [ref=f5e705] [cursor=pointer]:
+                          - /url: https://workspace.google.com/referral-program/
+                          - text: Refer Google Workspace
+                - list [ref=f5e706]:
+                  - listitem [ref=f5e707]:
+                    - link "Open the Learning and support page" [ref=f5e709] [cursor=pointer]:
+                      - /url: /support/
+                      - text: Learning and support
+                    - list [ref=f5e710]:
+                      - listitem [ref=f5e711]:
+                        - link "Open the Admin Help page in a new tab" [ref=f5e713] [cursor=pointer]:
+                          - /url: https://support.google.com/a/#topic=29157
+                          - text: Admin Help
+                      - listitem [ref=f5e714]:
+                        - link "Open the Setup and Deployment Center page in a new tab" [ref=f5e716] [cursor=pointer]:
+                          - /url: https://support.google.com/a/answer/6365252
+                          - text: Setup and Deployment Center
+                      - listitem [ref=f5e717]:
+                        - link "Open the Learning Center for Users page in a new tab" [ref=f5e719] [cursor=pointer]:
+                          - /url: https://support.google.com/a/users?hl=en_us&#topic=11499463
+                          - text: Learning Center for Users
+                      - listitem [ref=f5e720]:
+                        - link "Open the Forums for Admins page in a new tab" [ref=f5e722] [cursor=pointer]:
+                          - /url: https://productforums.google.com/forum/#!forum/apps
+                          - text: Forums for Admins
+                      - listitem [ref=f5e723]:
+                        - link "Open the Google Workspace Dashboard page in a new tab" [ref=f5e725] [cursor=pointer]:
+                          - /url: https://www.google.com/appsstatus?hl=en_us
+                          - text: Google Workspace Dashboard
+                      - listitem [ref=f5e726]:
+                        - link "Open the What's New in Google Workspace page" [ref=f5e728] [cursor=pointer]:
+                          - /url: https://workspace.google.com/whatsnew/
+                          - text: What's New in Google Workspace
+                      - listitem [ref=f5e729]:
+                        - link "Open the Find a Google Workspace Partner page in a new tab" [ref=f5e731] [cursor=pointer]:
+                          - /url: https://www.google.com/a/partnersearch/?hl=en_us
+                          - text: Find a Google Workspace Partner
+                      - listitem [ref=f5e732]:
+                        - link "Open the Join the community of IT Admins page in a new tab" [ref=f5e734] [cursor=pointer]:
+                          - /url: https://www.googlecloudcommunity.com/gc/Google-Workspace/ct-p/google-workspace
+                          - text: Join the community of IT Admins
+                      - listitem [ref=f5e735]:
+                        - link "Open the Press page in a new tab" [ref=f5e737] [cursor=pointer]:
+                          - /url: https://cloud.google.com/press/
+                          - text: Press
+                  - listitem [ref=f5e738]:
+                    - generic [ref=f5e739]: More from Google
+                    - list [ref=f5e741]:
+                      - listitem [ref=f5e742]:
+                        - link "Open the Google Cloud page in a new tab" [ref=f5e744] [cursor=pointer]:
+                          - /url: https://cloud.google.com/?hl=en
+                          - text: Google Cloud
+                      - listitem [ref=f5e745]:
+                        - link "Open the Google Domains page in a new tab" [ref=f5e747] [cursor=pointer]:
+                          - /url: https://domains.google.com/about/
+                          - text: Google Domains
+                      - listitem [ref=f5e748]:
+                        - link "Open the Chrome Enterprise page in a new tab" [ref=f5e750] [cursor=pointer]:
+                          - /url: https://chromeenterprise.google/
+                          - text: Chrome Enterprise
+                      - listitem [ref=f5e751]:
+                        - link "Open the Google Business Solutions page in a new tab" [ref=f5e753] [cursor=pointer]:
+                          - /url: https://www.google.com/intl/en_us/services
+                          - text: Google Business Solutions
+                      - listitem [ref=f5e754]:
+                        - link "Open the Google Ads page in a new tab" [ref=f5e756] [cursor=pointer]:
+                          - /url: https://ads.google.com/home/?subid=[subid]
+                          - text: Google Ads
+                      - listitem [ref=f5e757]:
+                        - link "Open the Business Messages page in a new tab" [ref=f5e759] [cursor=pointer]:
+                          - /url: https://businessmessages.google/
+                          - text: Business Messages
+            - generic [ref=f5e760]:
+              - generic [ref=f5e761]:
+                - img "Google" [ref=f5e764]
+                - list [ref=f5e765]:
+                  - listitem [ref=f5e766]:
+                    - link "Open the Privacy page in a new tab" [ref=f5e767] [cursor=pointer]:
+                      - /url: https://policies.google.com/privacy?hl=en_us
+                      - text: Privacy
+                  - listitem [ref=f5e768]:
+                    - link "Open the Terms page in a new tab" [ref=f5e769] [cursor=pointer]:
+                      - /url: https://policies.google.com/terms?hl=en_us
+                      - text: Terms
+                  - listitem [ref=f5e770]:
+                    - link "Open the About Google page in a new tab" [ref=f5e771] [cursor=pointer]:
+                      - /url: https://about.google/?hl=en_us
+                      - text: About Google
+                  - listitem [ref=f5e772]:
+                    - link "Open the Google Products page in a new tab" [ref=f5e773] [cursor=pointer]:
+                      - /url: https://www.google.com/intl/en_us/about/products/?from=gafb-voice-def-en
+                      - text: Google Products
+                  - listitem [ref=f5e774]:
+                    - link "Open the Help page in a new tab" [ref=f5e775] [cursor=pointer]:
+                      - /url: https://support.google.com/workspace/?hl=en_us
+                      - text: Help
+                - generic [ref=f5e776]:
+                  - link "Open the Help page in a new tab" [ref=f5e778] [cursor=pointer]:
+                    - /url: https://support.google.com/a
+                    - generic [ref=f5e782]: Help
+                  - button "English Change Language" [ref=f5e785] [cursor=pointer]:
+                    - generic [ref=f5e789]:
+                      - generic [ref=f5e790]: English
+                      - generic [ref=f5e792]: Change Language
+              - region "Language List":
+                - generic [ref=f5e793]:
+                  - link "Open the Bahasa Indonesia locale page" [ref=f5e794] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/id/products/voice/?from=gafb-voice-def-en
+                    - text: Bahasa Indonesia
+                  - link "Open the Čeština locale page" [ref=f5e795] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/cs/products/voice/?from=gafb-voice-def-en
+                    - text: Čeština
+                  - link "Open the Dansk locale page" [ref=f5e796] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/da/products/voice/?from=gafb-voice-def-en
+                    - text: Dansk
+                  - link "Open the Deutsch locale page" [ref=f5e797] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/de/products/voice/?from=gafb-voice-def-en
+                    - text: Deutsch
+                  - link "Open the Deutsch – Schweiz locale page" [ref=f5e798] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/de_ch/products/voice/?from=gafb-voice-def-en
+                    - text: Deutsch – Schweiz
+                  - generic [ref=f5e799]: English
+                  - link "Open the English – Australia locale page" [ref=f5e800] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/en_au/products/voice/?from=gafb-voice-def-en
+                    - text: English – Australia
+                  - link "Open the English – Canada locale page" [ref=f5e801] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/en_ca/products/voice/?from=gafb-voice-def-en
+                    - text: English – Canada
+                  - link "Open the English – India locale page" [ref=f5e802] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/en_in/products/voice/?from=gafb-voice-def-en
+                    - text: English – India
+                  - link "Open the English – Indonesia locale page" [ref=f5e803] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/en_id/products/voice/?from=gafb-voice-def-en
+                    - text: English – Indonesia
+                  - link "Open the English – Ireland locale page" [ref=f5e804] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/en_ie/products/voice/?from=gafb-voice-def-en
+                    - text: English – Ireland
+                  - link "Open the English – Malaysia locale page" [ref=f5e805] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/en_my/products/voice/?from=gafb-voice-def-en
+                    - text: English – Malaysia
+                  - link "Open the English – New Zealand locale page" [ref=f5e806] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/en_nz/products/voice/?from=gafb-voice-def-en
+                    - text: English – New Zealand
+                  - link "Open the English – Philippines locale page" [ref=f5e807] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/en_ph/products/voice/?from=gafb-voice-def-en
+                    - text: English – Philippines
+                  - link "Open the English – Singapore locale page" [ref=f5e808] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/en_sg/products/voice/?from=gafb-voice-def-en
+                    - text: English – Singapore
+                  - link "Open the English – South Africa locale page" [ref=f5e809] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/en_za/products/voice/?from=gafb-voice-def-en
+                    - text: English – South Africa
+                  - link "Open the English – United Kingdom locale page" [ref=f5e810] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/en_uk/products/voice/?from=gafb-voice-def-en
+                    - text: English – United Kingdom
+                  - link "Open the Español locale page" [ref=f5e811] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/es/products/voice/?from=gafb-voice-def-en
+                    - text: Español
+                  - link "Open the Español (Latinoamérica) locale page" [ref=f5e812] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/es-419/products/voice/?from=gafb-voice-def-en
+                    - text: Español (Latinoamérica)
+                  - link "Open the Español (Latinoamérica) – Argentina locale page" [ref=f5e813] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/es-419_ar/products/voice/?from=gafb-voice-def-en
+                    - text: Español (Latinoamérica) – Argentina
+                  - link "Open the Español (Latinoamérica) – Estados Unidos locale page" [ref=f5e814] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/es-419_us/products/voice/?from=gafb-voice-def-en
+                    - text: Español (Latinoamérica) – Estados Unidos
+                  - link "Open the Español (Latinoamérica) – México locale page" [ref=f5e815] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/es-419_mx/products/voice/?from=gafb-voice-def-en
+                    - text: Español (Latinoamérica) – México
+                  - link "Open the Français locale page" [ref=f5e816] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/fr/products/voice/?from=gafb-voice-def-en
+                    - text: Français
+                  - link "Open the Français – Canada locale page" [ref=f5e817] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/fr_ca/products/voice/?from=gafb-voice-def-en
+                    - text: Français – Canada
+                  - link "Open the Français – Suisse locale page" [ref=f5e818] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/fr_ch/products/voice/?from=gafb-voice-def-en
+                    - text: Français – Suisse
+                  - link "Open the Italiano locale page" [ref=f5e819] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/it/products/voice/?from=gafb-voice-def-en
+                    - text: Italiano
+                  - link "Open the Magyar locale page" [ref=f5e820] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/hu/products/voice/?from=gafb-voice-def-en
+                    - text: Magyar
+                  - link "Open the Nederlands locale page" [ref=f5e821] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/nl/products/voice/?from=gafb-voice-def-en
+                    - text: Nederlands
+                  - link "Open the Norsk locale page" [ref=f5e822] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/no/products/voice/?from=gafb-voice-def-en
+                    - text: Norsk
+                  - link "Open the Polski locale page" [ref=f5e823] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/pl/products/voice/?from=gafb-voice-def-en
+                    - text: Polski
+                  - link "Open the Português (Brasil) locale page" [ref=f5e824] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/pt-BR/products/voice/?from=gafb-voice-def-en
+                    - text: Português (Brasil)
+                  - link "Open the Português (Portugal) locale page" [ref=f5e825] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/pt-PT/products/voice/?from=gafb-voice-def-en
+                    - text: Português (Portugal)
+                  - link "Open the Suomi locale page" [ref=f5e826] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/fi/products/voice/?from=gafb-voice-def-en
+                    - text: Suomi
+                  - link "Open the Svenska locale page" [ref=f5e827] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/sv/products/voice/?from=gafb-voice-def-en
+                    - text: Svenska
+                  - link "Open the Tiếng Việt locale page" [ref=f5e828] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/vi/products/voice/?from=gafb-voice-def-en
+                    - text: Tiếng Việt
+                  - link "Open the Türkçe locale page" [ref=f5e829] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/tr/products/voice/?from=gafb-voice-def-en
+                    - text: Türkçe
+                  - link "Open the Русский locale page" [ref=f5e830] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/ru/products/voice/?from=gafb-voice-def-en
+                    - text: Русский
+                  - link "Open the Українська locale page" [ref=f5e831] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/uk/products/voice/?from=gafb-voice-def-en
+                    - text: Українська
+                  - link "Open the עברית locale page" [ref=f5e832] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/iw/products/voice/?from=gafb-voice-def-en
+                    - text: עברית
+                  - link "Open the العربية locale page" [ref=f5e833] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/ar/products/voice/?from=gafb-voice-def-en
+                    - text: العربية
+                  - link "Open the العربية – مصر locale page" [ref=f5e834] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/ar_eg/products/voice/?from=gafb-voice-def-en
+                    - text: العربية – مصر
+                  - link "Open the ไทย locale page" [ref=f5e835] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/th/products/voice/?from=gafb-voice-def-en
+                    - text: ไทย
+                  - link "Open the 한국어 locale page" [ref=f5e836] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/ko/products/voice/?from=gafb-voice-def-en
+                    - text: 한국어
+                  - link "Open the 中文 (香港) locale page" [ref=f5e837] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/zh-HK/products/voice/?from=gafb-voice-def-en
+                    - text: 中文 (香港)
+                  - link "Open the 中文（简体中文） locale page" [ref=f5e838] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/zh-CN/products/voice/?from=gafb-voice-def-en
+                    - text: 中文（简体中文）
+                  - link "Open the 中文（繁體中文） locale page" [ref=f5e839] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/zh-TW/products/voice/?from=gafb-voice-def-en
+                    - text: 中文（繁體中文）
+                  - link "Open the 日本語 locale page" [ref=f5e840] [cursor=pointer]:
+                    - /url: https://workspace.google.com/intl/ja/products/voice/?from=gafb-voice-def-en
+                    - text: 日本語
+  - generic:
+    - generic [ref=f5e841]: Hi there 👋 What brings you to Google Workspace today?
+    - button "Chat with us" [ref=f5e847]:
+      - generic:
+        - generic:
+          - heading [level=2] [aria-hidden]: Welcome to Google Cloud Guide
+      - button "Chat with us" [ref=f5e848] [cursor=pointer]
