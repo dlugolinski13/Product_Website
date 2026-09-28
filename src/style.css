@@ -140,3 +140,16 @@ label {
   font-weight: 600;
   color: var(--color-accent);
 }
+
+.product-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.product-images img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
