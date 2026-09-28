@@ -67,4 +67,38 @@ describe('ProductsView', () => {
     expect(router.currentRoute.value.path).toBe('/login');
     expect(router.currentRoute.value.query.redirect).toBe('/products');
   });
+
+  it('filters products by search text', async () => {
+    fetchProducts.mockResolvedValue([
+      { id: '1', name: 'Widget', item_number: 'W-1', description: 'A widget', company_price: 10, images: [] },
+      { id: '2', name: 'Gadget', item_number: 'G-1', description: 'A gadget', company_price: 20, images: [] },
+    ]);
+    const { wrapper } = await mountView();
+    await wrapper.find('.search-input').setValue('widget');
+    const products = wrapper.findAll('.product');
+    expect(products).toHaveLength(1);
+    expect(products[0].text()).toContain('A widget');
+    expect(products[0].text()).not.toContain('A gadget');
+  });
+
+  it('filters products by category', async () => {
+    fetchProducts.mockResolvedValue([
+      { id: '1', name: 'Widget', item_number: 'W-1', description: 'widget desc', company_price: 10, group_code: 'WIDG', images: [] },
+      { id: '2', name: 'Gadget', item_number: 'G-1', description: 'gadget desc', company_price: 20, group_code: 'GADG', images: [] },
+    ]);
+    const { wrapper } = await mountView();
+    await wrapper.find('.category-select').setValue('WIDG');
+    const products = wrapper.findAll('.product');
+    expect(products).toHaveLength(1);
+    expect(products[0].text()).toContain('widget desc');
+  });
+
+  it('shows no-match message when search yields no results', async () => {
+    fetchProducts.mockResolvedValue([
+      { id: '1', name: 'Widget', item_number: 'W-1', description: 'desc', company_price: 10, images: [] },
+    ]);
+    const { wrapper } = await mountView();
+    await wrapper.find('.search-input').setValue('zzznomatch');
+    expect(wrapper.text()).toContain('No products match your search.');
+  });
 });
