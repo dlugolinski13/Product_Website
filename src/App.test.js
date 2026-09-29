@@ -17,6 +17,7 @@ async function mountApp() {
       { path: '/products', component: { template: '<div>products</div>' } },
       { path: '/cart', component: { template: '<div>cart</div>' } },
       { path: '/login', component: { template: '<div>login</div>' } },
+      { path: '/upload-product', component: { template: '<div>upload</div>' } },
     ],
   });
   router.push('/');
