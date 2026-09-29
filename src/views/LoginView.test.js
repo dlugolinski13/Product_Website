@@ -11,6 +11,7 @@ async function mountAt(path) {
   const router = createRouter({
     history: createMemoryHistory(),
     routes: [
+      { path: '/', component: { template: '<div />' } },
       { path: '/login', component: LoginView },
       { path: '/products', component: { template: '<div />' } },
       { path: '/other', component: { template: '<div />' } },
@@ -36,13 +37,13 @@ describe('LoginView', () => {
     localStorage.clear();
   });
 
-  it('stores the token and goes to products on success', async () => {
+  it('stores the token and goes to home on success', async () => {
     login.mockResolvedValue({ token: 'tok', role: 'admin' });
     const { wrapper, router } = await mountAt('/login');
     await submit(wrapper);
     expect(login).toHaveBeenCalledWith('a@example.com', 'pw');
     expect(token.value).toBe('tok');
-    expect(router.currentRoute.value.path).toBe('/products');
+    expect(router.currentRoute.value.path).toBe('/');
   });
 
   it('honours the redirect query param', async () => {
@@ -59,5 +60,16 @@ describe('LoginView', () => {
     expect(wrapper.find('[role="alert"]').text()).toBe('Invalid credentials');
     expect(token.value).toBeNull();
     expect(router.currentRoute.value.path).toBe('/login');
+  });
+
+  it('toggles password visibility when the eye button is clicked', async () => {
+    const { wrapper } = await mountAt('/login');
+    expect(wrapper.find('input[type="password"]').exists()).toBe(true);
+    await wrapper.find('button[aria-label="Show password"]').trigger('click');
+    expect(wrapper.find('input[type="text"]').exists()).toBe(true);
+    expect(wrapper.find('button[aria-label="Hide password"]').exists()).toBe(true);
+    await wrapper.find('button[aria-label="Hide password"]').trigger('click');
+    expect(wrapper.find('input[type="password"]').exists()).toBe(true);
+    expect(wrapper.find('button[aria-label="Show password"]').exists()).toBe(true);
   });
 });
