@@ -3,8 +3,10 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter, RouterLink } from 'vue-router';
 import { fetchProducts } from '../api';
 import { token, logout } from '../auth';
+import { useCartStore } from '../stores/cart';
 
 const router = useRouter();
+const cart = useCartStore();
 const products = ref([]);
 const error = ref('');
 const search = ref('');
@@ -72,6 +74,7 @@ onMounted(async () => {
           <p>{{ product.description }}</p>
           <p class="price">${{ Number(product.company_price).toFixed(2) }}</p>
         </RouterLink>
+        <button type="button" class="add-to-cart-btn" @click="cart.addItem(product)">Add to Cart</button>
       </li>
     </ul>
   </section>
