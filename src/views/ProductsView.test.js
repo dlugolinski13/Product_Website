@@ -1,13 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import { createRouter, createMemoryHistory } from 'vue-router';
+import { createPinia, setActivePinia } from 'pinia';
 import ProductsView from './ProductsView.vue';
 import { token } from '../auth';
 import { fetchProducts } from '../api';
+import { useCartStore } from '../stores/cart';
 
 vi.mock('../api', () => ({ fetchProducts: vi.fn() }));
 
 async function mountView() {
+  const pinia = createPinia();
+  setActivePinia(pinia);
   const router = createRouter({
     history: createMemoryHistory(),
     routes: [
@@ -18,7 +22,7 @@ async function mountView() {
   });
   router.push('/products');
   await router.isReady();
-  const wrapper = mount(ProductsView, { global: { plugins: [router] } });
+  const wrapper = mount(ProductsView, { global: { plugins: [router, pinia] } });
   await flushPromises();
   return { wrapper, router };
 }
@@ -100,5 +104,31 @@ describe('ProductsView', () => {
     const { wrapper } = await mountView();
     await wrapper.find('.search-input').setValue('zzznomatch');
     expect(wrapper.text()).toContain('No products match your search.');
+  });
+
+  it('clicking Add to Cart adds the product to the cart store', async () => {
+    fetchProducts.mockResolvedValue([
+      { id: '1', name: 'Widget', item_number: 'W-1', description: 'A widget', company_price: 95, images: [] },
+    ]);
+    const { wrapper } = await mountView();
+    const cart = useCartStore();
+    await wrapper.find('.show-all-btn').trigger('click');
+    await wrapper.find('.add-to-cart-btn').trigger('click');
+    expect(cart.items).toHaveLength(1);
+    expect(cart.items[0].product.id).toBe('1');
+    expect(cart.items[0].quantity).toBe(1);
+  });
+
+  it('clicking Add to Cart twice increments quantity', async () => {
+    fetchProducts.mockResolvedValue([
+      { id: '1', name: 'Widget', item_number: 'W-1', description: 'A widget', company_price: 95, images: [] },
+    ]);
+    const { wrapper } = await mountView();
+    const cart = useCartStore();
+    await wrapper.find('.show-all-btn').trigger('click');
+    await wrapper.find('.add-to-cart-btn').trigger('click');
+    await wrapper.find('.add-to-cart-btn').trigger('click');
+    expect(cart.items).toHaveLength(1);
+    expect(cart.items[0].quantity).toBe(2);
   });
 });
