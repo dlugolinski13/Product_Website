@@ -22,3 +22,19 @@ export function login(email, password) {
 export function fetchProducts(token) {
   return request('/products', { headers: { 'X-Authorization': `Bearer ${token}` } });
 }
+
+export function createProduct(token, product) {
+  return request('/products', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Authorization': `Bearer ${token}` },
+    body: JSON.stringify(product),
+  });
+}
+
+export function addProductImage(token, productId, file) {
+  return request(`/products/${productId}/images`, {
+    method: 'POST',
+    headers: { 'Content-Type': file.type || 'application/octet-stream', 'X-Authorization': `Bearer ${token}` },
+    body: file,
+  });
+}
