@@ -74,3 +74,10 @@ onMounted(async () => {
     <p v-else>Loading…</p>
   </section>
 </template>
+
+<style scoped>
+.product-images img {
+  max-width: 100%;
+  height: auto;
+}
+</style>
