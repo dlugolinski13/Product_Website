@@ -72,9 +72,11 @@ onMounted(async () => {
         <RouterLink :to="'/products/' + product.id">
           <img v-if="product.images.length" :src="product.images[0]" :alt="product.name" />
           <p>{{ product.description }}</p>
-          <p class="price">${{ Number(product.company_price).toFixed(2) }}</p>
         </RouterLink>
-        <button type="button" class="add-to-cart-btn" @click="cart.addItem(product)">Add to Cart</button>
+        <div class="product-footer">
+          <p class="price">${{ Number(product.company_price).toFixed(2) }}</p>
+          <button type="button" class="add-to-cart-btn" @click="cart.addItem(product)">Add to Cart</button>
+        </div>
       </li>
     </ul>
   </section>
