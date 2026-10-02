@@ -6,6 +6,7 @@ import ProductDetailView from './views/ProductDetailView.vue';
 import CartView from './views/CartView.vue';
 import UploadProductView from './views/UploadProduct.vue';
 import OrderHistoryView from './views/OrderHistoryView.vue';
+import AccountView from './views/AccountView.vue';
 import { token } from './auth';
 
 // Hash history so deep links work on Static Web Apps without extra fallback routing config.
@@ -17,6 +18,7 @@ export const routes = [
   { path: '/cart', component: CartView, meta: { requiresAuth: true } },
   { path: '/upload-product', component: UploadProductView, meta: { requiresAuth: true } },
   { path: '/orders', component: OrderHistoryView, meta: { requiresAuth: true } },
+  { path: '/account', component: AccountView, meta: { requiresAuth: true } },
 ];
 
 export function requireAuth(to) {

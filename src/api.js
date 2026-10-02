@@ -50,3 +50,27 @@ export function createOrder(token, items) {
 export function fetchOrders(token) {
   return request('/orders', { headers: { 'X-Authorization': `Bearer ${token}` } });
 }
+
+export function fetchAccount(token) {
+  return request('/account', { headers: { 'X-Authorization': `Bearer ${token}` } });
+}
+
+export function updateAccount(token, profile) {
+  return request('/account', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'X-Authorization': `Bearer ${token}` },
+    body: JSON.stringify(profile),
+  });
+}
+
+export function fetchCustomers(token) {
+  return request('/account/customers', { headers: { 'X-Authorization': `Bearer ${token}` } });
+}
+
+export function assignSalesperson(token, customerId, salespersonId) {
+  return request(`/account/customers/${customerId}/salesperson`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'X-Authorization': `Bearer ${token}` },
+    body: JSON.stringify({ salespersonId }),
+  });
+}

@@ -7,8 +7,8 @@ describe('router', () => {
     token.value = null;
   });
 
-  it('defines home, login, products, product-detail, cart, upload-product, and orders routes', () => {
-    expect(routes.map((r) => r.path)).toEqual(['/', '/login', '/products', '/products/:id', '/cart', '/upload-product', '/orders']);
+  it('defines home, login, products, product-detail, cart, upload-product, orders, and account routes', () => {
+    expect(routes.map((r) => r.path)).toEqual(['/', '/login', '/products', '/products/:id', '/cart', '/upload-product', '/orders', '/account']);
   });
 
   it('redirects to login with a redirect target when unauthenticated', () => {
