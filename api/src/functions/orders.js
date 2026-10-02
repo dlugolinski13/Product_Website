@@ -79,6 +79,8 @@ app.http('createOrder', {
       return { status: 400, jsonBody: { error: 'At least one item is required' } };
     }
 
+    const submit = !!body.submit;
+
     let transaction;
     try {
       const pool = await getPool();
@@ -87,11 +89,14 @@ app.http('createOrder', {
 
       const orderResult = await new sql.Request(transaction)
         .input('customerId', sql.UniqueIdentifier, auth.claims.sub)
-        .query(`
-          INSERT INTO orders (customer_id, status)
-          OUTPUT INSERTED.id, INSERTED.status, INSERTED.created_at
-          VALUES (@customerId, 'draft')
-        `);
+        .query(submit
+          ? `INSERT INTO orders (customer_id, status, submitted_at)
+             OUTPUT INSERTED.id, INSERTED.status, INSERTED.created_at, INSERTED.submitted_at
+             VALUES (@customerId, 'submitted', SYSUTCDATETIME())`
+          : `INSERT INTO orders (customer_id, status)
+             OUTPUT INSERTED.id, INSERTED.status, INSERTED.created_at, INSERTED.submitted_at
+             VALUES (@customerId, 'draft')`
+        );
       const order = orderResult.recordset[0];
 
       for (const item of items) {
@@ -117,7 +122,7 @@ app.http('createOrder', {
       }
 
       await transaction.commit();
-      return { status: 201, jsonBody: { id: order.id, status: order.status, createdAt: order.created_at } };
+      return { status: 201, jsonBody: { id: order.id, status: order.status, createdAt: order.created_at, submittedAt: order.submitted_at } };
     } catch (err) {
       if (transaction) {
         try {

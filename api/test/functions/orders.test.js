@@ -166,7 +166,7 @@ describe('orders', () => {
     it('creates the order and its items inside a transaction', async () => {
       requireRoleMock.mockReturnValue({ ok: true, claims: { sub: 'cust-1', role: 'customer' } });
       requestQueryMock
-        .mockResolvedValueOnce({ recordset: [{ id: 'order-1', status: 'draft', created_at: 't1' }] })
+        .mockResolvedValueOnce({ recordset: [{ id: 'order-1', status: 'draft', created_at: 't1', submitted_at: null }] })
         .mockResolvedValueOnce({ recordset: [{ company_price: 5 }] })
         .mockResolvedValueOnce({});
 
@@ -176,9 +176,27 @@ describe('orders', () => {
       );
 
       expect(result.status).toBe(201);
-      expect(result.jsonBody).toEqual({ id: 'order-1', status: 'draft', createdAt: 't1' });
+      expect(result.jsonBody).toEqual({ id: 'order-1', status: 'draft', createdAt: 't1', submittedAt: null });
       expect(commitMock).toHaveBeenCalled();
       expect(rollbackMock).not.toHaveBeenCalled();
+    });
+
+    it('creates a submitted order when submit is true', async () => {
+      requireRoleMock.mockReturnValue({ ok: true, claims: { sub: 'cust-1', role: 'customer' } });
+      requestQueryMock
+        .mockResolvedValueOnce({ recordset: [{ id: 'order-1', status: 'submitted', created_at: 't1', submitted_at: 't2' }] })
+        .mockResolvedValueOnce({ recordset: [{ company_price: 5 }] })
+        .mockResolvedValueOnce({});
+
+      const result = await createHandler(
+        fakeRequest({ items: [{ productId: 'p1', quantity: 2 }], submit: true }),
+        fakeContext()
+      );
+
+      expect(result.status).toBe(201);
+      expect(result.jsonBody).toEqual({ id: 'order-1', status: 'submitted', createdAt: 't1', submittedAt: 't2' });
+      expect(requestQueryMock.mock.calls[0][0]).toContain('submitted');
+      expect(commitMock).toHaveBeenCalled();
     });
 
     it('rolls back and returns 500 when a product is missing or inactive', async () => {

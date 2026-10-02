@@ -1,7 +1,29 @@
 <script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { useCartStore } from '../stores/cart';
+import { token } from '../auth';
+import { createOrder } from '../api';
 
+const router = useRouter();
 const cart = useCartStore();
+const sending = ref(false);
+const orderError = ref(null);
+
+async function sendOrder() {
+  sending.value = true;
+  orderError.value = null;
+  try {
+    const items = cart.items.map((i) => ({ productId: i.product.id, quantity: i.quantity }));
+    await createOrder(token.value, items);
+    cart.clearCart();
+    router.push('/orders');
+  } catch (err) {
+    orderError.value = err.message;
+  } finally {
+    sending.value = false;
+  }
+}
 </script>
 
 <template>
@@ -18,6 +40,10 @@ const cart = useCartStore();
         </li>
       </ul>
       <p class="cart-subtotal">Subtotal: ${{ cart.subtotal.toFixed(2) }}</p>
+      <p v-if="orderError" role="alert">{{ orderError }}</p>
+      <button type="button" class="send-order-btn" :disabled="sending" @click="sendOrder">
+        {{ sending ? 'Sending…' : 'Send Order' }}
+      </button>
     </template>
   </section>
 </template>
