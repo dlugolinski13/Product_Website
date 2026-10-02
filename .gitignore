@@ -34,3 +34,5 @@ npm-debug.log*
 
 # Source product images (already uploaded to Blob Storage; not needed to run the app)
 database/images/
+
+Query.sql
