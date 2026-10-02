@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { login, fetchProducts, createProduct, addProductImage } from './api.js';
+import { login, fetchProducts, createProduct, addProductImage, createOrder, fetchOrders } from './api.js';
 
 function mockFetch(status, body) {
   globalThis.fetch = vi.fn(async () => ({
@@ -66,5 +66,26 @@ describe('api', () => {
     expect(options.headers['X-Authorization']).toBe('Bearer tok');
     expect(options.headers['Content-Type']).toBe('image/png');
     expect(options.body).toBe(file);
+  });
+
+  it('createOrder posts items with submit flag and X-Authorization', async () => {
+    mockFetch(201, { id: 'order-1', status: 'submitted', createdAt: 't1', submittedAt: 't2' });
+    const items = [{ productId: 'p1', quantity: 2 }];
+    const result = await createOrder('tok', items);
+    expect(result).toEqual({ id: 'order-1', status: 'submitted', createdAt: 't1', submittedAt: 't2' });
+    const [url, options] = fetch.mock.calls[0];
+    expect(url).toBe('/api/orders');
+    expect(options.method).toBe('POST');
+    expect(options.headers['X-Authorization']).toBe('Bearer tok');
+    expect(JSON.parse(options.body)).toEqual({ items, submit: true });
+  });
+
+  it('fetchOrders sends the token in X-Authorization and returns the body', async () => {
+    mockFetch(200, [{ id: 'o1', status: 'submitted', items: [] }]);
+    const result = await fetchOrders('tok');
+    expect(result).toHaveLength(1);
+    const [url, options] = fetch.mock.calls[0];
+    expect(url).toBe('/api/orders');
+    expect(options.headers['X-Authorization']).toBe('Bearer tok');
   });
 });

@@ -38,3 +38,15 @@ export function addProductImage(token, productId, file) {
     body: file,
   });
 }
+
+export function createOrder(token, items) {
+  return request('/orders', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Authorization': `Bearer ${token}` },
+    body: JSON.stringify({ items, submit: true }),
+  });
+}
+
+export function fetchOrders(token) {
+  return request('/orders', { headers: { 'X-Authorization': `Bearer ${token}` } });
+}

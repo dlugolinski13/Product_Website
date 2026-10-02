@@ -11,7 +11,14 @@ BEGIN
     password_hash NVARCHAR(255) NOT NULL,
     role NVARCHAR(20) NOT NULL CHECK (role IN ('admin','customer')),
     full_name NVARCHAR(200),
-    created_at DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
+    created_at DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    salesperson_id UNIQUEIDENTIFIER NULL,
+    address_line1 NVARCHAR(200) NULL,
+    address_line2 NVARCHAR(200) NULL,
+    city NVARCHAR(100) NULL,
+    state NVARCHAR(100) NULL,
+    postal_code NVARCHAR(20) NULL,
+    country NVARCHAR(100) NULL
   );
 END
 
