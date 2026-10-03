@@ -89,7 +89,8 @@ describe('AccountView', () => {
     it('shows the email, name and address, and links to edit profile and order history', async () => {
       fetchAccount.mockResolvedValue(customerUser);
       const { wrapper } = await mountView();
-      expect(wrapper.find('.account-email').text()).toBe('alice@x.com');
+      expect(wrapper.find('.account-email').text()).toBe('alice@x.com (customer)');
+      expect(wrapper.find('.account-role').text()).toBe('(customer)');
       expect(wrapper.find('.account-name').text()).toBe('Alice');
       expect(wrapper.find('.account-address').text()).toContain('1 Main St');
       expect(wrapper.find('.account-address').text()).toContain('Denver, CO, 80201');
@@ -107,6 +108,12 @@ describe('AccountView', () => {
       fetchAccount.mockResolvedValue(salespersonUser);
       const { wrapper } = await mountView();
       expect(wrapper.find('.account-address').exists()).toBe(false);
+    });
+
+    it('shows the salesperson role in parentheses next to the email', async () => {
+      fetchAccount.mockResolvedValue(salespersonUser);
+      const { wrapper } = await mountView();
+      expect(wrapper.find('.account-email').text()).toBe('bob@co.com (salesperson)');
     });
 
     it('includes address line 2 and omits the country when there is none', async () => {

@@ -69,7 +69,7 @@ async function setCustomerSalesperson(customerId, salespersonId) {
     <template v-else-if="user">
       <div class="account-profile">
         <h2>Profile</h2>
-        <p class="account-email">{{ user.email }}</p>
+        <p class="account-email">{{ user.email }} <span class="account-role">({{ user.role }})</span></p>
         <p class="account-name">{{ user.fullName || 'No name on file' }}</p>
         <p v-if="user.addressLine1" class="account-address">
           {{ user.addressLine1 }}<template v-if="user.addressLine2">, {{ user.addressLine2 }}</template><br />
