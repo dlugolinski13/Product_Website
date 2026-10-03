@@ -7,6 +7,11 @@ import App from './App.vue';
 import { token } from './auth';
 import { useCartStore } from './stores/cart';
 
+function makeToken(payload) {
+  const base64 = btoa(JSON.stringify(payload)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  return `header.${base64}.signature`;
+}
+
 async function mountApp() {
   const pinia = createPinia();
   setActivePinia(pinia);
@@ -18,7 +23,7 @@ async function mountApp() {
       { path: '/cart', component: { template: '<div>cart</div>' } },
       { path: '/login', component: { template: '<div>login</div>' } },
       { path: '/upload-product', component: { template: '<div>upload</div>' } },
-      { path: '/orders', component: { template: '<div>orders</div>' } },
+      { path: '/account', component: { template: '<div>account</div>' } },
     ],
   });
   router.push('/');
@@ -40,17 +45,33 @@ describe('App', () => {
     expect(texts).toContain('Home');
     expect(texts).toContain('Products');
     expect(texts).toContain('Log in');
+    expect(texts).not.toContain('Order History');
+    expect(texts).not.toContain('Account');
     expect(wrapper.find('.cart-link').exists()).toBe(true);
     expect(wrapper.find('nav button').exists()).toBe(false);
   });
 
-  it('shows Log out when logged in and returns to login after clicking it', async () => {
-    token.value = 'tok';
+  it('shows the Account link, user email and Sign out for a logged-in customer, and no Upload Product link', async () => {
+    token.value = makeToken({ sub: 'u1', role: 'customer', email: 'customer@example.com' });
     const { wrapper, router } = await mountApp();
+
+    const texts = wrapper.findAll('nav a').map((a) => a.text());
+    expect(texts).toContain('Account');
+    expect(texts).not.toContain('Upload Product');
+    expect(texts).not.toContain('Order History');
+    expect(wrapper.find('.user-email').text()).toBe('customer@example.com');
+
     await wrapper.find('nav button').trigger('click');
     await flushPromises();
     expect(token.value).toBeNull();
     expect(router.currentRoute.value.path).toBe('/login');
+  });
+
+  it('also shows an Upload Product link for admins', async () => {
+    token.value = makeToken({ sub: 'u2', role: 'admin', email: 'admin@example.com' });
+    const { wrapper } = await mountApp();
+    const texts = wrapper.findAll('nav a').map((a) => a.text());
+    expect(texts).toContain('Upload Product');
   });
 
   it('shows no badge when cart is empty', async () => {
