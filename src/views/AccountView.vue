@@ -1,24 +1,13 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { fetchAccount, updateAccount, fetchCustomers, assignSalesperson } from '../api';
+import { fetchAccount, fetchCustomers, assignSalesperson } from '../api';
 import { token, logout } from '../auth';
 
 const router = useRouter();
 const user = ref(null);
 const loading = ref(true);
 const error = ref(null);
-
-const fullName = ref('');
-const addressLine1 = ref('');
-const addressLine2 = ref('');
-const city = ref('');
-const state = ref('');
-const postalCode = ref('');
-const country = ref('');
-const saving = ref(false);
-const saveError = ref(null);
-const saveSuccess = ref(false);
 
 const customers = ref([]);
 const salespersons = ref([]);
@@ -29,13 +18,6 @@ const assigning = ref(null);
 onMounted(async () => {
   try {
     user.value = await fetchAccount(token.value);
-    fullName.value = user.value.fullName || '';
-    addressLine1.value = user.value.addressLine1 || '';
-    addressLine2.value = user.value.addressLine2 || '';
-    city.value = user.value.city || '';
-    state.value = user.value.state || '';
-    postalCode.value = user.value.postalCode || '';
-    country.value = user.value.country || '';
 
     if (user.value.role === 'salesperson') {
       customersLoading.value = true;
@@ -60,28 +42,6 @@ onMounted(async () => {
     loading.value = false;
   }
 });
-
-async function saveProfile() {
-  saveError.value = null;
-  saveSuccess.value = false;
-  saving.value = true;
-  try {
-    await updateAccount(token.value, {
-      fullName: fullName.value,
-      addressLine1: addressLine1.value,
-      addressLine2: addressLine2.value,
-      city: city.value,
-      state: state.value,
-      postalCode: postalCode.value,
-      country: country.value,
-    });
-    saveSuccess.value = true;
-  } catch (err) {
-    saveError.value = err.message;
-  } finally {
-    saving.value = false;
-  }
-}
 
 async function setCustomerSalesperson(customerId, salespersonId) {
   assigning.value = customerId;
@@ -110,39 +70,16 @@ async function setCustomerSalesperson(customerId, salespersonId) {
       <div class="account-profile">
         <h2>Profile</h2>
         <p class="account-email">{{ user.email }}</p>
-        <form @submit.prevent="saveProfile" class="profile-form">
-          <label>
-            Full name
-            <input v-model="fullName" type="text" />
-          </label>
-          <label>
-            Address line 1
-            <input v-model="addressLine1" type="text" />
-          </label>
-          <label>
-            Address line 2
-            <input v-model="addressLine2" type="text" />
-          </label>
-          <label>
-            City
-            <input v-model="city" type="text" />
-          </label>
-          <label>
-            State / Province
-            <input v-model="state" type="text" />
-          </label>
-          <label>
-            Postal code
-            <input v-model="postalCode" type="text" />
-          </label>
-          <label>
-            Country
-            <input v-model="country" type="text" />
-          </label>
-          <button type="submit" :disabled="saving">Save</button>
-          <p v-if="saveError" class="error" role="alert">{{ saveError }}</p>
-          <p v-if="saveSuccess" class="save-success">Saved.</p>
-        </form>
+        <p class="account-name">{{ user.fullName || 'No name on file' }}</p>
+        <p v-if="user.addressLine1" class="account-address">
+          {{ user.addressLine1 }}<template v-if="user.addressLine2">, {{ user.addressLine2 }}</template><br />
+          {{ [user.city, user.state, user.postalCode].filter(Boolean).join(', ') }}
+          <template v-if="user.country"> {{ user.country }}</template>
+        </p>
+        <ul class="account-links">
+          <li><RouterLink to="/account/edit">Edit profile</RouterLink></li>
+          <li><RouterLink to="/orders">Order history</RouterLink></li>
+        </ul>
       </div>
 
       <div v-if="user.role === 'customer'" class="account-salesperson">

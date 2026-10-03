@@ -1,18 +1,21 @@
 # Product ordering site — project brief
 
 ## What this is
-A Vue.js site with two audiences:
-- **Admins**: manage the product catalog
-- **Customers**: log in, view current products, place and reload orders
+A Vue.js site with three roles:
+- **Admin**: manages the product catalog — only admins can reach the Upload Product page (`/upload-product`, gated in both the router and the API)
+- **Salesperson**: manages an assigned set of customers from the Account page (view/reassign which salesperson a customer has)
+- **Customer**: logs in, views current products, places and reloads orders, manages their own account, sees their assigned salesperson
 
 ## Stack decisions
-- **Frontend**: Vue 3 + Vite
+- **Frontend**: Vue 3 + Vite, state in Pinia (`src/stores/cart.js` is the cart store)
 - **Backend**: Azure Functions (Node.js) — lives in an `/api` folder alongside the Vue app
 - **Hosting**: Azure Static Web Apps — hosts the built Vue frontend and the `/api` functions together as one resource, deploys automatically via GitHub Actions on push to `main`
 - **Database**: Azure SQL Database (T-SQL)
 - **Image storage**: Azure Blob Storage — product images are uploaded to a blob container by the API, not linked from arbitrary external URLs; the database stores only the blob name and the API resolves it to a URL on read
-- **Auth**: Custom JWT-based auth. A `users` table stores email/password hash/role. The API issues a JWT on login; the frontend reads the role claim to show the admin UI vs the customer UI; the API re-checks role on every product-management request. The frontend must send the JWT as `X-Authorization: Bearer <token>`, not the standard `Authorization` header — Azure Static Web Apps overwrites `Authorization` on managed Functions requests with its own token (see api/src/lib/auth.js).
-- **Frontend structure**: `vue-router` with hash history (deep links work on Static Web Apps without fallback config). `src/api.js` wraps `fetch` to `/api` and sends the JWT as `X-Authorization`; `src/auth.js` holds the token (a ref persisted to localStorage). `/products` requires a token — `src/router.js` redirects to `/login?redirect=…` when there isn't one, and `ProductsView` logs out and redirects on a 401.
+- **Auth**: Custom JWT-based auth. A `users` table stores email/password hash/role (`admin`, `salesperson`, or `customer`). The API issues a JWT on login carrying `sub`/`role`/`email`; the frontend decodes that payload for display (`src/auth.js`'s `user` computed — decode only, no signature check) to show/hide role-gated nav links and pages; the API re-checks role on every role-restricted request via `requireRole` (see `api/src/lib/auth.js`). The frontend must send the JWT as `X-Authorization: Bearer <token>`, not the standard `Authorization` header — Azure Static Web Apps overwrites `Authorization` on managed Functions requests with its own token.
+- **Frontend structure**: `vue-router` with hash history (deep links work on Static Web Apps without fallback config). `src/api.js` wraps `fetch` to `/api` and sends the JWT as `X-Authorization`; `src/auth.js` holds the token (a ref persisted to localStorage) and the decoded `user`. Routes needing a token set `meta: { requiresAuth: true }`; `/upload-product` additionally sets `meta: { requiresAdmin: true }`, enforced in `router.js`'s `requireAuth` guard (redirects non-admins to `/products`). Most views log out and redirect to `/login?redirect=…` on a 401.
+  - Pages: `/` Home, `/products` + `/products/:id` Products/detail (add to cart), `/cart` Cart, `/account` Account (profile summary, salesperson info or customer-management table depending on role, links to **Edit profile** and **Order history** — these are intentionally not top-level nav tabs), `/account/edit` Edit Profile (the actual form), `/orders` Order History, `/upload-product` Upload Product (admin only).
+  - `App.vue`'s header puts the logged-in user's email with a Sign out link beneath it in the upper-right corner, with an Account link next to that block; Upload Product only appears in the nav for admins.
 - **Sample data**: `database/seed.sql` (idempotent, run after `schema.sql`) inserts four Champion luggage sets copied from the Mazel catalog, plus the `LUGG` group, class 12 and COLLECT/Net 30 terms they reference.
 - **Repo**: GitHub, opened in VS Code
 
@@ -34,9 +37,16 @@ CREATE TABLE users (
   id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
   email NVARCHAR(255) NOT NULL UNIQUE,
   password_hash NVARCHAR(255) NOT NULL,
-  role NVARCHAR(20) NOT NULL CHECK (role IN ('admin','customer')),
+  role NVARCHAR(20) NOT NULL CHECK (role IN ('admin','salesperson','customer')),
   full_name NVARCHAR(200),
-  created_at DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
+  created_at DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+  salesperson_id UNIQUEIDENTIFIER NULL,  -- self-reference: the customer's assigned salesperson
+  address_line1 NVARCHAR(200) NULL,
+  address_line2 NVARCHAR(200) NULL,
+  city NVARCHAR(100) NULL,
+  state NVARCHAR(100) NULL,
+  postal_code NVARCHAR(20) NULL,
+  country NVARCHAR(100) NULL
 );
 
 CREATE TABLE product_groups (
@@ -120,4 +130,6 @@ Order carryover (copying items from a past order into a new one) needs no extra 
 ## Open questions to confirm
 - `cases_per_pack`: does a pack contain multiple cases, or does a case contain multiple packs? Field may need renaming to `packs_per_case`.
 - `customer_comments`: assumed to be an admin-entered note shown to customers (not a customer-submitted review) — confirm.
-- Exact role/permission rules (what a customer can vs can't do) still need to be defined.
+- Exact role/permission rules beyond what's built (admin manages products, salespersons manage their assigned customers) still need to be defined for edge cases.
+- **Production migration needed**: `database/schema.sql` now widens the `users.role` CHECK constraint to allow `salesperson`. The migration is idempotent and safe to re-run, but it has to actually be run against the production database (Azure portal Query editor or Azure Data Studio) — it does not happen automatically on deploy. Until it's run, inserting a `salesperson` row will fail against the live constraint even though the application code already expects that role to exist.
+- `database/schema.sql` had drifted out of sync with the live schema before this change (missing the `salesperson_id`/address columns that `api/src/functions/account.js` already queries) — it's been caught up here, but it's worth periodically diffing this file against the real deployed schema so it stays trustworthy as the source of truth.

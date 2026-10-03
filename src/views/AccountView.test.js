@@ -4,11 +4,10 @@ import { createRouter, createMemoryHistory } from 'vue-router';
 import { createPinia, setActivePinia } from 'pinia';
 import AccountView from './AccountView.vue';
 import { token } from '../auth';
-import { fetchAccount, updateAccount, fetchCustomers, assignSalesperson } from '../api';
+import { fetchAccount, fetchCustomers, assignSalesperson } from '../api';
 
 vi.mock('../api', () => ({
   fetchAccount: vi.fn(),
-  updateAccount: vi.fn(),
   fetchCustomers: vi.fn(),
   assignSalesperson: vi.fn(),
 }));
@@ -34,6 +33,8 @@ async function mountView() {
     history: createMemoryHistory(),
     routes: [
       { path: '/account', component: AccountView },
+      { path: '/account/edit', component: { template: '<div />' } },
+      { path: '/orders', component: { template: '<div />' } },
       { path: '/login', component: { template: '<div />' } },
     ],
   });
@@ -47,7 +48,6 @@ async function mountView() {
 describe('AccountView', () => {
   beforeEach(() => {
     fetchAccount.mockReset();
-    updateAccount.mockReset();
     fetchCustomers.mockReset();
     assignSalesperson.mockReset();
     token.value = 'tok';
@@ -85,44 +85,42 @@ describe('AccountView', () => {
     expect(router.currentRoute.value.query.redirect).toBe('/account');
   });
 
-  describe('profile form', () => {
-    it('renders the profile form with pre-filled values', async () => {
+  describe('profile summary', () => {
+    it('shows the email, name and address, and links to edit profile and order history', async () => {
       fetchAccount.mockResolvedValue(customerUser);
       const { wrapper } = await mountView();
       expect(wrapper.find('.account-email').text()).toBe('alice@x.com');
-      expect(wrapper.find('input[type="text"]').element.value).toBe('Alice');
+      expect(wrapper.find('.account-name').text()).toBe('Alice');
+      expect(wrapper.find('.account-address').text()).toContain('1 Main St');
+      expect(wrapper.find('.account-address').text()).toContain('Denver, CO, 80201');
+      expect(wrapper.text()).toContain('Edit profile');
+      expect(wrapper.text()).toContain('Order history');
     });
 
-    it('v-model inputs are reactive and submit updated values', async () => {
-      fetchAccount.mockResolvedValue({ ...customerUser, fullName: '' });
-      updateAccount.mockResolvedValue(undefined);
+    it('shows a placeholder when there is no name on file', async () => {
+      fetchAccount.mockResolvedValue({ ...customerUser, fullName: null });
       const { wrapper } = await mountView();
-      const inputs = wrapper.findAll('.profile-form input[type="text"]');
-      for (const input of inputs) {
-        await input.setValue('updated');
-      }
-      await wrapper.find('form').trigger('submit');
-      await flushPromises();
-      expect(updateAccount).toHaveBeenCalledWith('tok', expect.objectContaining({ fullName: 'updated', city: 'updated' }));
+      expect(wrapper.find('.account-name').text()).toBe('No name on file');
     });
 
-    it('saves profile and shows success message', async () => {
+    it('does not render an address block when there is no address on file', async () => {
+      fetchAccount.mockResolvedValue(salespersonUser);
+      const { wrapper } = await mountView();
+      expect(wrapper.find('.account-address').exists()).toBe(false);
+    });
+
+    it('includes address line 2 and omits the country when there is none', async () => {
+      fetchAccount.mockResolvedValue({ ...customerUser, addressLine2: 'Suite 2', country: null });
+      const { wrapper } = await mountView();
+      const text = wrapper.find('.account-address').text();
+      expect(text).toContain('Suite 2');
+      expect(text).not.toContain('US');
+    });
+
+    it('does not render an editable form directly on the account page', async () => {
       fetchAccount.mockResolvedValue(customerUser);
-      updateAccount.mockResolvedValue(undefined);
       const { wrapper } = await mountView();
-      await wrapper.find('form').trigger('submit');
-      await flushPromises();
-      expect(updateAccount).toHaveBeenCalledWith('tok', expect.objectContaining({ fullName: 'Alice', city: 'Denver' }));
-      expect(wrapper.find('.save-success').exists()).toBe(true);
-    });
-
-    it('shows save error when update fails', async () => {
-      fetchAccount.mockResolvedValue(customerUser);
-      updateAccount.mockRejectedValue(Object.assign(new Error('save failed'), { status: 500 }));
-      const { wrapper } = await mountView();
-      await wrapper.find('form').trigger('submit');
-      await flushPromises();
-      expect(wrapper.find('[role="alert"]').text()).toBe('save failed');
+      expect(wrapper.find('form').exists()).toBe(false);
     });
   });
 

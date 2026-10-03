@@ -9,7 +9,7 @@ BEGIN
     id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
     email NVARCHAR(255) NOT NULL UNIQUE,
     password_hash NVARCHAR(255) NOT NULL,
-    role NVARCHAR(20) NOT NULL CHECK (role IN ('admin','customer')),
+    role NVARCHAR(20) NOT NULL CHECK (role IN ('admin','salesperson','customer')),
     full_name NVARCHAR(200),
     created_at DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
     salesperson_id UNIQUEIDENTIFIER NULL,
@@ -20,6 +20,24 @@ BEGIN
     postal_code NVARCHAR(20) NULL,
     country NVARCHAR(100) NULL
   );
+END
+
+-- Migration: widen the role check constraint to include salesperson on databases
+-- created before that role existed. Idempotent — only runs if the constraint still
+-- excludes it.
+IF EXISTS (
+  SELECT 1 FROM sys.check_constraints cc
+  JOIN sys.tables t ON cc.parent_object_id = t.object_id
+  WHERE t.name = 'users' AND cc.definition NOT LIKE '%salesperson%'
+)
+BEGIN
+  DECLARE @roleConstraintName NVARCHAR(200);
+  SELECT @roleConstraintName = cc.name
+  FROM sys.check_constraints cc
+  JOIN sys.tables t ON cc.parent_object_id = t.object_id
+  WHERE t.name = 'users' AND cc.definition NOT LIKE '%salesperson%';
+  EXEC('ALTER TABLE dbo.users DROP CONSTRAINT ' + @roleConstraintName);
+  ALTER TABLE dbo.users ADD CONSTRAINT CK_users_role CHECK (role IN ('admin','salesperson','customer'));
 END
 
 IF OBJECT_ID('dbo.product_groups', 'U') IS NULL
