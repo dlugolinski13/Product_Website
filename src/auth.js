@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const TOKEN_KEY = 'auth_token';
 
@@ -10,7 +10,21 @@ function readStoredToken() {
   }
 }
 
+// Decodes the JWT payload for display only (which email/role to show, which admin-only
+// links to render) — the API re-verifies the signature on every request, per CLAUDE.md.
+function decodeToken(value) {
+  if (!value) return null;
+  try {
+    const payload = value.split('.')[1];
+    const json = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
+    return JSON.parse(json);
+  } catch {
+    return null;
+  }
+}
+
 export const token = ref(readStoredToken());
+export const user = computed(() => decodeToken(token.value));
 
 export function setToken(value) {
   token.value = value;

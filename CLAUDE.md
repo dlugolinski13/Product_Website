@@ -1,9 +1,10 @@
 # Product ordering site — project brief
 
 ## What this is
-A Vue.js site with two audiences:
-- **Admins**: manage the product catalog
-- **Customers**: log in, view current products, place and reload orders
+A Vue.js site with three roles:
+- **Admin**: manages the product catalog (only admins see/can reach the Upload Product page), can see all customers' orders
+- **Sales person**: a third role the data model supports alongside admin/customer; no permissions beyond "customer" are wired up for it yet — see Open questions
+- **Customer**: logs in, views current products, places and reloads orders, manages their own account
 
 ## Stack decisions
 - **Frontend**: Vue 3 + Vite
@@ -11,8 +12,10 @@ A Vue.js site with two audiences:
 - **Hosting**: Azure Static Web Apps — hosts the built Vue frontend and the `/api` functions together as one resource, deploys automatically via GitHub Actions on push to `main`
 - **Database**: Azure SQL Database (T-SQL)
 - **Image storage**: Azure Blob Storage — product images are uploaded to a blob container by the API, not linked from arbitrary external URLs; the database stores only the blob name and the API resolves it to a URL on read
-- **Auth**: Custom JWT-based auth. A `users` table stores email/password hash/role. The API issues a JWT on login; the frontend reads the role claim to show the admin UI vs the customer UI; the API re-checks role on every product-management request. The frontend must send the JWT as `X-Authorization: Bearer <token>`, not the standard `Authorization` header — Azure Static Web Apps overwrites `Authorization` on managed Functions requests with its own token (see api/src/lib/auth.js).
-- **Frontend structure**: `vue-router` with hash history (deep links work on Static Web Apps without fallback config). `src/api.js` wraps `fetch` to `/api` and sends the JWT as `X-Authorization`; `src/auth.js` holds the token (a ref persisted to localStorage). `/products` requires a token — `src/router.js` redirects to `/login?redirect=…` when there isn't one, and `ProductsView` logs out and redirects on a 401.
+- **Auth**: Custom JWT-based auth. A `users` table stores email/password hash/role (`admin`, `sales_person`, or `customer`). The API issues a JWT on login carrying `sub`/`role`/`email`; the frontend decodes that payload (`src/auth.js`'s `user` computed — display only, no signature check) to show the admin UI vs the customer UI and which nav links to render; the API re-checks role on every product-management request via `requireRole`. The frontend must send the JWT as `X-Authorization: Bearer <token>`, not the standard `Authorization` header — Azure Static Web Apps overwrites `Authorization` on managed Functions requests with its own token (see api/src/lib/auth.js).
+- **Frontend structure**: `vue-router` with hash history (deep links work on Static Web Apps without fallback config). `src/api.js` wraps `fetch` to `/api` and sends the JWT as `X-Authorization`; `src/auth.js` holds the token (a ref persisted to localStorage) and the decoded `user`; `src/cart.js` holds the cart (also localStorage-persisted). Routes needing a token set `meta: { requiresAuth: true }`; `/products/upload` additionally sets `meta: { requiresAdmin: true }`, enforced in `router.js`'s `requireAuth` guard (redirects non-admins to `/products`). `ProductsView` logs out and redirects on a 401.
+  - Pages: `/` Home, `/products` Products (add to cart, image zoom), `/cart` Cart, `/account` Account (shows profile, links to Edit profile and Order history), `/account/edit` Edit profile, `/orders` Order history, `/products/upload` Upload Product (admin only).
+  - `App.vue`'s header shows the logged-in user's email with a Sign out link beneath it in the upper-right corner, plus an Account link next to it; an Upload Product nav link appears only when `user.role === 'admin'`.
 - **Sample data**: `database/seed.sql` (idempotent, run after `schema.sql`) inserts four Champion luggage sets copied from the Mazel catalog, plus the `LUGG` group, class 12 and COLLECT/Net 30 terms they reference.
 - **Repo**: GitHub, opened in VS Code
 
@@ -34,7 +37,7 @@ CREATE TABLE users (
   id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
   email NVARCHAR(255) NOT NULL UNIQUE,
   password_hash NVARCHAR(255) NOT NULL,
-  role NVARCHAR(20) NOT NULL CHECK (role IN ('admin','customer')),
+  role NVARCHAR(20) NOT NULL CHECK (role IN ('admin','sales_person','customer')),
   full_name NVARCHAR(200),
   created_at DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
 );
@@ -121,3 +124,6 @@ Order carryover (copying items from a past order into a new one) needs no extra 
 - `cases_per_pack`: does a pack contain multiple cases, or does a case contain multiple packs? Field may need renaming to `packs_per_case`.
 - `customer_comments`: assumed to be an admin-entered note shown to customers (not a customer-submitted review) — confirm.
 - Exact role/permission rules (what a customer can vs can't do) still need to be defined.
+- `sales_person` exists as a `users.role` value with no distinct backend permissions yet — it's treated like `customer` everywhere (`requireRole(request)` with no role argument just requires *some* valid role). Define what a sales person should be able to do differently (e.g. see all customers' orders like admin, manage their assigned accounts) before building anything role-specific for it.
+- There's no UI yet for creating a user or changing their role — rows have to be inserted/updated directly in `users` (matching how the existing admin login was set up). Decide whether that needs an admin-facing page.
+- **Production migration needed**: `database/schema.sql` now widens the `users.role` CHECK constraint to allow `sales_person`. This migration is idempotent and safe to re-run, but it has to actually be run against the production database (Azure portal Query editor or Azure Data Studio) — it does not happen automatically on deploy.

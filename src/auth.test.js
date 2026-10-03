@@ -1,5 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
+function makeToken(payload) {
+  const base64 = btoa(JSON.stringify(payload)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  return `header.${base64}.signature`;
+}
+
 describe('auth', () => {
   beforeEach(() => {
     vi.resetModules();
@@ -42,5 +47,22 @@ describe('auth', () => {
     expect(token.value).toBeNull();
     setToken('mem');
     expect(token.value).toBe('mem');
+  });
+
+  it('user is null when there is no token', async () => {
+    const { user } = await import('./auth.js');
+    expect(user.value).toBeNull();
+  });
+
+  it('user decodes the token payload', async () => {
+    const { token, user } = await import('./auth.js');
+    token.value = makeToken({ sub: 'u1', role: 'admin', email: 'a@example.com' });
+    expect(user.value).toEqual({ sub: 'u1', role: 'admin', email: 'a@example.com' });
+  });
+
+  it('user is null for a malformed token', async () => {
+    const { token, user } = await import('./auth.js');
+    token.value = 'not-a-jwt';
+    expect(user.value).toBeNull();
   });
 });

@@ -4,8 +4,10 @@ import { createRouter, createMemoryHistory } from 'vue-router';
 import ProductsView from './ProductsView.vue';
 import { token } from '../auth';
 import { fetchProducts } from '../api';
+import { addToCart } from '../cart';
 
 vi.mock('../api', () => ({ fetchProducts: vi.fn() }));
+vi.mock('../cart', () => ({ addToCart: vi.fn() }));
 
 async function mountView() {
   const router = createRouter({
@@ -25,6 +27,7 @@ async function mountView() {
 describe('ProductsView', () => {
   beforeEach(() => {
     fetchProducts.mockReset();
+    addToCart.mockReset();
     token.value = 'tok';
   });
 
@@ -63,5 +66,42 @@ describe('ProductsView', () => {
     expect(token.value).toBeNull();
     expect(router.currentRoute.value.path).toBe('/login');
     expect(router.currentRoute.value.query.redirect).toBe('/products');
+  });
+
+  it('adds a product to the cart with the chosen quantity', async () => {
+    const product = { id: '1', name: 'Widget', item_number: 'W-1', description: 'A widget', company_price: 95, images: [] };
+    fetchProducts.mockResolvedValue([product]);
+    const { wrapper } = await mountView();
+
+    await wrapper.find('.quantity').setValue(3);
+    await wrapper.find('.add-to-cart button').trigger('click');
+
+    expect(addToCart).toHaveBeenCalledWith(product, 3);
+    expect(wrapper.find('.added-confirmation').text()).toBe('Added!');
+  });
+
+  it('falls back to a quantity of 1 when the quantity field is cleared', async () => {
+    const product = { id: '1', name: 'Widget', item_number: 'W-1', description: 'A widget', company_price: 95, images: [] };
+    fetchProducts.mockResolvedValue([product]);
+    const { wrapper } = await mountView();
+
+    await wrapper.find('.quantity').setValue('');
+    await wrapper.find('.add-to-cart button').trigger('click');
+
+    expect(addToCart).toHaveBeenCalledWith(product, 1);
+  });
+
+  it('opens and closes the image zoom overlay', async () => {
+    fetchProducts.mockResolvedValue([
+      { id: '1', name: 'Widget', item_number: 'W-1', description: 'A widget', company_price: 95, images: ['https://img/1.png'] },
+    ]);
+    const { wrapper } = await mountView();
+
+    expect(wrapper.find('.image-zoom-overlay').exists()).toBe(false);
+    await wrapper.find('.product-thumb').trigger('click');
+    expect(wrapper.find('.image-zoom-overlay img').attributes('src')).toBe('https://img/1.png');
+
+    await wrapper.find('.image-zoom-overlay').trigger('click');
+    expect(wrapper.find('.image-zoom-overlay').exists()).toBe(false);
   });
 });

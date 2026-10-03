@@ -22,3 +22,43 @@ export function login(email, password) {
 export function fetchProducts(token) {
   return request('/products', { headers: { 'X-Authorization': `Bearer ${token}` } });
 }
+
+export function createOrder(token, items) {
+  return request('/orders', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Authorization': `Bearer ${token}` },
+    body: JSON.stringify({ items }),
+  });
+}
+
+export function fetchOrders(token) {
+  return request('/orders', { headers: { 'X-Authorization': `Bearer ${token}` } });
+}
+
+export function fetchProfile(token) {
+  return request('/users/me', { headers: { 'X-Authorization': `Bearer ${token}` } });
+}
+
+export function updateProfile(token, updates) {
+  return request('/users/me', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'X-Authorization': `Bearer ${token}` },
+    body: JSON.stringify(updates),
+  });
+}
+
+export function createProduct(token, product) {
+  return request('/products', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Authorization': `Bearer ${token}` },
+    body: JSON.stringify(product),
+  });
+}
+
+export function uploadProductImage(token, productId, file) {
+  return request(`/products/${productId}/images`, {
+    method: 'POST',
+    headers: { 'Content-Type': file.type || 'application/octet-stream', 'X-Authorization': `Bearer ${token}` },
+    body: file,
+  });
+}

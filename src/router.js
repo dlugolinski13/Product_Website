@@ -2,18 +2,31 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 import HomeView from './views/HomeView.vue';
 import LoginView from './views/LoginView.vue';
 import ProductsView from './views/ProductsView.vue';
-import { token } from './auth';
+import CartView from './views/CartView.vue';
+import AccountView from './views/AccountView.vue';
+import ProfileEditView from './views/ProfileEditView.vue';
+import OrderHistoryView from './views/OrderHistoryView.vue';
+import UploadProductView from './views/UploadProductView.vue';
+import { token, user } from './auth';
 
 // Hash history so deep links work on Static Web Apps without extra fallback routing config.
 export const routes = [
   { path: '/', component: HomeView },
   { path: '/login', component: LoginView },
   { path: '/products', component: ProductsView, meta: { requiresAuth: true } },
+  { path: '/products/upload', component: UploadProductView, meta: { requiresAuth: true, requiresAdmin: true } },
+  { path: '/cart', component: CartView, meta: { requiresAuth: true } },
+  { path: '/account', component: AccountView, meta: { requiresAuth: true } },
+  { path: '/account/edit', component: ProfileEditView, meta: { requiresAuth: true } },
+  { path: '/orders', component: OrderHistoryView, meta: { requiresAuth: true } },
 ];
 
 export function requireAuth(to) {
   if (to.meta.requiresAuth && !token.value) {
     return { path: '/login', query: { redirect: to.fullPath } };
+  }
+  if (to.meta.requiresAdmin && user.value?.role !== 'admin') {
+    return { path: '/products' };
   }
 }
 
