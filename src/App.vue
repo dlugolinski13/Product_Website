@@ -30,9 +30,9 @@ function handleLogout() {
       </div>
       <div class="nav-account">
         <template v-if="token">
-          <RouterLink to="/account" class="account-link">Account</RouterLink>
           <div class="user-block">
             <span class="user-email">{{ user?.email }}</span>
+            <RouterLink to="/account" class="account-link">Account</RouterLink>
             <button type="button" @click="handleLogout">Sign out</button>
           </div>
         </template>
