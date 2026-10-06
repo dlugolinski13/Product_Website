@@ -33,6 +33,12 @@ async function sendOrder() {
     <template v-else>
       <ul class="cart-list">
         <li v-for="item in cart.items" :key="item.product.id" class="cart-item">
+          <img
+            v-if="item.product.images && item.product.images.length"
+            :src="item.product.images[0]"
+            :alt="item.product.name"
+            class="cart-item-thumbnail"
+          />
           <span class="cart-item-name">{{ item.product.name }}</span>
           <span class="cart-item-qty">{{ item.quantity }}</span>
           <span class="price">${{ Number(item.product.company_price).toFixed(2) }}</span>
@@ -47,3 +53,19 @@ async function sendOrder() {
     </template>
   </section>
 </template>
+
+<style scoped>
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.cart-item-thumbnail {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+</style>
