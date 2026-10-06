@@ -1,45 +1,45 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { login } from '../api';
+import { register } from '../api';
 import { setToken } from '../auth';
 
 const router = useRouter();
 const route = useRoute();
-const email = ref('');
+const email = ref(route.query.email || '');
 const password = ref('');
+const confirmPassword = ref('');
 const showPassword = ref(false);
 const error = ref('');
 const submitting = ref(false);
 
 async function submit() {
+  if (password.value !== confirmPassword.value) {
+    error.value = 'Passwords do not match';
+    return;
+  }
   error.value = '';
   submitting.value = true;
   try {
-    const result = await login(email.value, password.value);
+    const result = await register(email.value, password.value);
     setToken(result.token);
-    router.push(route.query.redirect || '/');
+    router.push('/');
   } catch (err) {
     error.value = err.message;
   } finally {
     submitting.value = false;
   }
 }
-
-function goToCreateAccount() {
-  const query = email.value ? { email: email.value } : {};
-  router.push({ path: '/create-account', query });
-}
 </script>
 
 <template>
   <section>
-    <h1>Log in</h1>
+    <h1>Create Account</h1>
     <form @submit.prevent="submit">
       <label>Email <input v-model="email" type="email" autocomplete="username" required /></label>
       <label>Password
         <span class="password-field">
-          <input v-model="password" :type="showPassword ? 'text' : 'password'" autocomplete="current-password" required />
+          <input v-model="password" :type="showPassword ? 'text' : 'password'" autocomplete="new-password" required />
           <button
             type="button"
             class="toggle-password"
@@ -57,10 +57,11 @@ function goToCreateAccount() {
           </button>
         </span>
       </label>
-      <button type="submit" :disabled="submitting">Log in</button>
+      <label>Confirm password <input v-model="confirmPassword" :type="showPassword ? 'text' : 'password'" autocomplete="new-password" required /></label>
+      <button type="submit" :disabled="submitting">Create Account</button>
       <p v-if="error" class="error" role="alert">{{ error }}</p>
     </form>
-    <button type="button" class="create-account-btn" @click="goToCreateAccount">Create Account</button>
+    <p class="login-link"><RouterLink to="/login">Already have an account? Log in</RouterLink></p>
   </section>
 </template>
 
@@ -109,7 +110,7 @@ button[type="submit"] {
   font-size: 1.1rem;
 }
 
-.create-account-btn {
+.login-link {
   margin-top: 1rem;
 }
 </style>

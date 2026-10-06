@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import HomeView from './views/HomeView.vue';
 import LoginView from './views/LoginView.vue';
+import CreateAccountView from './views/CreateAccountView.vue';
 import ProductsView from './views/ProductsView.vue';
 import ProductDetailView from './views/ProductDetailView.vue';
 import CartView from './views/CartView.vue';
@@ -14,6 +15,7 @@ import { token, user } from './auth';
 export const routes = [
   { path: '/', component: HomeView },
   { path: '/login', component: LoginView },
+  { path: '/create-account', component: CreateAccountView },
   { path: '/products', component: ProductsView, meta: { requiresAuth: true } },
   { path: '/products/:id', component: ProductDetailView, meta: { requiresAuth: true } },
   { path: '/cart', component: CartView, meta: { requiresAuth: true } },

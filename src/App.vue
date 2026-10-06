@@ -44,3 +44,14 @@ function handleLogout() {
     <RouterView />
   </main>
 </template>
+
+<style scoped>
+.user-email {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+  vertical-align: middle;
+}
+</style>

@@ -13,6 +13,7 @@ async function mountAt(path) {
     routes: [
       { path: '/', component: { template: '<div />' } },
       { path: '/login', component: LoginView },
+      { path: '/create-account', component: { template: '<div />' } },
       { path: '/products', component: { template: '<div />' } },
       { path: '/other', component: { template: '<div />' } },
     ],
@@ -60,6 +61,23 @@ describe('LoginView', () => {
     expect(wrapper.find('[role="alert"]').text()).toBe('Invalid credentials');
     expect(token.value).toBeNull();
     expect(router.currentRoute.value.path).toBe('/login');
+  });
+
+  it('navigates to /create-account with no query when email is empty', async () => {
+    const { wrapper, router } = await mountAt('/login');
+    await wrapper.find('button.create-account-btn').trigger('click');
+    await flushPromises();
+    expect(router.currentRoute.value.path).toBe('/create-account');
+    expect(router.currentRoute.value.query.email).toBeUndefined();
+  });
+
+  it('navigates to /create-account with email query when email is filled', async () => {
+    const { wrapper, router } = await mountAt('/login');
+    await wrapper.find('input[type="email"]').setValue('test@example.com');
+    await wrapper.find('button.create-account-btn').trigger('click');
+    await flushPromises();
+    expect(router.currentRoute.value.path).toBe('/create-account');
+    expect(router.currentRoute.value.query.email).toBe('test@example.com');
   });
 
   it('toggles password visibility when the eye button is clicked', async () => {
