@@ -27,7 +27,7 @@ describe('login', () => {
       nodeRequire,
       {
         '@azure/functions': { app: { http: (name, options) => routes.set(name, options) } },
-        '../../src/lib/db': { sql: { NVarChar: 'NVarChar' }, getPool: (...args) => getPoolMock(...args) },
+        '../../src/lib/db': { sql: { NVarChar: 'NVarChar', UniqueIdentifier: 'UniqueIdentifier' }, getPool: (...args) => getPoolMock(...args) },
         '../../src/lib/auth': { signToken: (...args) => signTokenMock(...args) },
       },
       '../../src/functions/login.js'
@@ -63,9 +63,22 @@ describe('login', () => {
 
   it('returns a token and role for valid credentials', async () => {
     const hash = await bcrypt.hash('correct-password', 4);
-    queryMock.mockResolvedValue({ recordset: [{ id: '1', email: 'a@example.com', password_hash: hash, role: 'admin' }] });
+    queryMock
+      .mockResolvedValueOnce({ recordset: [{ id: '1', email: 'a@example.com', password_hash: hash, role: 'admin' }] })
+      .mockResolvedValueOnce({ recordset: [{ cnt: 1 }] });
     const result = await handler(fakeRequest({ email: 'a@example.com', password: 'correct-password' }), fakeContext());
     expect(result.jsonBody).toEqual({ token: 'signed-jwt', role: 'admin' });
+  });
+
+  it('creates the account record when it is missing after successful login', async () => {
+    const hash = await bcrypt.hash('correct-password', 4);
+    queryMock
+      .mockResolvedValueOnce({ recordset: [{ id: '1', email: 'a@example.com', password_hash: hash, role: 'customer' }] })
+      .mockResolvedValueOnce({ recordset: [{ cnt: 0 }] })
+      .mockResolvedValueOnce({ recordset: [] });
+    const result = await handler(fakeRequest({ email: 'a@example.com', password: 'correct-password' }), fakeContext());
+    expect(result.jsonBody).toEqual({ token: 'signed-jwt', role: 'customer' });
+    expect(queryMock).toHaveBeenCalledTimes(3);
   });
 
   it('returns 500 and logs when the database call fails', async () => {

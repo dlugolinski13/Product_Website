@@ -26,6 +26,21 @@ app.http('login', {
       }
 
       const token = signToken(user);
+
+      const acctCheck = await pool
+        .request()
+        .input('uid', sql.UniqueIdentifier, user.id)
+        .query('SELECT COUNT(1) AS cnt FROM users WHERE id = @uid');
+      if (acctCheck.recordset[0].cnt === 0) {
+        await pool
+          .request()
+          .input('uid', sql.UniqueIdentifier, user.id)
+          .input('email', sql.NVarChar, user.email)
+          .input('role', sql.NVarChar, user.role)
+          .input('hash', sql.NVarChar, user.password_hash)
+          .query('INSERT INTO users (id, email, password_hash, role) VALUES (@uid, @email, @hash, @role)');
+      }
+
       return { jsonBody: { token, role: user.role } };
     } catch (err) {
       context.error('login failed', err);
