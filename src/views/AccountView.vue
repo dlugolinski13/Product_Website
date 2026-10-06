@@ -67,8 +67,8 @@ async function setCustomerSalesperson(customerId, salespersonId) {
     <p v-if="loading">Loading…</p>
     <p v-else-if="error" role="alert">{{ error }}</p>
     <template v-else-if="user">
-      <div class="account-profile">
-        <h2>Profile</h2>
+      <div class="account-profile account-section">
+        <h2 class="section-heading">Profile</h2>
         <p class="account-email">{{ user.email }} <span class="account-role">({{ user.role }})</span></p>
         <p class="account-name">{{ user.fullName || 'No name on file' }}</p>
         <p v-if="user.addressLine1" class="account-address">
@@ -82,8 +82,8 @@ async function setCustomerSalesperson(customerId, salespersonId) {
         </ul>
       </div>
 
-      <div v-if="user.role === 'customer'" class="account-salesperson">
-        <h2>Your salesperson</h2>
+      <div v-if="user.role === 'customer'" class="account-salesperson account-section">
+        <h2 class="section-heading">Your Salesperson</h2>
         <p v-if="user.salesperson">
           {{ user.salesperson.fullName || user.salesperson.email }}
           ({{ user.salesperson.email }})
@@ -91,8 +91,8 @@ async function setCustomerSalesperson(customerId, salespersonId) {
         <p v-else>No salesperson assigned.</p>
       </div>
 
-      <div v-if="user.role === 'salesperson'" class="account-customers">
-        <h2>Customers</h2>
+      <div v-if="user.role === 'salesperson'" class="account-customers account-section">
+        <h2 class="section-heading">Customers</h2>
         <p v-if="customersLoading">Loading…</p>
         <p v-else-if="customersError" role="alert">{{ customersError }}</p>
         <template v-else>
@@ -133,3 +133,96 @@ async function setCustomerSalesperson(customerId, salespersonId) {
     </template>
   </section>
 </template>
+
+<style scoped>
+.account-section {
+  margin-bottom: 2rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.section-heading {
+  margin: 0 0 0.75rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.5rem;
+}
+
+.account-email {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0 0 0.25rem;
+}
+
+.account-role {
+  font-weight: 400;
+  color: #6b7280;
+}
+
+.account-name {
+  color: #374151;
+  margin: 0 0 0.5rem;
+}
+
+.account-address {
+  color: #6b7280;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0 0 0.75rem;
+}
+
+.account-links {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0 0;
+  display: flex;
+  gap: 1rem;
+}
+
+.account-links a {
+  font-size: 0.9rem;
+  text-decoration: none;
+  color: #2563eb;
+}
+
+.account-links a:hover {
+  text-decoration: underline;
+}
+
+.customers-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.customers-table th {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  background: #f3f4f6;
+  border-bottom: 2px solid #e5e7eb;
+  font-weight: 600;
+  color: #374151;
+}
+
+.customer-row td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: middle;
+}
+
+.customer-email {
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+.salesperson-select {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+</style>

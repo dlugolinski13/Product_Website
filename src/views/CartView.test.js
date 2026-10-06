@@ -103,6 +103,23 @@ describe('CartView', () => {
     expect(wrapper.vm.$router.currentRoute.value.path).toBe('/orders');
   });
 
+  it('shows a thumbnail when the product has images', () => {
+    const cart = useCartStore();
+    cart.addItem({ id: '1', name: 'Widget', company_price: 10, images: ['http://img/1.jpg'] });
+    const wrapper = mountView(pinia);
+    const img = wrapper.find('.cart-item-thumbnail');
+    expect(img.exists()).toBe(true);
+    expect(img.attributes('src')).toBe('http://img/1.jpg');
+    expect(img.attributes('alt')).toBe('Widget');
+  });
+
+  it('does not show a thumbnail when the product has no images', () => {
+    const cart = useCartStore();
+    cart.addItem({ id: '1', name: 'Widget', company_price: 10, images: [] });
+    const wrapper = mountView(pinia);
+    expect(wrapper.find('.cart-item-thumbnail').exists()).toBe(false);
+  });
+
   it('shows an error and keeps cart intact when the order fails', async () => {
     createOrder.mockRejectedValue(new Error('server error'));
     const cart = useCartStore();
