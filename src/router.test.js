@@ -12,10 +12,11 @@ describe('router', () => {
     token.value = null;
   });
 
-  it('defines home, login, products, product-detail, cart, upload-product, orders, account and edit-profile routes', () => {
+  it('defines home, login, create-account, products, product-detail, cart, upload-product, orders, account and edit-profile routes', () => {
     expect(routes.map((r) => r.path)).toEqual([
       '/',
       '/login',
+      '/create-account',
       '/products',
       '/products/:id',
       '/cart',
