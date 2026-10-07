@@ -129,7 +129,7 @@ async function removeCustomerFromList(customerId) {
                 {{ c.fullName || c.email }} ({{ c.email }})
               </option>
             </select>
-            <button :disabled="!selectedCustomerId || adding" @click="addCustomerToList" class="add-btn">
+            <button :disabled="!selectedCustomerId || adding" @click="addCustomerToList" class="cta add-btn">
               Add
             </button>
           </div>
@@ -151,7 +151,7 @@ async function removeCustomerFromList(customerId) {
                   <button
                     :disabled="removing === customer.id"
                     @click="removeCustomerFromList(customer.id)"
-                    class="remove-btn"
+                    class="cta remove-btn"
                   >Remove</button>
                 </td>
               </tr>
@@ -238,20 +238,8 @@ async function removeCustomerFromList(customerId) {
 
 .customer-add-select {
   flex: 1;
-  padding: 0.25rem 0.5rem;
   border: 1px solid #d1d5db;
   border-radius: 4px;
-  font-size: 0.875rem;
-}
-
-.add-btn {
-  padding: 0.25rem 0.75rem;
-  background: #2563eb;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  cursor: pointer;
 }
 
 .add-btn:disabled {
@@ -283,16 +271,6 @@ async function removeCustomerFromList(customerId) {
 .customer-email {
   color: #6b7280;
   font-size: 0.85rem;
-}
-
-.remove-btn {
-  padding: 0.2rem 0.6rem;
-  background: #fff;
-  color: #dc2626;
-  border: 1px solid #dc2626;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  cursor: pointer;
 }
 
 .remove-btn:disabled {

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { login, fetchProducts, createProduct, addProductImage, createOrder, fetchOrders, fetchAccount, updateAccount, fetchCustomers, assignSalesperson, removeCustomer } from './api.js';
+import { login, fetchProducts, createProduct, addProductImage, createOrder, fetchOrders, fetchAccount, updateAccount, fetchCustomers, assignSalesperson, removeCustomer, fetchAdminCustomers, adminAssignSalesperson } from './api.js';
 
 function mockFetch(status, body) {
   globalThis.fetch = vi.fn(async () => ({
@@ -134,5 +134,24 @@ describe('api', () => {
     expect(url).toBe('/api/account/customers/cust-1');
     expect(options.method).toBe('DELETE');
     expect(options.headers['X-Authorization']).toBe('Bearer tok');
+  });
+
+  it('fetchAdminCustomers sends the token in X-Authorization and returns the body', async () => {
+    mockFetch(200, { customers: [], salespeople: [] });
+    const result = await fetchAdminCustomers('tok');
+    expect(result).toEqual({ customers: [], salespeople: [] });
+    const [url, options] = fetch.mock.calls[0];
+    expect(url).toBe('/api/manage/customers');
+    expect(options.headers['X-Authorization']).toBe('Bearer tok');
+  });
+
+  it('adminAssignSalesperson PUTs salespersonId JSON with X-Authorization', async () => {
+    mockFetch(204, {});
+    await adminAssignSalesperson('tok', 'cust-1', 'sp-1');
+    const [url, options] = fetch.mock.calls[0];
+    expect(url).toBe('/api/manage/customers/cust-1/salesperson');
+    expect(options.method).toBe('PUT');
+    expect(options.headers['X-Authorization']).toBe('Bearer tok');
+    expect(JSON.parse(options.body)).toEqual({ salespersonId: 'sp-1' });
   });
 });

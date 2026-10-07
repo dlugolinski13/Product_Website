@@ -90,11 +90,11 @@ export function removeCustomer(token, customerId) {
 }
 
 export function fetchAdminCustomers(token) {
-  return request('/admin/customers', { headers: { 'X-Authorization': `Bearer ${token}` } });
+  return request('/manage/customers', { headers: { 'X-Authorization': `Bearer ${token}` } });
 }
 
 export function adminAssignSalesperson(token, customerId, salespersonId) {
-  return request(`/admin/customers/${customerId}/salesperson`, {
+  return request(`/manage/customers/${customerId}/salesperson`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', 'X-Authorization': `Bearer ${token}` },
     body: JSON.stringify({ salespersonId }),
