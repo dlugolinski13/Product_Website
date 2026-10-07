@@ -3,9 +3,9 @@ import { mount, flushPromises } from '@vue/test-utils';
 import { createRouter, createMemoryHistory } from 'vue-router';
 import EditProfileView from './EditProfileView.vue';
 import { token } from '../auth';
-import { fetchAccount, updateAccount } from '../api';
+import { fetchAccount, updateAccount, changePassword } from '../api';
 
-vi.mock('../api', () => ({ fetchAccount: vi.fn(), updateAccount: vi.fn() }));
+vi.mock('../api', () => ({ fetchAccount: vi.fn(), updateAccount: vi.fn(), changePassword: vi.fn() }));
 
 const customerUser = {
   id: 'u1', email: 'alice@x.com', fullName: 'Alice', role: 'customer',
@@ -33,6 +33,7 @@ describe('EditProfileView', () => {
   beforeEach(() => {
     fetchAccount.mockReset();
     updateAccount.mockReset();
+    changePassword.mockReset();
     token.value = 'tok';
   });
 
@@ -117,5 +118,87 @@ describe('EditProfileView', () => {
     fetchAccount.mockResolvedValue(customerUser);
     const { wrapper } = await mountView();
     expect(wrapper.text()).toContain('Back to account');
+  });
+
+  describe('Change Password', () => {
+    it('renders the change password form', async () => {
+      fetchAccount.mockResolvedValue(customerUser);
+      const { wrapper } = await mountView();
+      expect(wrapper.find('.password-form').exists()).toBe(true);
+      expect(wrapper.text()).toContain('Change Password');
+    });
+
+    it('calls changePassword with correct args on submit', async () => {
+      fetchAccount.mockResolvedValue(customerUser);
+      changePassword.mockResolvedValue(undefined);
+      const { wrapper } = await mountView();
+      const form = wrapper.find('.password-form');
+      const inputs = form.findAll('input[type="password"]');
+      await inputs[0].setValue('oldpass1');
+      await inputs[1].setValue('newpass123');
+      await inputs[2].setValue('newpass123');
+      await form.trigger('submit');
+      await flushPromises();
+      expect(changePassword).toHaveBeenCalledWith('tok', 'oldpass1', 'newpass123');
+    });
+
+    it('shows success message after password change', async () => {
+      fetchAccount.mockResolvedValue(customerUser);
+      changePassword.mockResolvedValue(undefined);
+      const { wrapper } = await mountView();
+      const form = wrapper.find('.password-form');
+      const inputs = form.findAll('input[type="password"]');
+      await inputs[0].setValue('oldpass1');
+      await inputs[1].setValue('newpass123');
+      await inputs[2].setValue('newpass123');
+      await form.trigger('submit');
+      await flushPromises();
+      expect(wrapper.find('.password-success').exists()).toBe(true);
+    });
+
+    it('shows error when new passwords do not match', async () => {
+      fetchAccount.mockResolvedValue(customerUser);
+      const { wrapper } = await mountView();
+      const form = wrapper.find('.password-form');
+      const inputs = form.findAll('input[type="password"]');
+      await inputs[0].setValue('oldpass1');
+      await inputs[1].setValue('newpass123');
+      await inputs[2].setValue('different');
+      await form.trigger('submit');
+      await flushPromises();
+      expect(changePassword).not.toHaveBeenCalled();
+      const alert = form.find('[role="alert"]');
+      expect(alert.text()).toContain('do not match');
+    });
+
+    it('shows error when changePassword API fails', async () => {
+      fetchAccount.mockResolvedValue(customerUser);
+      changePassword.mockRejectedValue(Object.assign(new Error('Current password is incorrect'), { status: 401 }));
+      const { wrapper } = await mountView();
+      const form = wrapper.find('.password-form');
+      const inputs = form.findAll('input[type="password"]');
+      await inputs[0].setValue('wrongpass');
+      await inputs[1].setValue('newpass123');
+      await inputs[2].setValue('newpass123');
+      await form.trigger('submit');
+      await flushPromises();
+      expect(form.find('[role="alert"]').text()).toBe('Current password is incorrect');
+    });
+
+    it('clears password fields after successful change', async () => {
+      fetchAccount.mockResolvedValue(customerUser);
+      changePassword.mockResolvedValue(undefined);
+      const { wrapper } = await mountView();
+      const form = wrapper.find('.password-form');
+      const inputs = form.findAll('input[type="password"]');
+      await inputs[0].setValue('oldpass1');
+      await inputs[1].setValue('newpass123');
+      await inputs[2].setValue('newpass123');
+      await form.trigger('submit');
+      await flushPromises();
+      for (const input of form.findAll('input[type="password"]')) {
+        expect(input.element.value).toBe('');
+      }
+    });
   });
 });
