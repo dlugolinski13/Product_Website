@@ -88,3 +88,15 @@ export function removeCustomer(token, customerId) {
     headers: { 'X-Authorization': `Bearer ${token}` },
   });
 }
+
+export function fetchAdminCustomers(token) {
+  return request('/admin/customers', { headers: { 'X-Authorization': `Bearer ${token}` } });
+}
+
+export function adminAssignSalesperson(token, customerId, salespersonId) {
+  return request(`/admin/customers/${customerId}/salesperson`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'X-Authorization': `Bearer ${token}` },
+    body: JSON.stringify({ salespersonId }),
+  });
+}
