@@ -12,20 +12,30 @@ app.http('getAccount', {
 
     try {
       const pool = await getPool();
-      const result = await pool
+
+      const userResult = await pool
         .request()
         .input('id', sql.UniqueIdentifier, auth.claims.sub)
         .query(`
-          SELECT u.id, u.email, u.full_name, u.role,
-                 u.address_line1, u.address_line2, u.city, u.state, u.postal_code, u.country,
-                 s.id AS sp_id, s.full_name AS sp_full_name, s.email AS sp_email
-          FROM users u
-          LEFT JOIN users s ON s.id = u.salesperson_id
-          WHERE u.id = @id
+          SELECT id, email, full_name, role,
+                 address_line1, address_line2, city, state, postal_code, country
+          FROM users
+          WHERE id = @id
         `);
 
-      const row = result.recordset[0];
+      const row = userResult.recordset[0];
       if (!row) return { status: 404 };
+
+      const salespersonsResult = await pool
+        .request()
+        .input('id', sql.UniqueIdentifier, auth.claims.sub)
+        .query(`
+          SELECT s.id, s.full_name, s.email
+          FROM salesperson_customers sc
+          JOIN users s ON s.id = sc.salesperson_id
+          WHERE sc.customer_id = @id
+          ORDER BY s.full_name, s.email
+        `);
 
       return {
         jsonBody: {
@@ -39,9 +49,11 @@ app.http('getAccount', {
           state: row.state,
           postalCode: row.postal_code,
           country: row.country,
-          salesperson: row.sp_id
-            ? { id: row.sp_id, fullName: row.sp_full_name, email: row.sp_email }
-            : null,
+          salespersons: salespersonsResult.recordset.map(r => ({
+            id: r.id,
+            fullName: r.full_name,
+            email: r.email,
+          })),
         },
       };
     } catch (err) {
@@ -93,8 +105,8 @@ app.http('updateAccount', {
   },
 });
 
-// Returns all customers with their assigned salesperson, plus all salesperson users
-// so the frontend can populate an assignment dropdown.
+// Returns the calling salesperson's assigned customers (from the junction table)
+// and all customers not yet in their list (for the add-customer dropdown).
 app.http('listCustomers', {
   methods: ['GET'],
   authLevel: 'anonymous',
@@ -106,33 +118,38 @@ app.http('listCustomers', {
     try {
       const pool = await getPool();
 
-      const customersResult = await pool.request().query(`
-        SELECT u.id, u.email, u.full_name,
-               s.id AS sp_id, s.full_name AS sp_full_name, s.email AS sp_email
-        FROM users u
-        LEFT JOIN users s ON s.id = u.salesperson_id
-        WHERE u.role = 'customer'
-        ORDER BY u.full_name, u.email
-      `);
+      const assignedResult = await pool
+        .request()
+        .input('salespersonId', sql.UniqueIdentifier, auth.claims.sub)
+        .query(`
+          SELECT u.id, u.email, u.full_name
+          FROM salesperson_customers sc
+          JOIN users u ON u.id = sc.customer_id
+          WHERE sc.salesperson_id = @salespersonId
+          ORDER BY u.full_name, u.email
+        `);
 
-      const salespersonsResult = await pool.request().query(`
-        SELECT id, email, full_name
-        FROM users
-        WHERE role = 'salesperson'
-        ORDER BY full_name, email
-      `);
+      const availableResult = await pool
+        .request()
+        .input('salespersonId', sql.UniqueIdentifier, auth.claims.sub)
+        .query(`
+          SELECT u.id, u.email, u.full_name
+          FROM users u
+          WHERE u.role = 'customer'
+            AND u.id NOT IN (
+              SELECT customer_id FROM salesperson_customers WHERE salesperson_id = @salespersonId
+            )
+          ORDER BY u.full_name, u.email
+        `);
 
       return {
         jsonBody: {
-          customers: customersResult.recordset.map(row => ({
+          customers: assignedResult.recordset.map(row => ({
             id: row.id,
             email: row.email,
             fullName: row.full_name,
-            salesperson: row.sp_id
-              ? { id: row.sp_id, fullName: row.sp_full_name, email: row.sp_email }
-              : null,
           })),
-          salespersons: salespersonsResult.recordset.map(row => ({
+          availableCustomers: availableResult.recordset.map(row => ({
             id: row.id,
             email: row.email,
             fullName: row.full_name,
@@ -146,8 +163,7 @@ app.http('listCustomers', {
   },
 });
 
-// One-salesperson-per-customer is enforced by the single salesperson_id column: each UPDATE
-// simply overwrites any previous assignment.
+// Adds a customer to the calling salesperson's list (idempotent).
 app.http('assignSalesperson', {
   methods: ['PUT'],
   authLevel: 'anonymous',
@@ -157,8 +173,6 @@ app.http('assignSalesperson', {
     if (!auth.ok) return { status: auth.status };
 
     const { customerId } = request.params;
-    const body = await request.json();
-    const salespersonId = body.salespersonId || null;
 
     try {
       const pool = await getPool();
@@ -172,26 +186,62 @@ app.http('assignSalesperson', {
         return { status: 404, jsonBody: { error: 'Customer not found' } };
       }
 
-      if (salespersonId) {
-        const spResult = await pool
-          .request()
-          .input('salespersonId', sql.UniqueIdentifier, salespersonId)
-          .query("SELECT id FROM users WHERE id = @salespersonId AND role = 'salesperson'");
-
-        if (!spResult.recordset[0]) {
-          return { status: 400, jsonBody: { error: 'Salesperson not found' } };
-        }
-      }
-
       await pool
         .request()
+        .input('salespersonId', sql.UniqueIdentifier, auth.claims.sub)
         .input('customerId', sql.UniqueIdentifier, customerId)
-        .input('salespersonId', sql.UniqueIdentifier, salespersonId)
-        .query('UPDATE dbo.users SET salesperson_id = @salespersonId WHERE id = @customerId');
+        .query(`
+          IF NOT EXISTS (
+            SELECT 1 FROM salesperson_customers
+            WHERE salesperson_id = @salespersonId AND customer_id = @customerId
+          )
+            INSERT INTO salesperson_customers (salesperson_id, customer_id)
+            VALUES (@salespersonId, @customerId)
+        `);
 
       return { status: 204 };
     } catch (err) {
       context.error('assignSalesperson failed', err);
+      return { status: 500, jsonBody: { error: err.message } };
+    }
+  },
+});
+
+// Removes a customer from the calling salesperson's list.
+app.http('removeCustomer', {
+  methods: ['DELETE'],
+  authLevel: 'anonymous',
+  route: 'account/customers/{customerId}',
+  handler: async (request, context) => {
+    const auth = requireRole(request, 'salesperson');
+    if (!auth.ok) return { status: auth.status };
+
+    const { customerId } = request.params;
+
+    try {
+      const pool = await getPool();
+
+      const customerResult = await pool
+        .request()
+        .input('customerId', sql.UniqueIdentifier, customerId)
+        .query("SELECT id FROM users WHERE id = @customerId AND role = 'customer'");
+
+      if (!customerResult.recordset[0]) {
+        return { status: 404, jsonBody: { error: 'Customer not found' } };
+      }
+
+      await pool
+        .request()
+        .input('salespersonId', sql.UniqueIdentifier, auth.claims.sub)
+        .input('customerId', sql.UniqueIdentifier, customerId)
+        .query(`
+          DELETE FROM dbo.salesperson_customers
+          WHERE salesperson_id = @salespersonId AND customer_id = @customerId
+        `);
+
+      return { status: 204 };
+    } catch (err) {
+      context.error('removeCustomer failed', err);
       return { status: 500, jsonBody: { error: err.message } };
     }
   },

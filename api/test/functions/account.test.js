@@ -23,6 +23,7 @@ describe('account', () => {
   let updateHandler;
   let listCustomersHandler;
   let assignHandler;
+  let removeHandler;
 
   beforeAll(() => {
     loadWithMocks(
@@ -41,6 +42,7 @@ describe('account', () => {
     updateHandler = routes.get('updateAccount').handler;
     listCustomersHandler = routes.get('listCustomers').handler;
     assignHandler = routes.get('assignSalesperson').handler;
+    removeHandler = routes.get('removeCustomer').handler;
   });
 
   beforeEach(() => {
@@ -65,37 +67,47 @@ describe('account', () => {
       expect(result.status).toBe(404);
     });
 
-    it('returns user profile with no salesperson', async () => {
+    it('returns user profile with empty salespersons when none assigned', async () => {
       requireRoleMock.mockReturnValue({ ok: true, claims: { sub: 'u1', role: 'customer' } });
-      queryMock.mockResolvedValue({
-        recordset: [{
-          id: 'u1', email: 'a@b.com', full_name: 'Alice', role: 'customer',
-          address_line1: '1 Main St', address_line2: null, city: 'Springfield',
-          state: 'IL', postal_code: '62701', country: 'US',
-          sp_id: null, sp_full_name: null, sp_email: null,
-        }],
-      });
+      queryMock
+        .mockResolvedValueOnce({
+          recordset: [{
+            id: 'u1', email: 'a@b.com', full_name: 'Alice', role: 'customer',
+            address_line1: '1 Main St', address_line2: null, city: 'Springfield',
+            state: 'IL', postal_code: '62701', country: 'US',
+          }],
+        })
+        .mockResolvedValueOnce({ recordset: [] });
       const result = await getHandler(fakeRequest(), fakeContext());
       expect(result.jsonBody).toEqual({
         id: 'u1', email: 'a@b.com', fullName: 'Alice', role: 'customer',
         addressLine1: '1 Main St', addressLine2: null, city: 'Springfield',
         state: 'IL', postalCode: '62701', country: 'US',
-        salesperson: null,
+        salespersons: [],
       });
     });
 
-    it('returns user profile with salesperson', async () => {
+    it('returns user profile with assigned salespersons', async () => {
       requireRoleMock.mockReturnValue({ ok: true, claims: { sub: 'u1', role: 'customer' } });
-      queryMock.mockResolvedValue({
-        recordset: [{
-          id: 'u1', email: 'a@b.com', full_name: 'Alice', role: 'customer',
-          address_line1: null, address_line2: null, city: null,
-          state: null, postal_code: null, country: null,
-          sp_id: 'sp1', sp_full_name: 'Bob', sp_email: 'bob@co.com',
-        }],
-      });
+      queryMock
+        .mockResolvedValueOnce({
+          recordset: [{
+            id: 'u1', email: 'a@b.com', full_name: 'Alice', role: 'customer',
+            address_line1: null, address_line2: null, city: null,
+            state: null, postal_code: null, country: null,
+          }],
+        })
+        .mockResolvedValueOnce({
+          recordset: [
+            { id: 'sp1', full_name: 'Bob', email: 'bob@co.com' },
+            { id: 'sp2', full_name: 'Carol', email: 'carol@co.com' },
+          ],
+        });
       const result = await getHandler(fakeRequest(), fakeContext());
-      expect(result.jsonBody.salesperson).toEqual({ id: 'sp1', fullName: 'Bob', email: 'bob@co.com' });
+      expect(result.jsonBody.salespersons).toEqual([
+        { id: 'sp1', fullName: 'Bob', email: 'bob@co.com' },
+        { id: 'sp2', fullName: 'Carol', email: 'carol@co.com' },
+      ]);
     });
 
     it('returns 500 and logs on db failure', async () => {
@@ -149,28 +161,37 @@ describe('account', () => {
       expect(result.status).toBe(403);
     });
 
-    it('returns customers and salespersons', async () => {
+    it('returns assigned customers and available customers', async () => {
       requireRoleMock.mockReturnValue({ ok: true, claims: { sub: 'sp1', role: 'salesperson' } });
       queryMock
         .mockResolvedValueOnce({
           recordset: [
-            { id: 'c1', email: 'c@x.com', full_name: 'Carol', sp_id: 'sp1', sp_full_name: 'Bob', sp_email: 'bob@co.com' },
-            { id: 'c2', email: 'd@x.com', full_name: 'Dave', sp_id: null, sp_full_name: null, sp_email: null },
+            { id: 'c1', email: 'c@x.com', full_name: 'Carol' },
           ],
         })
         .mockResolvedValueOnce({
           recordset: [
-            { id: 'sp1', email: 'bob@co.com', full_name: 'Bob' },
+            { id: 'c2', email: 'd@x.com', full_name: 'Dave' },
           ],
         });
 
       const result = await listCustomersHandler(fakeRequest(), fakeContext());
 
-      expect(result.jsonBody.customers).toHaveLength(2);
-      expect(result.jsonBody.customers[0].salesperson).toEqual({ id: 'sp1', fullName: 'Bob', email: 'bob@co.com' });
-      expect(result.jsonBody.customers[1].salesperson).toBeNull();
-      expect(result.jsonBody.salespersons).toHaveLength(1);
-      expect(result.jsonBody.salespersons[0]).toEqual({ id: 'sp1', email: 'bob@co.com', fullName: 'Bob' });
+      expect(result.jsonBody.customers).toHaveLength(1);
+      expect(result.jsonBody.customers[0]).toEqual({ id: 'c1', email: 'c@x.com', fullName: 'Carol' });
+      expect(result.jsonBody.availableCustomers).toHaveLength(1);
+      expect(result.jsonBody.availableCustomers[0]).toEqual({ id: 'c2', email: 'd@x.com', fullName: 'Dave' });
+    });
+
+    it('returns empty lists when no customers', async () => {
+      requireRoleMock.mockReturnValue({ ok: true, claims: { sub: 'sp1', role: 'salesperson' } });
+      queryMock
+        .mockResolvedValueOnce({ recordset: [] })
+        .mockResolvedValueOnce({ recordset: [] });
+
+      const result = await listCustomersHandler(fakeRequest(), fakeContext());
+      expect(result.jsonBody.customers).toHaveLength(0);
+      expect(result.jsonBody.availableCustomers).toHaveLength(0);
     });
 
     it('returns 500 and logs on db failure', async () => {
@@ -200,56 +221,78 @@ describe('account', () => {
       requireRoleMock.mockReturnValue({ ok: true, claims: { sub: 'sp1', role: 'salesperson' } });
       queryMock.mockResolvedValue({ recordset: [] });
       const result = await assignHandler(
-        fakeRequest({ salespersonId: 'sp1' }, { customerId: 'missing' }),
+        fakeRequest({}, { customerId: 'missing' }),
         fakeContext()
       );
       expect(result.status).toBe(404);
     });
 
-    it('returns 400 when salespersonId does not belong to a salesperson', async () => {
-      requireRoleMock.mockReturnValue({ ok: true, claims: { sub: 'sp1', role: 'salesperson' } });
-      queryMock
-        .mockResolvedValueOnce({ recordset: [{ id: 'c1' }] })
-        .mockResolvedValueOnce({ recordset: [] });
-      const result = await assignHandler(
-        fakeRequest({ salespersonId: 'not-a-sp' }, { customerId: 'c1' }),
-        fakeContext()
-      );
-      expect(result.status).toBe(400);
-    });
-
-    it('assigns a salesperson and returns 204', async () => {
-      requireRoleMock.mockReturnValue({ ok: true, claims: { sub: 'sp1', role: 'salesperson' } });
-      queryMock
-        .mockResolvedValueOnce({ recordset: [{ id: 'c1' }] })
-        .mockResolvedValueOnce({ recordset: [{ id: 'sp1' }] })
-        .mockResolvedValueOnce({});
-      const result = await assignHandler(
-        fakeRequest({ salespersonId: 'sp1' }, { customerId: 'c1' }),
-        fakeContext()
-      );
-      expect(result.status).toBe(204);
-    });
-
-    it('unassigns salesperson when salespersonId is null', async () => {
+    it('adds customer to salesperson list and returns 204', async () => {
       requireRoleMock.mockReturnValue({ ok: true, claims: { sub: 'sp1', role: 'salesperson' } });
       queryMock
         .mockResolvedValueOnce({ recordset: [{ id: 'c1' }] })
         .mockResolvedValueOnce({});
       const result = await assignHandler(
-        fakeRequest({ salespersonId: null }, { customerId: 'c1' }),
+        fakeRequest({}, { customerId: 'c1' }),
         fakeContext()
       );
       expect(result.status).toBe(204);
-      // Only two queries: customer check + update (no salesperson lookup when unassigning)
       expect(queryMock).toHaveBeenCalledTimes(2);
+      expect(queryMock).toHaveBeenLastCalledWith(expect.stringContaining('INSERT INTO salesperson_customers'));
     });
 
     it('returns 500 and logs on db failure', async () => {
       requireRoleMock.mockReturnValue({ ok: true, claims: { sub: 'sp1', role: 'salesperson' } });
       getPoolMock.mockRejectedValueOnce(new Error('db down'));
       const context = fakeContext();
-      const result = await assignHandler(fakeRequest({ salespersonId: 'sp1' }, { customerId: 'c1' }), context);
+      const result = await assignHandler(fakeRequest({}, { customerId: 'c1' }), context);
+      expect(result.status).toBe(500);
+      expect(context.error).toHaveBeenCalled();
+    });
+  });
+
+  describe('removeCustomer', () => {
+    it('returns 401 when unauthorized', async () => {
+      requireRoleMock.mockReturnValue({ ok: false, status: 401 });
+      const result = await removeHandler(fakeRequest({}, { customerId: 'c1' }), fakeContext());
+      expect(result.status).toBe(401);
+    });
+
+    it('returns 403 when caller is not a salesperson', async () => {
+      requireRoleMock.mockReturnValue({ ok: false, status: 403 });
+      const result = await removeHandler(fakeRequest({}, { customerId: 'c1' }), fakeContext());
+      expect(result.status).toBe(403);
+    });
+
+    it('returns 404 when customer is not found', async () => {
+      requireRoleMock.mockReturnValue({ ok: true, claims: { sub: 'sp1', role: 'salesperson' } });
+      queryMock.mockResolvedValue({ recordset: [] });
+      const result = await removeHandler(
+        fakeRequest({}, { customerId: 'missing' }),
+        fakeContext()
+      );
+      expect(result.status).toBe(404);
+    });
+
+    it('removes customer from salesperson list and returns 204', async () => {
+      requireRoleMock.mockReturnValue({ ok: true, claims: { sub: 'sp1', role: 'salesperson' } });
+      queryMock
+        .mockResolvedValueOnce({ recordset: [{ id: 'c1' }] })
+        .mockResolvedValueOnce({});
+      const result = await removeHandler(
+        fakeRequest({}, { customerId: 'c1' }),
+        fakeContext()
+      );
+      expect(result.status).toBe(204);
+      expect(queryMock).toHaveBeenCalledTimes(2);
+      expect(queryMock).toHaveBeenLastCalledWith(expect.stringContaining('DELETE FROM dbo.salesperson_customers'));
+    });
+
+    it('returns 500 and logs on db failure', async () => {
+      requireRoleMock.mockReturnValue({ ok: true, claims: { sub: 'sp1', role: 'salesperson' } });
+      getPoolMock.mockRejectedValueOnce(new Error('db down'));
+      const context = fakeContext();
+      const result = await removeHandler(fakeRequest({}, { customerId: 'c1' }), context);
       expect(result.status).toBe(500);
       expect(context.error).toHaveBeenCalled();
     });

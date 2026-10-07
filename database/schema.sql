@@ -126,3 +126,14 @@ BEGIN
     notes NVARCHAR(MAX)
   );
 END
+
+IF OBJECT_ID('dbo.salesperson_customers', 'U') IS NULL
+BEGIN
+  CREATE TABLE salesperson_customers (
+    salesperson_id UNIQUEIDENTIFIER NOT NULL REFERENCES users(id),
+    customer_id    UNIQUEIDENTIFIER NOT NULL REFERENCES users(id),
+    assigned_at    DATETIME2        NOT NULL DEFAULT SYSUTCDATETIME(),
+    CONSTRAINT PK_salesperson_customers PRIMARY KEY (salesperson_id, customer_id)
+  );
+  CREATE INDEX IX_salesperson_customers_customer ON salesperson_customers (customer_id);
+END

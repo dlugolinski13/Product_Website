@@ -4,26 +4,27 @@ import { createRouter, createMemoryHistory } from 'vue-router';
 import { createPinia, setActivePinia } from 'pinia';
 import AccountView from './AccountView.vue';
 import { token } from '../auth';
-import { fetchAccount, fetchCustomers, assignSalesperson } from '../api';
+import { fetchAccount, fetchCustomers, assignSalesperson, removeCustomer } from '../api';
 
 vi.mock('../api', () => ({
   fetchAccount: vi.fn(),
   fetchCustomers: vi.fn(),
   assignSalesperson: vi.fn(),
+  removeCustomer: vi.fn(),
 }));
 
 const customerUser = {
   id: 'u1', email: 'alice@x.com', fullName: 'Alice', role: 'customer',
   addressLine1: '1 Main St', addressLine2: null, city: 'Denver',
   state: 'CO', postalCode: '80201', country: 'US',
-  salesperson: { id: 'sp1', fullName: 'Bob', email: 'bob@co.com' },
+  salespersons: [{ id: 'sp1', fullName: 'Bob', email: 'bob@co.com' }],
 };
 
 const salespersonUser = {
   id: 'sp1', email: 'bob@co.com', fullName: 'Bob', role: 'salesperson',
   addressLine1: null, addressLine2: null, city: null,
   state: null, postalCode: null, country: null,
-  salesperson: null,
+  salespersons: [],
 };
 
 async function mountView() {
@@ -50,6 +51,7 @@ describe('AccountView', () => {
     fetchAccount.mockReset();
     fetchCustomers.mockReset();
     assignSalesperson.mockReset();
+    removeCustomer.mockReset();
     token.value = 'tok';
   });
 
@@ -132,7 +134,7 @@ describe('AccountView', () => {
   });
 
   describe('customer role', () => {
-    it('shows assigned salesperson', async () => {
+    it('shows assigned salespersons', async () => {
       fetchAccount.mockResolvedValue(customerUser);
       const { wrapper } = await mountView();
       expect(wrapper.find('.account-salesperson').exists()).toBe(true);
@@ -140,7 +142,7 @@ describe('AccountView', () => {
     });
 
     it('shows no-salesperson message when unassigned', async () => {
-      fetchAccount.mockResolvedValue({ ...customerUser, salesperson: null });
+      fetchAccount.mockResolvedValue({ ...customerUser, salespersons: [] });
       const { wrapper } = await mountView();
       expect(wrapper.find('.account-salesperson').text()).toContain('No salesperson assigned.');
     });
@@ -156,11 +158,11 @@ describe('AccountView', () => {
     beforeEach(() => {
       fetchCustomers.mockResolvedValue({
         customers: [
-          { id: 'c1', email: 'carol@x.com', fullName: 'Carol', salesperson: { id: 'sp1', fullName: 'Bob', email: 'bob@co.com' } },
-          { id: 'c2', email: 'dave@x.com', fullName: 'Dave', salesperson: null },
+          { id: 'c1', email: 'carol@x.com', fullName: 'Carol' },
+          { id: 'c2', email: 'dave@x.com', fullName: 'Dave' },
         ],
-        salespersons: [
-          { id: 'sp1', email: 'bob@co.com', fullName: 'Bob' },
+        availableCustomers: [
+          { id: 'c3', email: 'eve@x.com', fullName: 'Eve' },
         ],
       });
     });
@@ -171,7 +173,7 @@ describe('AccountView', () => {
       expect(wrapper.find('.account-salesperson').exists()).toBe(false);
     });
 
-    it('loads and shows the customer management section', async () => {
+    it('loads and shows the customer management section with assigned customers', async () => {
       fetchAccount.mockResolvedValue(salespersonUser);
       const { wrapper } = await mountView();
       expect(wrapper.find('.account-customers').exists()).toBe(true);
@@ -181,42 +183,64 @@ describe('AccountView', () => {
       expect(rows[1].text()).toContain('Dave');
     });
 
-    it('shows salesperson dropdown with correct selected value', async () => {
+    it('shows a remove button for each assigned customer', async () => {
       fetchAccount.mockResolvedValue(salespersonUser);
       const { wrapper } = await mountView();
-      const selects = wrapper.findAll('.salesperson-select');
-      expect(selects[0].element.value).toBe('sp1');
-      expect(selects[1].element.value).toBe('');
+      const removeBtns = wrapper.findAll('.remove-btn');
+      expect(removeBtns).toHaveLength(2);
     });
 
-    it('calls assignSalesperson when dropdown changes and updates local state', async () => {
+    it('shows available customers in the add-customer dropdown', async () => {
+      fetchAccount.mockResolvedValue(salespersonUser);
+      const { wrapper } = await mountView();
+      const select = wrapper.find('.customer-add-select');
+      expect(select.exists()).toBe(true);
+      expect(select.text()).toContain('Eve');
+    });
+
+    it('calls assignSalesperson and updates local state when add is clicked', async () => {
       fetchAccount.mockResolvedValue(salespersonUser);
       assignSalesperson.mockResolvedValue(undefined);
       const { wrapper } = await mountView();
-      const selects = wrapper.findAll('.salesperson-select');
-      await selects[1].setValue('sp1');
+      const select = wrapper.find('.customer-add-select');
+      await select.setValue('c3');
+      await wrapper.find('.add-btn').trigger('click');
       await flushPromises();
-      expect(assignSalesperson).toHaveBeenCalledWith('tok', 'c2', 'sp1');
+      expect(assignSalesperson).toHaveBeenCalledWith('tok', 'c3');
+      expect(wrapper.findAll('.customer-row')).toHaveLength(3);
+      const options = wrapper.find('.customer-add-select').findAll('option');
+      const values = options.map(o => o.element.value);
+      expect(values).not.toContain('c3');
     });
 
-    it('calls assignSalesperson with null when unassigning', async () => {
+    it('calls removeCustomer and updates local state when remove is clicked', async () => {
       fetchAccount.mockResolvedValue(salespersonUser);
-      assignSalesperson.mockResolvedValue(undefined);
+      removeCustomer.mockResolvedValue(undefined);
       const { wrapper } = await mountView();
-      const selects = wrapper.findAll('.salesperson-select');
-      await selects[0].setValue('');
+      const firstRemoveBtn = wrapper.findAll('.remove-btn')[0];
+      await firstRemoveBtn.trigger('click');
       await flushPromises();
-      expect(assignSalesperson).toHaveBeenCalledWith('tok', 'c1', null);
+      expect(removeCustomer).toHaveBeenCalledWith('tok', 'c1');
+      expect(wrapper.findAll('.customer-row')).toHaveLength(1);
     });
 
-    it('shows error when assigning fails', async () => {
+    it('shows error when adding fails', async () => {
       fetchAccount.mockResolvedValue(salespersonUser);
-      assignSalesperson.mockRejectedValue(Object.assign(new Error('assign failed'), { status: 500 }));
+      assignSalesperson.mockRejectedValue(Object.assign(new Error('add failed'), { status: 500 }));
       const { wrapper } = await mountView();
-      const selects = wrapper.findAll('.salesperson-select');
-      await selects[0].setValue('');
+      await wrapper.find('.customer-add-select').setValue('c3');
+      await wrapper.find('.add-btn').trigger('click');
       await flushPromises();
-      expect(wrapper.find('.account-customers [role="alert"]').text()).toBe('assign failed');
+      expect(wrapper.find('.account-customers [role="alert"]').text()).toBe('add failed');
+    });
+
+    it('shows error when removing fails', async () => {
+      fetchAccount.mockResolvedValue(salespersonUser);
+      removeCustomer.mockRejectedValue(Object.assign(new Error('remove failed'), { status: 500 }));
+      const { wrapper } = await mountView();
+      await wrapper.findAll('.remove-btn')[0].trigger('click');
+      await flushPromises();
+      expect(wrapper.find('.account-customers [role="alert"]').text()).toBe('remove failed');
     });
 
     it('shows error when customer list fails to load', async () => {
@@ -226,11 +250,11 @@ describe('AccountView', () => {
       expect(wrapper.find('.account-customers [role="alert"]').text()).toBe('list failed');
     });
 
-    it('shows empty state when no customers', async () => {
+    it('shows empty state when no customers are assigned', async () => {
       fetchAccount.mockResolvedValue(salespersonUser);
-      fetchCustomers.mockResolvedValue({ customers: [], salespersons: [] });
+      fetchCustomers.mockResolvedValue({ customers: [], availableCustomers: [] });
       const { wrapper } = await mountView();
-      expect(wrapper.find('.account-customers').text()).toContain('No customers found.');
+      expect(wrapper.find('.account-customers').text()).toContain('No customers assigned yet.');
     });
   });
 });
