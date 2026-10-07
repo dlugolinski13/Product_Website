@@ -12,7 +12,7 @@ describe('router', () => {
     token.value = null;
   });
 
-  it('defines home, login, create-account, products, product-detail, cart, upload-product, orders, account, edit-profile and admin/customers routes', () => {
+  it('defines home, login, create-account, products, product-detail, cart, upload-product, orders, account, edit-profile, admin/customers and admin routes', () => {
     expect(routes.map((r) => r.path)).toEqual([
       '/',
       '/login',
@@ -25,6 +25,7 @@ describe('router', () => {
       '/account',
       '/account/edit',
       '/admin/customers',
+      '/admin',
     ]);
   });
 
