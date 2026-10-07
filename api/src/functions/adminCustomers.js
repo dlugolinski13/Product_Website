@@ -6,7 +6,7 @@ const { requireRole } = require('../lib/auth');
 app.http('adminListCustomers', {
   methods: ['GET'],
   authLevel: 'anonymous',
-  route: 'admin/customers',
+  route: 'manage/customers',
   handler: async (request, context) => {
     const auth = requireRole(request, 'admin');
     if (!auth.ok) return { status: auth.status };
@@ -54,7 +54,7 @@ app.http('adminListCustomers', {
 app.http('adminAssignSalesperson', {
   methods: ['PUT'],
   authLevel: 'anonymous',
-  route: 'admin/customers/{customerId}/salesperson',
+  route: 'manage/customers/{customerId}/salesperson',
   handler: async (request, context) => {
     const auth = requireRole(request, 'admin');
     if (!auth.ok) return { status: auth.status };

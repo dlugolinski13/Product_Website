@@ -77,7 +77,7 @@ async function save(customer) {
               <button
                 :disabled="saving[customer.id]"
                 @click="save(customer)"
-                class="save-btn"
+                class="cta save-btn"
               >Save</button>
               <span
                 v-if="saveError[customer.id]"
@@ -120,21 +120,9 @@ async function save(customer) {
 }
 
 .salesperson-select {
-  padding: 0.25rem 0.5rem;
   border: 1px solid #d1d5db;
   border-radius: 4px;
-  font-size: 0.875rem;
   min-width: 200px;
-}
-
-.save-btn {
-  padding: 0.2rem 0.75rem;
-  background: #2563eb;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  cursor: pointer;
 }
 
 .save-btn:disabled {

@@ -102,6 +102,9 @@ label {
   background: var(--color-primary);
   border-radius: 6px;
   text-decoration: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
 }
 
 .search-controls {
@@ -282,7 +285,8 @@ input[type="search"],
 input[type="tel"],
 input[type="url"],
 input[type="date"],
-textarea {
+textarea,
+select {
   padding: 0.75rem 1rem;
   font-size: 1.1rem;
   box-sizing: border-box;
