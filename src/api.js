@@ -75,10 +75,16 @@ export function fetchCustomers(token) {
   return request('/account/customers', { headers: { 'X-Authorization': `Bearer ${token}` } });
 }
 
-export function assignSalesperson(token, customerId, salespersonId) {
+export function assignSalesperson(token, customerId) {
   return request(`/account/customers/${customerId}/salesperson`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json', 'X-Authorization': `Bearer ${token}` },
-    body: JSON.stringify({ salespersonId }),
+    headers: { 'X-Authorization': `Bearer ${token}` },
+  });
+}
+
+export function removeCustomer(token, customerId) {
+  return request(`/account/customers/${customerId}`, {
+    method: 'DELETE',
+    headers: { 'X-Authorization': `Bearer ${token}` },
   });
 }

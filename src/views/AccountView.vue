@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { fetchAccount, fetchCustomers, assignSalesperson } from '../api';
+import { fetchAccount, fetchCustomers, assignSalesperson, removeCustomer } from '../api';
 import { token, logout } from '../auth';
 
 const router = useRouter();
@@ -10,10 +10,12 @@ const loading = ref(true);
 const error = ref(null);
 
 const customers = ref([]);
-const salespersons = ref([]);
+const availableCustomers = ref([]);
+const selectedCustomerId = ref('');
 const customersLoading = ref(false);
 const customersError = ref(null);
-const assigning = ref(null);
+const adding = ref(false);
+const removing = ref(null);
 
 onMounted(async () => {
   try {
@@ -24,7 +26,7 @@ onMounted(async () => {
       try {
         const data = await fetchCustomers(token.value);
         customers.value = data.customers;
-        salespersons.value = data.salespersons;
+        availableCustomers.value = data.availableCustomers;
       } catch (err) {
         customersError.value = err.message;
       } finally {
@@ -43,20 +45,43 @@ onMounted(async () => {
   }
 });
 
-async function setCustomerSalesperson(customerId, salespersonId) {
-  assigning.value = customerId;
+async function addCustomerToList() {
+  if (!selectedCustomerId.value) return;
+  adding.value = true;
   customersError.value = null;
   try {
-    await assignSalesperson(token.value, customerId, salespersonId || null);
-    const customer = customers.value.find(c => c.id === customerId);
+    await assignSalesperson(token.value, selectedCustomerId.value);
+    const customer = availableCustomers.value.find(c => c.id === selectedCustomerId.value);
     if (customer) {
-      const sp = salespersons.value.find(s => s.id === salespersonId);
-      customer.salesperson = sp ? { id: sp.id, fullName: sp.fullName, email: sp.email } : null;
+      customers.value = [...customers.value, customer].sort((a, b) =>
+        (a.fullName || a.email).localeCompare(b.fullName || b.email)
+      );
+      availableCustomers.value = availableCustomers.value.filter(c => c.id !== selectedCustomerId.value);
+    }
+    selectedCustomerId.value = '';
+  } catch (err) {
+    customersError.value = err.message;
+  } finally {
+    adding.value = false;
+  }
+}
+
+async function removeCustomerFromList(customerId) {
+  removing.value = customerId;
+  customersError.value = null;
+  try {
+    await removeCustomer(token.value, customerId);
+    const customer = customers.value.find(c => c.id === customerId);
+    customers.value = customers.value.filter(c => c.id !== customerId);
+    if (customer) {
+      availableCustomers.value = [...availableCustomers.value, customer].sort((a, b) =>
+        (a.fullName || a.email).localeCompare(b.fullName || b.email)
+      );
     }
   } catch (err) {
     customersError.value = err.message;
   } finally {
-    assigning.value = null;
+    removing.value = null;
   }
 }
 </script>
@@ -83,25 +108,37 @@ async function setCustomerSalesperson(customerId, salespersonId) {
       </div>
 
       <div v-if="user.role === 'customer'" class="account-salesperson account-section">
-        <h2 class="section-heading">Your Salesperson</h2>
-        <p v-if="user.salesperson">
-          {{ user.salesperson.fullName || user.salesperson.email }}
-          ({{ user.salesperson.email }})
-        </p>
-        <p v-else>No salesperson assigned.</p>
+        <h2 class="section-heading">Your Salesperson(s)</h2>
+        <p v-if="!user.salespersons || user.salespersons.length === 0">No salesperson assigned.</p>
+        <ul v-else class="salespersons-list">
+          <li v-for="sp in user.salespersons" :key="sp.id">
+            {{ sp.fullName || sp.email }} ({{ sp.email }})
+          </li>
+        </ul>
       </div>
 
       <div v-if="user.role === 'salesperson'" class="account-customers account-section">
-        <h2 class="section-heading">Customers</h2>
+        <h2 class="section-heading">My Customers</h2>
         <p v-if="customersLoading">Loading…</p>
         <p v-else-if="customersError" role="alert">{{ customersError }}</p>
         <template v-else>
-          <p v-if="customers.length === 0">No customers found.</p>
+          <div class="add-customer-row">
+            <select v-model="selectedCustomerId" class="customer-add-select">
+              <option value="">— Add a customer —</option>
+              <option v-for="c in availableCustomers" :key="c.id" :value="c.id">
+                {{ c.fullName || c.email }} ({{ c.email }})
+              </option>
+            </select>
+            <button :disabled="!selectedCustomerId || adding" @click="addCustomerToList" class="add-btn">
+              Add
+            </button>
+          </div>
+          <p v-if="customers.length === 0">No customers assigned yet.</p>
           <table v-else class="customers-table">
             <thead>
               <tr>
                 <th>Customer</th>
-                <th>Assigned salesperson</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -111,19 +148,11 @@ async function setCustomerSalesperson(customerId, salespersonId) {
                   <span class="customer-email"> ({{ customer.email }})</span>
                 </td>
                 <td>
-                  <select
-                    :value="customer.salesperson ? customer.salesperson.id : ''"
-                    :disabled="assigning === customer.id"
-                    @change="setCustomerSalesperson(customer.id, $event.target.value || null)"
-                    class="salesperson-select"
-                  >
-                    <option value="">— Unassigned —</option>
-                    <option
-                      v-for="sp in salespersons"
-                      :key="sp.id"
-                      :value="sp.id"
-                    >{{ sp.fullName || sp.email }}</option>
-                  </select>
+                  <button
+                    :disabled="removing === customer.id"
+                    @click="removeCustomerFromList(customer.id)"
+                    class="remove-btn"
+                  >Remove</button>
                 </td>
               </tr>
             </tbody>
@@ -193,6 +222,43 @@ async function setCustomerSalesperson(customerId, salespersonId) {
   text-decoration: underline;
 }
 
+.salespersons-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+.add-customer-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+
+.customer-add-select {
+  flex: 1;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.add-btn {
+  padding: 0.25rem 0.75rem;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.add-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .customers-table {
   width: 100%;
   border-collapse: collapse;
@@ -219,10 +285,18 @@ async function setCustomerSalesperson(customerId, salespersonId) {
   font-size: 0.85rem;
 }
 
-.salesperson-select {
-  padding: 0.25rem 0.5rem;
-  border: 1px solid #d1d5db;
+.remove-btn {
+  padding: 0.2rem 0.6rem;
+  background: #fff;
+  color: #dc2626;
+  border: 1px solid #dc2626;
   border-radius: 4px;
-  font-size: 0.875rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.remove-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 </style>

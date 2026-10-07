@@ -1,0 +1,6 @@
+DROP INDEX IX_salesperson_customers_customer ON dbo.salesperson_customers;
+ALTER TABLE dbo.salesperson_customers DROP CONSTRAINT FK_salesperson_customers_customer;
+ALTER TABLE dbo.salesperson_customers DROP CONSTRAINT FK_salesperson_customers_salesperson;
+ALTER TABLE dbo.salesperson_customers DROP CONSTRAINT DF_salesperson_customers_assigned_at;
+ALTER TABLE dbo.salesperson_customers DROP CONSTRAINT PK_salesperson_customers;
+DROP TABLE dbo.salesperson_customers;
