@@ -9,6 +9,8 @@ const queryMock = vi.fn();
 const requestMock = vi.fn(() => ({ input: vi.fn().mockReturnThis(), query: queryMock }));
 const getPoolMock = vi.fn(async () => ({ request: requestMock }));
 const requireRoleMock = vi.fn();
+const bcryptCompareMock = vi.fn();
+const bcryptHashMock = vi.fn();
 
 function fakeContext() {
   return { error: vi.fn() };
@@ -21,6 +23,7 @@ function fakeRequest(body, params = {}) {
 describe('account', () => {
   let getHandler;
   let updateHandler;
+  let changePasswordHandler;
   let listCustomersHandler;
   let assignHandler;
   let removeHandler;
@@ -35,11 +38,13 @@ describe('account', () => {
           getPool: (...args) => getPoolMock(...args),
         },
         '../../src/lib/auth': { requireRole: (...args) => requireRoleMock(...args) },
+        'bcryptjs': { compare: (...args) => bcryptCompareMock(...args), hash: (...args) => bcryptHashMock(...args) },
       },
       '../../src/functions/account.js'
     );
     getHandler = routes.get('getAccount').handler;
     updateHandler = routes.get('updateAccount').handler;
+    changePasswordHandler = routes.get('changePassword').handler;
     listCustomersHandler = routes.get('listCustomers').handler;
     assignHandler = routes.get('assignSalesperson').handler;
     removeHandler = routes.get('removeCustomer').handler;
@@ -51,6 +56,8 @@ describe('account', () => {
     getPoolMock.mockReset();
     getPoolMock.mockImplementation(async () => ({ request: requestMock }));
     requireRoleMock.mockReset();
+    bcryptCompareMock.mockReset();
+    bcryptHashMock.mockReset();
   });
 
   describe('getAccount', () => {
@@ -143,6 +150,63 @@ describe('account', () => {
       getPoolMock.mockRejectedValueOnce(new Error('db down'));
       const context = fakeContext();
       const result = await updateHandler(fakeRequest({}), context);
+      expect(result.status).toBe(500);
+      expect(context.error).toHaveBeenCalled();
+    });
+  });
+
+  describe('changePassword', () => {
+    it('returns 401 when unauthorized', async () => {
+      requireRoleMock.mockReturnValue({ ok: false, status: 401 });
+      const result = await changePasswordHandler(fakeRequest({ currentPassword: 'old', newPassword: 'new12345' }), fakeContext());
+      expect(result.status).toBe(401);
+    });
+
+    it('returns 400 when fields are missing', async () => {
+      requireRoleMock.mockReturnValue({ ok: true, claims: { sub: 'u1', role: 'customer' } });
+      const result = await changePasswordHandler(fakeRequest({}), fakeContext());
+      expect(result.status).toBe(400);
+    });
+
+    it('returns 400 when new password is too short', async () => {
+      requireRoleMock.mockReturnValue({ ok: true, claims: { sub: 'u1', role: 'customer' } });
+      const result = await changePasswordHandler(fakeRequest({ currentPassword: 'old', newPassword: 'short' }), fakeContext());
+      expect(result.status).toBe(400);
+    });
+
+    it('returns 404 when user not found', async () => {
+      requireRoleMock.mockReturnValue({ ok: true, claims: { sub: 'u1', role: 'customer' } });
+      queryMock.mockResolvedValue({ recordset: [] });
+      const result = await changePasswordHandler(fakeRequest({ currentPassword: 'oldpass', newPassword: 'newpass12' }), fakeContext());
+      expect(result.status).toBe(404);
+    });
+
+    it('returns 401 when current password is wrong', async () => {
+      requireRoleMock.mockReturnValue({ ok: true, claims: { sub: 'u1', role: 'customer' } });
+      queryMock.mockResolvedValue({ recordset: [{ password_hash: 'hash' }] });
+      bcryptCompareMock.mockResolvedValue(false);
+      const result = await changePasswordHandler(fakeRequest({ currentPassword: 'wrong', newPassword: 'newpass12' }), fakeContext());
+      expect(result.status).toBe(401);
+      expect(result.jsonBody.error).toContain('incorrect');
+    });
+
+    it('updates password hash and returns 204', async () => {
+      requireRoleMock.mockReturnValue({ ok: true, claims: { sub: 'u1', role: 'customer' } });
+      queryMock
+        .mockResolvedValueOnce({ recordset: [{ password_hash: 'oldhash' }] })
+        .mockResolvedValueOnce({});
+      bcryptCompareMock.mockResolvedValue(true);
+      bcryptHashMock.mockResolvedValue('newhash');
+      const result = await changePasswordHandler(fakeRequest({ currentPassword: 'correct', newPassword: 'newpass12' }), fakeContext());
+      expect(result.status).toBe(204);
+      expect(queryMock).toHaveBeenLastCalledWith(expect.stringContaining('UPDATE dbo.users SET password_hash'));
+    });
+
+    it('returns 500 and logs on db failure', async () => {
+      requireRoleMock.mockReturnValue({ ok: true, claims: { sub: 'u1', role: 'customer' } });
+      getPoolMock.mockRejectedValueOnce(new Error('db down'));
+      const context = fakeContext();
+      const result = await changePasswordHandler(fakeRequest({ currentPassword: 'old', newPassword: 'newpass12' }), context);
       expect(result.status).toBe(500);
       expect(context.error).toHaveBeenCalled();
     });

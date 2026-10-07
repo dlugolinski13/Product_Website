@@ -100,7 +100,7 @@ async function submit() {
       <label>Case height (in) <input v-model="caseHeight" type="number" step="0.01" min="0" /></label>
       <label>Customer comments <textarea v-model="customerComments"></textarea></label>
       <label>Image <input type="file" accept="image/*" @change="handleFile" /></label>
-      <button type="submit" :disabled="submitting">Upload</button>
+      <button type="submit" class="cta" :disabled="submitting">Upload</button>
       <p v-if="error" class="error" role="alert">{{ error }}</p>
     </form>
   </section>

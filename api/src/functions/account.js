@@ -1,4 +1,5 @@
 const { app } = require('@azure/functions');
+const bcrypt = require('bcryptjs');
 const { sql, getPool } = require('../lib/db');
 const { requireRole } = require('../lib/auth');
 
@@ -100,6 +101,55 @@ app.http('updateAccount', {
       return { status: 204 };
     } catch (err) {
       context.error('updateAccount failed', err);
+      return { status: 500, jsonBody: { error: err.message } };
+    }
+  },
+});
+
+app.http('changePassword', {
+  methods: ['PATCH'],
+  authLevel: 'anonymous',
+  route: 'account/password',
+  handler: async (request, context) => {
+    const auth = requireRole(request);
+    if (!auth.ok) return { status: auth.status };
+
+    const body = await request.json();
+    const { currentPassword, newPassword } = body;
+
+    if (!currentPassword || !newPassword) {
+      return { status: 400, jsonBody: { error: 'currentPassword and newPassword are required' } };
+    }
+    if (newPassword.length < 8) {
+      return { status: 400, jsonBody: { error: 'New password must be at least 8 characters' } };
+    }
+
+    try {
+      const pool = await getPool();
+
+      const result = await pool
+        .request()
+        .input('id', sql.UniqueIdentifier, auth.claims.sub)
+        .query('SELECT password_hash FROM dbo.users WHERE id = @id');
+
+      const row = result.recordset[0];
+      if (!row) return { status: 404 };
+
+      const matches = await bcrypt.compare(currentPassword, row.password_hash);
+      if (!matches) {
+        return { status: 401, jsonBody: { error: 'Current password is incorrect' } };
+      }
+
+      const newHash = await bcrypt.hash(newPassword, 10);
+      await pool
+        .request()
+        .input('id', sql.UniqueIdentifier, auth.claims.sub)
+        .input('hash', sql.NVarChar, newHash)
+        .query('UPDATE dbo.users SET password_hash = @hash WHERE id = @id');
+
+      return { status: 204 };
+    } catch (err) {
+      context.error('changePassword failed', err);
       return { status: 500, jsonBody: { error: err.message } };
     }
   },

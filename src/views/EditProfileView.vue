@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { fetchAccount, updateAccount } from '../api';
+import { fetchAccount, updateAccount, changePassword } from '../api';
 import { token, logout } from '../auth';
 
 const router = useRouter();
@@ -18,6 +18,13 @@ const country = ref('');
 const saving = ref(false);
 const saveError = ref(null);
 const saveSuccess = ref(false);
+
+const currentPassword = ref('');
+const newPassword = ref('');
+const confirmPassword = ref('');
+const changingPassword = ref(false);
+const passwordError = ref(null);
+const passwordSuccess = ref(false);
 
 onMounted(async () => {
   try {
@@ -40,6 +47,27 @@ onMounted(async () => {
     loading.value = false;
   }
 });
+
+async function submitChangePassword() {
+  passwordError.value = null;
+  passwordSuccess.value = false;
+  if (newPassword.value !== confirmPassword.value) {
+    passwordError.value = 'New passwords do not match';
+    return;
+  }
+  changingPassword.value = true;
+  try {
+    await changePassword(token.value, currentPassword.value, newPassword.value);
+    passwordSuccess.value = true;
+    currentPassword.value = '';
+    newPassword.value = '';
+    confirmPassword.value = '';
+  } catch (err) {
+    passwordError.value = err.message;
+  } finally {
+    changingPassword.value = false;
+  }
+}
 
 async function saveProfile() {
   saveError.value = null;
@@ -98,9 +126,27 @@ async function saveProfile() {
         Country
         <input v-model="country" type="text" />
       </label>
-      <button type="submit" :disabled="saving">Save</button>
+      <button type="submit" class="cta" :disabled="saving">Save</button>
       <p v-if="saveError" class="error" role="alert">{{ saveError }}</p>
       <p v-if="saveSuccess" class="save-success">Saved.</p>
+    </form>
+    <form @submit.prevent="submitChangePassword" class="password-form">
+      <h2>Change Password</h2>
+      <label>
+        Current password
+        <input v-model="currentPassword" type="password" autocomplete="current-password" required />
+      </label>
+      <label>
+        New password
+        <input v-model="newPassword" type="password" autocomplete="new-password" required />
+      </label>
+      <label>
+        Confirm new password
+        <input v-model="confirmPassword" type="password" autocomplete="new-password" required />
+      </label>
+      <button type="submit" class="cta" :disabled="changingPassword">Update password</button>
+      <p v-if="passwordError" class="error" role="alert">{{ passwordError }}</p>
+      <p v-if="passwordSuccess" class="password-success">Password updated.</p>
     </form>
     <RouterLink to="/account">Back to account</RouterLink>
   </section>

@@ -71,6 +71,14 @@ export function updateAccount(token, profile) {
   });
 }
 
+export function changePassword(token, currentPassword, newPassword) {
+  return request('/account/password', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'X-Authorization': `Bearer ${token}` },
+    body: JSON.stringify({ currentPassword, newPassword }),
+  });
+}
+
 export function fetchCustomers(token) {
   return request('/account/customers', { headers: { 'X-Authorization': `Bearer ${token}` } });
 }
