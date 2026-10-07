@@ -35,7 +35,9 @@ async function save(customer) {
   try {
     const salespersonId = customer.pendingSalespersonId || null;
     await adminAssignSalesperson(token.value, customer.id, salespersonId);
-    customer.salespersonId = salespersonId;
+    const data = await fetchAdminCustomers(token.value);
+    customers.value = data.customers.map(c => ({ ...c, pendingSalespersonId: c.salespersonId || '' }));
+    salespeople.value = data.salespeople;
   } catch (err) {
     saveError.value = { ...saveError.value, [customer.id]: err.message };
   } finally {
@@ -51,7 +53,8 @@ async function save(customer) {
     <p v-else-if="error" role="alert">{{ error }}</p>
     <template v-else>
       <p v-if="customers.length === 0">No customers found.</p>
-      <table v-else class="admin-customers-table">
+      <div v-else class="admin-customers-wrapper">
+      <table class="admin-customers-table">
         <thead>
           <tr>
             <th>Customer</th>
@@ -88,11 +91,16 @@ async function save(customer) {
           </tr>
         </tbody>
       </table>
+      </div>
     </template>
   </section>
 </template>
 
 <style scoped>
+.admin-customers-wrapper {
+  overflow-x: auto;
+}
+
 .admin-customers-table {
   width: 100%;
   border-collapse: collapse;

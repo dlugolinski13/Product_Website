@@ -137,6 +137,15 @@ describe('AdminCustomersView', () => {
     expect(adminAssignSalesperson).toHaveBeenCalledWith('tok', 'c1', null);
   });
 
+  it('re-fetches the customer list after a successful save', async () => {
+    fetchAdminCustomers.mockResolvedValue(adminData);
+    adminAssignSalesperson.mockResolvedValue(undefined);
+    const { wrapper } = await mountView();
+    await wrapper.findAll('.admin-customer-row')[0].find('.save-btn').trigger('click');
+    await flushPromises();
+    expect(fetchAdminCustomers).toHaveBeenCalledTimes(2);
+  });
+
   it('shows save error inline on failure', async () => {
     fetchAdminCustomers.mockResolvedValue(adminData);
     adminAssignSalesperson.mockRejectedValue(Object.assign(new Error('save failed'), { status: 500 }));

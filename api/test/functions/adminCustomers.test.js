@@ -145,28 +145,33 @@ describe('adminCustomers', () => {
     it('assigns salesperson and returns 204', async () => {
       requireRoleMock.mockReturnValue({ ok: true, claims: { sub: 'a1', role: 'admin' } });
       queryMock
-        .mockResolvedValueOnce({ recordset: [{ id: 'c1' }] })
-        .mockResolvedValueOnce({ recordset: [{ id: 'sp1' }] })
-        .mockResolvedValueOnce({});
+        .mockResolvedValueOnce({ recordset: [{ id: 'c1' }] })  // customer check
+        .mockResolvedValueOnce({ recordset: [{ id: 'sp1' }] }) // salesperson check
+        .mockResolvedValueOnce({})                              // DELETE salesperson_customers
+        .mockResolvedValueOnce({})                              // INSERT salesperson_customers
+        .mockResolvedValueOnce({});                             // UPDATE users
       const result = await assignHandler(
         fakeRequest({ salespersonId: 'sp1' }, { customerId: 'c1' }),
         fakeContext()
       );
       expect(result.status).toBe(204);
       expect(queryMock).toHaveBeenCalledWith(expect.stringContaining('UPDATE dbo.users SET salesperson_id'));
+      expect(queryMock).toHaveBeenCalledWith(expect.stringContaining('salesperson_customers'));
     });
 
     it('clears salesperson assignment when salespersonId is null', async () => {
       requireRoleMock.mockReturnValue({ ok: true, claims: { sub: 'a1', role: 'admin' } });
       queryMock
-        .mockResolvedValueOnce({ recordset: [{ id: 'c1' }] })
-        .mockResolvedValueOnce({});
+        .mockResolvedValueOnce({ recordset: [{ id: 'c1' }] }) // customer check
+        .mockResolvedValueOnce({})                             // DELETE salesperson_customers
+        .mockResolvedValueOnce({});                            // UPDATE users
       const result = await assignHandler(
         fakeRequest({ salespersonId: null }, { customerId: 'c1' }),
         fakeContext()
       );
       expect(result.status).toBe(204);
       expect(queryMock).toHaveBeenCalledWith(expect.stringContaining('UPDATE dbo.users SET salesperson_id'));
+      expect(queryMock).toHaveBeenCalledWith(expect.stringContaining('salesperson_customers'));
     });
 
     it('returns 500 and logs on db failure', async () => {

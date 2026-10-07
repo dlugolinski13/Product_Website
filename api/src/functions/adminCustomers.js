@@ -15,10 +15,11 @@ app.http('adminListCustomers', {
       const pool = await getPool();
 
       const customersResult = await pool.request().query(`
-        SELECT id, email, full_name, salesperson_id
-        FROM users
-        WHERE role = 'customer'
-        ORDER BY full_name, email
+        SELECT u.id, u.email, u.full_name, sc.salesperson_id
+        FROM users u
+        LEFT JOIN salesperson_customers sc ON sc.customer_id = u.id
+        WHERE u.role = 'customer'
+        ORDER BY u.full_name, u.email
       `);
 
       const salespeopleResult = await pool.request().query(`
@@ -84,6 +85,19 @@ app.http('adminAssignSalesperson', {
         if (!spResult.recordset[0]) {
           return { status: 404, jsonBody: { error: 'Salesperson not found' } };
         }
+      }
+
+      await pool
+        .request()
+        .input('customerId', sql.UniqueIdentifier, customerId)
+        .query('DELETE FROM dbo.salesperson_customers WHERE customer_id = @customerId');
+
+      if (salespersonId) {
+        await pool
+          .request()
+          .input('salespersonId', sql.UniqueIdentifier, salespersonId)
+          .input('customerId', sql.UniqueIdentifier, customerId)
+          .query('INSERT INTO dbo.salesperson_customers (salesperson_id, customer_id) VALUES (@salespersonId, @customerId)');
       }
 
       await pool
