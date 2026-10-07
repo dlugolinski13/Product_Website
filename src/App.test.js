@@ -24,6 +24,7 @@ async function mountApp() {
       { path: '/login', component: { template: '<div>login</div>' } },
       { path: '/upload-product', component: { template: '<div>upload</div>' } },
       { path: '/account', component: { template: '<div>account</div>' } },
+      { path: '/admin', component: { template: '<div>admin</div>' } },
     ],
   });
   router.push('/');
@@ -67,11 +68,20 @@ describe('App', () => {
     expect(router.currentRoute.value.path).toBe('/login');
   });
 
-  it('also shows an Upload Product link for admins', async () => {
+  it('also shows an Upload Product link and Admin link for admins', async () => {
     token.value = makeToken({ sub: 'u2', role: 'admin', email: 'admin@example.com' });
     const { wrapper } = await mountApp();
     const texts = wrapper.findAll('nav a').map((a) => a.text());
     expect(texts).toContain('Upload Product');
+    expect(texts).toContain('Admin');
+  });
+
+  it('shows Admin link for salespeople but not Upload Product', async () => {
+    token.value = makeToken({ sub: 'u3', role: 'salesperson', email: 'sp@example.com' });
+    const { wrapper } = await mountApp();
+    const texts = wrapper.findAll('nav a').map((a) => a.text());
+    expect(texts).toContain('Admin');
+    expect(texts).not.toContain('Upload Product');
   });
 
   it('shows no badge when cart is empty', async () => {

@@ -18,7 +18,8 @@ BEGIN
     city NVARCHAR(100) NULL,
     state NVARCHAR(100) NULL,
     postal_code NVARCHAR(20) NULL,
-    country NVARCHAR(100) NULL
+    country NVARCHAR(100) NULL,
+    phone NVARCHAR(30) NULL
   );
 END
 
@@ -124,6 +125,17 @@ BEGIN
     quantity INT NOT NULL CHECK (quantity > 0),
     unit_price DECIMAL(10,2) NOT NULL,
     notes NVARCHAR(MAX)
+  );
+END
+
+IF OBJECT_ID('dbo.notifications', 'U') IS NULL
+BEGIN
+  CREATE TABLE notifications (
+    id          INT              NOT NULL IDENTITY CONSTRAINT PK_notifications PRIMARY KEY,
+    message     NVARCHAR(500)    NOT NULL,
+    created_by  UNIQUEIDENTIFIER NOT NULL REFERENCES users(id),
+    created_at  DATETIME2        NOT NULL DEFAULT SYSUTCDATETIME(),
+    is_active   BIT              NOT NULL DEFAULT 1
   );
 END
 

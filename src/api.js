@@ -100,3 +100,30 @@ export function adminAssignSalesperson(token, customerId, salespersonId) {
     body: JSON.stringify({ salespersonId }),
   });
 }
+
+export function adminCreateUser(token, userData) {
+  return request('/manage/users', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Authorization': `Bearer ${token}` },
+    body: JSON.stringify(userData),
+  });
+}
+
+export function fetchNotifications(token) {
+  return request('/manage/notifications', { headers: { 'X-Authorization': `Bearer ${token}` } });
+}
+
+export function createNotification(token, notification) {
+  return request('/manage/notifications', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Authorization': `Bearer ${token}` },
+    body: JSON.stringify(notification),
+  });
+}
+
+export function toggleNotification(token, id) {
+  return request(`/manage/notifications/${id}`, {
+    method: 'PUT',
+    headers: { 'X-Authorization': `Bearer ${token}` },
+  });
+}
