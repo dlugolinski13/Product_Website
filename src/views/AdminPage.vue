@@ -155,42 +155,46 @@ async function toggleNotif(id) {
 
     <!-- Create Salesperson (admin only) -->
     <div v-if="user?.role === 'admin'" class="admin-section">
-      <h2 class="section-heading">Create Salesperson</h2>
-      <form @submit.prevent="submitCreateSalesperson" class="user-form">
-        <label for="sp-name">Full Name</label>
-        <input id="sp-name" v-model="spForm.fullName" type="text" placeholder="Full name" />
-        <label for="sp-email">Email <span class="required">*</span></label>
-        <input id="sp-email" v-model="spForm.email" type="email" required placeholder="Email address" />
-        <label for="sp-phone">Phone</label>
-        <input id="sp-phone" v-model="spForm.phone" type="tel" placeholder="Phone number" />
-        <label for="sp-password">Password <span class="required">*</span></label>
-        <input id="sp-password" v-model="spForm.password" type="password" required placeholder="Password" />
-        <p v-if="spError" role="alert" class="form-error">{{ spError }}</p>
-        <p v-if="spSuccess" class="form-success">Salesperson created.</p>
-        <button type="submit" :disabled="spSaving" class="cta">
-          {{ spSaving ? 'Creating…' : 'Create Salesperson' }}
-        </button>
-      </form>
+      <details class="accordion">
+        <summary class="section-heading accordion-summary">Create Salesperson</summary>
+        <form @submit.prevent="submitCreateSalesperson" class="user-form accordion-body">
+          <label for="sp-name">Full Name</label>
+          <input id="sp-name" v-model="spForm.fullName" type="text" placeholder="Full name" />
+          <label for="sp-email">Email <span class="required">*</span></label>
+          <input id="sp-email" v-model="spForm.email" type="email" required placeholder="Email address" />
+          <label for="sp-phone">Phone</label>
+          <input id="sp-phone" v-model="spForm.phone" type="tel" placeholder="Phone number" />
+          <label for="sp-password">Password <span class="required">*</span></label>
+          <input id="sp-password" v-model="spForm.password" type="password" required placeholder="Password" />
+          <p v-if="spError" role="alert" class="form-error">{{ spError }}</p>
+          <p v-if="spSuccess" class="form-success">Salesperson created.</p>
+          <button type="submit" :disabled="spSaving" class="cta">
+            {{ spSaving ? 'Creating…' : 'Create Salesperson' }}
+          </button>
+        </form>
+      </details>
     </div>
 
     <!-- Create Customer (admin only) -->
     <div v-if="user?.role === 'admin'" class="admin-section">
-      <h2 class="section-heading">Create Customer</h2>
-      <form @submit.prevent="submitCreateCustomer" class="user-form">
-        <label for="cust-name">Full Name</label>
-        <input id="cust-name" v-model="custForm.fullName" type="text" placeholder="Full name" />
-        <label for="cust-email">Email <span class="required">*</span></label>
-        <input id="cust-email" v-model="custForm.email" type="email" required placeholder="Email address" />
-        <label for="cust-phone">Phone</label>
-        <input id="cust-phone" v-model="custForm.phone" type="tel" placeholder="Phone number" />
-        <label for="cust-password">Password <span class="required">*</span></label>
-        <input id="cust-password" v-model="custForm.password" type="password" required placeholder="Password" />
-        <p v-if="custError" role="alert" class="form-error">{{ custError }}</p>
-        <p v-if="custSuccess" class="form-success">Customer created.</p>
-        <button type="submit" :disabled="custSaving" class="cta">
-          {{ custSaving ? 'Creating…' : 'Create Customer' }}
-        </button>
-      </form>
+      <details class="accordion">
+        <summary class="section-heading accordion-summary">Create Customer</summary>
+        <form @submit.prevent="submitCreateCustomer" class="user-form accordion-body">
+          <label for="cust-name">Full Name</label>
+          <input id="cust-name" v-model="custForm.fullName" type="text" placeholder="Full name" />
+          <label for="cust-email">Email <span class="required">*</span></label>
+          <input id="cust-email" v-model="custForm.email" type="email" required placeholder="Email address" />
+          <label for="cust-phone">Phone</label>
+          <input id="cust-phone" v-model="custForm.phone" type="tel" placeholder="Phone number" />
+          <label for="cust-password">Password <span class="required">*</span></label>
+          <input id="cust-password" v-model="custForm.password" type="password" required placeholder="Password" />
+          <p v-if="custError" role="alert" class="form-error">{{ custError }}</p>
+          <p v-if="custSuccess" class="form-success">Customer created.</p>
+          <button type="submit" :disabled="custSaving" class="cta">
+            {{ custSaving ? 'Creating…' : 'Create Customer' }}
+          </button>
+        </form>
+      </details>
     </div>
 
     <!-- Notifications Management (admin only) -->
@@ -289,6 +293,33 @@ async function toggleNotif(id) {
   color: #374151;
   border-bottom: 1px solid #e5e7eb;
   padding-bottom: 0.5rem;
+}
+
+.accordion {
+  border: none;
+}
+
+.accordion-summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.accordion-summary::before {
+  content: '▶';
+  font-size: 0.7rem;
+  transition: transform 0.15s;
+  flex-shrink: 0;
+}
+
+details[open] > .accordion-summary::before {
+  transform: rotate(90deg);
+}
+
+.accordion-body {
+  margin-top: 1rem;
 }
 
 .assign-link {

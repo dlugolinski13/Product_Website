@@ -19,7 +19,6 @@ function handleLogout() {
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/products">Products</RouterLink>
         <RouterLink v-if="user?.role === 'admin'" to="/upload-product">Upload Product</RouterLink>
-        <RouterLink v-if="user?.role === 'admin'" to="/admin/customers">Assign Customers</RouterLink>
         <RouterLink v-if="user?.role === 'admin' || user?.role === 'salesperson'" to="/admin">Admin</RouterLink>
         <RouterLink to="/cart" class="cart-link" aria-label="Cart">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -34,8 +33,10 @@ function handleLogout() {
         <template v-if="token">
           <div class="user-block">
             <span class="user-email">{{ user?.email }}</span>
-            <RouterLink to="/account" class="account-link">Account</RouterLink>
-            <button type="button" @click="handleLogout">Sign out</button>
+            <div class="user-actions">
+              <RouterLink to="/account" class="account-link">Account</RouterLink>
+              <button type="button" @click="handleLogout">Sign out</button>
+            </div>
           </div>
         </template>
         <RouterLink v-else to="/login">Log in</RouterLink>
@@ -48,12 +49,24 @@ function handleLogout() {
 </template>
 
 <style scoped>
+.user-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .user-email {
   max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  display: inline-block;
-  vertical-align: middle;
+  display: block;
 }
 </style>
