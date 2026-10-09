@@ -29,5 +29,9 @@ export const useCartStore = defineStore('cart', () => {
     items.value = [];
   }
 
-  return { items, itemCount, subtotal, addItem, removeItem, clearCart };
+  function restoreItems(savedItems) {
+    items.value = savedItems.map(({ product, quantity }) => ({ product, quantity }));
+  }
+
+  return { items, itemCount, subtotal, addItem, removeItem, clearCart, restoreItems };
 });

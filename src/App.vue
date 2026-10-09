@@ -1,12 +1,45 @@
 <script setup>
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { token, user, logout } from './auth';
 import { useCartStore } from './stores/cart';
+import { saveCart, discardSavedCart } from './api';
 
 const router = useRouter();
 const cart = useCartStore();
+const showSaveCartModal = ref(false);
 
 function handleLogout() {
+  if (cart.itemCount > 0) {
+    showSaveCartModal.value = true;
+  } else {
+    logout();
+    router.push('/login');
+  }
+}
+
+async function handleSave() {
+  const currentToken = token.value;
+  showSaveCartModal.value = false;
+  try {
+    await saveCart(currentToken, cart.items.map((i) => ({ productId: i.product.id, quantity: i.quantity })));
+  } catch {
+    // proceed with logout regardless
+  }
+  cart.clearCart();
+  logout();
+  router.push('/login');
+}
+
+async function handleDiscard() {
+  const currentToken = token.value;
+  showSaveCartModal.value = false;
+  try {
+    await discardSavedCart(currentToken);
+  } catch {
+    // proceed with logout regardless
+  }
+  cart.clearCart();
   logout();
   router.push('/login');
 }
@@ -46,6 +79,16 @@ function handleLogout() {
   <main>
     <RouterView />
   </main>
+
+  <div v-if="showSaveCartModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="save-cart-title">
+    <div class="modal">
+      <p id="save-cart-title">Save cart for next login?</p>
+      <div class="modal-actions">
+        <button type="button" @click="handleSave">Save</button>
+        <button type="button" @click="handleDiscard">Discard</button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>
@@ -68,5 +111,31 @@ function handleLogout() {
   text-overflow: ellipsis;
   white-space: nowrap;
   display: block;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  background: #fff;
+  padding: 1.5rem 2rem;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 280px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
 }
 </style>

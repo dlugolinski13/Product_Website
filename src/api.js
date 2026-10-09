@@ -135,3 +135,22 @@ export function toggleNotification(token, id) {
     headers: { 'X-Authorization': `Bearer ${token}` },
   });
 }
+
+export function fetchSavedCart(token) {
+  return request('/cart/saved', { headers: { 'X-Authorization': `Bearer ${token}` } });
+}
+
+export function saveCart(token, items) {
+  return request('/cart/saved', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Authorization': `Bearer ${token}` },
+    body: JSON.stringify({ items }),
+  });
+}
+
+export function discardSavedCart(token) {
+  return request('/cart/saved', {
+    method: 'DELETE',
+    headers: { 'X-Authorization': `Bearer ${token}` },
+  });
+}

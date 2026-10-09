@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { login, fetchProducts, createProduct, addProductImage, createOrder, fetchOrders, fetchAccount, updateAccount, fetchCustomers, assignSalesperson, removeCustomer, fetchAdminCustomers, adminAssignSalesperson } from './api.js';
+import { login, fetchProducts, createProduct, addProductImage, createOrder, fetchOrders, fetchAccount, updateAccount, fetchCustomers, assignSalesperson, removeCustomer, fetchAdminCustomers, adminAssignSalesperson, fetchSavedCart, saveCart, discardSavedCart } from './api.js';
 
 function mockFetch(status, body) {
   globalThis.fetch = vi.fn(async () => ({
@@ -153,5 +153,34 @@ describe('api', () => {
     expect(options.method).toBe('PUT');
     expect(options.headers['X-Authorization']).toBe('Bearer tok');
     expect(JSON.parse(options.body)).toEqual({ salespersonId: 'sp-1' });
+  });
+
+  it('fetchSavedCart sends the token in X-Authorization and returns the body', async () => {
+    mockFetch(200, { items: [] });
+    const result = await fetchSavedCart('tok');
+    expect(result).toEqual({ items: [] });
+    const [url, options] = fetch.mock.calls[0];
+    expect(url).toBe('/api/cart/saved');
+    expect(options.headers['X-Authorization']).toBe('Bearer tok');
+  });
+
+  it('saveCart POSTs items JSON with X-Authorization and returns the body', async () => {
+    mockFetch(204, {});
+    const items = [{ productId: 'p1', quantity: 2 }];
+    await saveCart('tok', items);
+    const [url, options] = fetch.mock.calls[0];
+    expect(url).toBe('/api/cart/saved');
+    expect(options.method).toBe('POST');
+    expect(options.headers['X-Authorization']).toBe('Bearer tok');
+    expect(JSON.parse(options.body)).toEqual({ items });
+  });
+
+  it('discardSavedCart DELETEs with X-Authorization', async () => {
+    mockFetch(204, {});
+    await discardSavedCart('tok');
+    const [url, options] = fetch.mock.calls[0];
+    expect(url).toBe('/api/cart/saved');
+    expect(options.method).toBe('DELETE');
+    expect(options.headers['X-Authorization']).toBe('Bearer tok');
   });
 });
