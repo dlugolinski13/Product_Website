@@ -1,13 +1,21 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import { createRouter, createMemoryHistory } from 'vue-router';
+import { createPinia, setActivePinia } from 'pinia';
 import LoginView from './LoginView.vue';
 import { token } from '../auth';
-import { login } from '../api';
+import { useCartStore } from '../stores/cart';
+import { login, fetchSavedCart, discardSavedCart } from '../api';
 
-vi.mock('../api', () => ({ login: vi.fn() }));
+vi.mock('../api', () => ({
+  login: vi.fn(),
+  fetchSavedCart: vi.fn(),
+  discardSavedCart: vi.fn(),
+}));
 
 async function mountAt(path) {
+  const pinia = createPinia();
+  setActivePinia(pinia);
   const router = createRouter({
     history: createMemoryHistory(),
     routes: [
@@ -20,7 +28,7 @@ async function mountAt(path) {
   });
   router.push(path);
   await router.isReady();
-  const wrapper = mount(LoginView, { global: { plugins: [router] } });
+  const wrapper = mount(LoginView, { global: { plugins: [router, pinia] } });
   return { wrapper, router };
 }
 
@@ -34,6 +42,10 @@ async function submit(wrapper) {
 describe('LoginView', () => {
   beforeEach(() => {
     login.mockReset();
+    fetchSavedCart.mockReset();
+    discardSavedCart.mockReset();
+    fetchSavedCart.mockResolvedValue({ items: [] });
+    discardSavedCart.mockResolvedValue(undefined);
     token.value = null;
     localStorage.clear();
   });
@@ -89,5 +101,43 @@ describe('LoginView', () => {
     await wrapper.find('button[aria-label="Hide password"]').trigger('click');
     expect(wrapper.find('input[type="password"]').exists()).toBe(true);
     expect(wrapper.find('button[aria-label="Show password"]').exists()).toBe(true);
+  });
+
+  it('restores saved cart items on login and deletes them from the server', async () => {
+    login.mockResolvedValue({ token: 'tok' });
+    const savedProduct = { id: 'p1', name: 'Widget', company_price: 10, item_number: 'W1', retail_price: 15, description: '' };
+    fetchSavedCart.mockResolvedValue({ items: [{ product: savedProduct, productId: 'p1', quantity: 2 }] });
+
+    const { wrapper } = await mountAt('/login');
+    await submit(wrapper);
+
+    const cart = useCartStore();
+    expect(cart.items).toHaveLength(1);
+    expect(cart.items[0].product).toEqual(savedProduct);
+    expect(cart.items[0].quantity).toBe(2);
+    expect(discardSavedCart).toHaveBeenCalledWith('tok');
+  });
+
+  it('does not restore or discard when there are no saved items', async () => {
+    login.mockResolvedValue({ token: 'tok' });
+    fetchSavedCart.mockResolvedValue({ items: [] });
+
+    const { wrapper } = await mountAt('/login');
+    await submit(wrapper);
+
+    const cart = useCartStore();
+    expect(cart.items).toHaveLength(0);
+    expect(discardSavedCart).not.toHaveBeenCalled();
+  });
+
+  it('proceeds to app even when fetchSavedCart fails', async () => {
+    login.mockResolvedValue({ token: 'tok' });
+    fetchSavedCart.mockRejectedValue(new Error('network error'));
+
+    const { wrapper, router } = await mountAt('/login');
+    await submit(wrapper);
+
+    expect(token.value).toBe('tok');
+    expect(router.currentRoute.value.path).toBe('/');
   });
 });

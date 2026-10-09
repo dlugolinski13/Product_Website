@@ -1,11 +1,13 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { login } from '../api';
+import { login, fetchSavedCart, discardSavedCart } from '../api';
 import { setToken } from '../auth';
+import { useCartStore } from '../stores/cart';
 
 const router = useRouter();
 const route = useRoute();
+const cart = useCartStore();
 const email = ref('');
 const password = ref('');
 const showPassword = ref(false);
@@ -18,6 +20,15 @@ async function submit() {
   try {
     const result = await login(email.value, password.value);
     setToken(result.token);
+    try {
+      const { items } = await fetchSavedCart(result.token);
+      if (items.length > 0) {
+        cart.restoreItems(items);
+        await discardSavedCart(result.token);
+      }
+    } catch {
+      // cart restore is non-critical — proceed to app
+    }
     router.push(route.query.redirect || '/');
   } catch (err) {
     error.value = err.message;

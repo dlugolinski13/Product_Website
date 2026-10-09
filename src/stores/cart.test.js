@@ -76,4 +76,29 @@ describe('cart store', () => {
     cart.addItem({ id: '1', name: 'A', company_price: '5.50' });
     expect(cart.subtotal).toBe(11);
   });
+
+  it('restoreItems replaces cart contents with saved items preserving quantities', () => {
+    const cart = useCartStore();
+    cart.addItem({ id: 'old', name: 'Old', company_price: 1 });
+
+    const p1 = { id: 'p1', name: 'Widget', company_price: 10 };
+    const p2 = { id: 'p2', name: 'Gadget', company_price: 5 };
+    cart.restoreItems([
+      { product: p1, quantity: 3 },
+      { product: p2, quantity: 1 },
+    ]);
+
+    expect(cart.items).toHaveLength(2);
+    expect(cart.items[0]).toEqual({ product: p1, quantity: 3 });
+    expect(cart.items[1]).toEqual({ product: p2, quantity: 1 });
+    expect(cart.itemCount).toBe(4);
+    expect(cart.subtotal).toBe(35);
+  });
+
+  it('restoreItems with empty array clears the cart', () => {
+    const cart = useCartStore();
+    cart.addItem({ id: '1', name: 'A', company_price: 5 });
+    cart.restoreItems([]);
+    expect(cart.items).toEqual([]);
+  });
 });
