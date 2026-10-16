@@ -108,6 +108,17 @@ describe('AdminCustomersView', () => {
     expect(select.text()).toContain('Alice');
   });
 
+  it('renders a salesperson item for each salesperson in the left panel', async () => {
+    fetchAdminCustomers.mockResolvedValue(adminData);
+    const { wrapper } = await mountView();
+    const items = wrapper.findAll('.sp-item');
+    expect(items).toHaveLength(2);
+    expect(items[0].text()).toContain('Bob');
+    expect(items[0].text()).toContain('bob@co.com');
+    expect(items[1].text()).toContain('Alice');
+    expect(items[1].text()).toContain('alice@co.com');
+  });
+
   it('shows empty state when no customers exist', async () => {
     fetchAdminCustomers.mockResolvedValue({ customers: [], salespeople: [] });
     const { wrapper } = await mountView();
