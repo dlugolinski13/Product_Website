@@ -78,6 +78,14 @@ describe('AdminCustomersView', () => {
     expect(router.currentRoute.value.query.redirect).toBe('/admin/customers');
   });
 
+  it('renders two side-by-side panels', async () => {
+    fetchAdminCustomers.mockResolvedValue(adminData);
+    const { wrapper } = await mountView();
+    expect(wrapper.find('.assign-panels').exists()).toBe(true);
+    expect(wrapper.find('.salespeople-panel').exists()).toBe(true);
+    expect(wrapper.find('.customers-panel').exists()).toBe(true);
+  });
+
   it('renders a row for each customer', async () => {
     fetchAdminCustomers.mockResolvedValue(adminData);
     const { wrapper } = await mountView();
@@ -90,6 +98,22 @@ describe('AdminCustomersView', () => {
     expect(wrapper.text()).toContain('Carol');
     expect(wrapper.text()).toContain('carol@x.com');
     expect(wrapper.text()).toContain('Dave');
+  });
+
+  it('renders all salespersons in the left panel', async () => {
+    fetchAdminCustomers.mockResolvedValue(adminData);
+    const { wrapper } = await mountView();
+    const panel = wrapper.find('.salespeople-panel');
+    expect(panel.text()).toContain('Bob');
+    expect(panel.text()).toContain('bob@co.com');
+    expect(panel.text()).toContain('Alice');
+    expect(panel.text()).toContain('alice@co.com');
+  });
+
+  it('shows one salesperson-item per salesperson', async () => {
+    fetchAdminCustomers.mockResolvedValue(adminData);
+    const { wrapper } = await mountView();
+    expect(wrapper.findAll('.salesperson-item')).toHaveLength(2);
   });
 
   it('pre-selects the current salesperson in each dropdown', async () => {
@@ -111,8 +135,15 @@ describe('AdminCustomersView', () => {
   it('shows empty state when no customers exist', async () => {
     fetchAdminCustomers.mockResolvedValue({ customers: [], salespeople: [] });
     const { wrapper } = await mountView();
-    expect(wrapper.text()).toContain('No customers found.');
+    expect(wrapper.find('.customers-panel').text()).toContain('No customers found.');
     expect(wrapper.find('.admin-customers-table').exists()).toBe(false);
+  });
+
+  it('shows empty state when no salespersons exist', async () => {
+    fetchAdminCustomers.mockResolvedValue({ customers: [], salespeople: [] });
+    const { wrapper } = await mountView();
+    expect(wrapper.find('.salespeople-panel').text()).toContain('No salespersons found.');
+    expect(wrapper.find('.salespeople-list').exists()).toBe(false);
   });
 
   it('calls adminAssignSalesperson with correct args when save is clicked', async () => {

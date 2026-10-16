@@ -51,52 +51,100 @@ async function save(customer) {
     <h1>Assign Customers</h1>
     <p v-if="loading">Loading…</p>
     <p v-else-if="error" role="alert">{{ error }}</p>
-    <template v-else>
-      <p v-if="customers.length === 0">No customers found.</p>
-      <div v-else class="admin-customers-wrapper">
-      <table class="admin-customers-table">
-        <thead>
-          <tr>
-            <th>Customer</th>
-            <th>Salesperson</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="customer in customers" :key="customer.id" class="admin-customer-row">
-            <td>
-              <span>{{ customer.fullName || customer.email }}</span>
-              <span class="admin-customer-email"> ({{ customer.email }})</span>
-            </td>
-            <td>
-              <select v-model="customer.pendingSalespersonId" class="salesperson-select">
-                <option value="">— None —</option>
-                <option v-for="sp in salespeople" :key="sp.id" :value="sp.id">
-                  {{ sp.fullName || sp.email }} ({{ sp.email }})
-                </option>
-              </select>
-            </td>
-            <td>
-              <button
-                :disabled="saving[customer.id]"
-                @click="save(customer)"
-                class="cta save-btn"
-              >Save</button>
-              <span
-                v-if="saveError[customer.id]"
-                class="save-error"
-                role="alert"
-              >{{ saveError[customer.id] }}</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div v-else class="assign-panels">
+      <div class="panel salespeople-panel">
+        <h2>Salespersons</h2>
+        <p v-if="salespeople.length === 0">No salespersons found.</p>
+        <ul v-else class="salespeople-list">
+          <li v-for="sp in salespeople" :key="sp.id" class="salesperson-item">
+            <span>{{ sp.fullName || sp.email }}</span>
+            <span class="salesperson-email"> ({{ sp.email }})</span>
+          </li>
+        </ul>
       </div>
-    </template>
+      <div class="panel customers-panel">
+        <h2>Customers</h2>
+        <p v-if="customers.length === 0">No customers found.</p>
+        <div v-else class="admin-customers-wrapper">
+          <table class="admin-customers-table">
+            <thead>
+              <tr>
+                <th>Customer</th>
+                <th>Salesperson</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="customer in customers" :key="customer.id" class="admin-customer-row">
+                <td>
+                  <span>{{ customer.fullName || customer.email }}</span>
+                  <span class="admin-customer-email"> ({{ customer.email }})</span>
+                </td>
+                <td>
+                  <select v-model="customer.pendingSalespersonId" class="salesperson-select">
+                    <option value="">— None —</option>
+                    <option v-for="sp in salespeople" :key="sp.id" :value="sp.id">
+                      {{ sp.fullName || sp.email }} ({{ sp.email }})
+                    </option>
+                  </select>
+                </td>
+                <td>
+                  <button
+                    :disabled="saving[customer.id]"
+                    @click="save(customer)"
+                    class="cta save-btn"
+                  >Save</button>
+                  <span
+                    v-if="saveError[customer.id]"
+                    class="save-error"
+                    role="alert"
+                  >{{ saveError[customer.id] }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
 <style scoped>
+.assign-panels {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.panel {
+  flex: 1;
+  min-width: 0;
+}
+
+.panel h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.75rem;
+}
+
+.salespeople-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.salesperson-item {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.9rem;
+}
+
+.salesperson-email {
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
 .admin-customers-wrapper {
   overflow-x: auto;
 }
