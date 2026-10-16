@@ -108,6 +108,17 @@ describe('AdminCustomersView', () => {
     expect(select.text()).toContain('Alice');
   });
 
+  it('renders salesperson list and customer table side by side', async () => {
+    fetchAdminCustomers.mockResolvedValue(adminData);
+    const { wrapper } = await mountView();
+    expect(wrapper.find('.salesperson-list').exists()).toBe(true);
+    expect(wrapper.find('.admin-customers-table').exists()).toBe(true);
+    const spItems = wrapper.findAll('.salesperson-item');
+    expect(spItems).toHaveLength(2);
+    expect(spItems[0].text()).toContain('Bob');
+    expect(spItems[1].text()).toContain('Alice');
+  });
+
   it('shows empty state when no customers exist', async () => {
     fetchAdminCustomers.mockResolvedValue({ customers: [], salespeople: [] });
     const { wrapper } = await mountView();

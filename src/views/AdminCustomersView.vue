@@ -51,52 +51,92 @@ async function save(customer) {
     <h1>Assign Customers</h1>
     <p v-if="loading">Loading…</p>
     <p v-else-if="error" role="alert">{{ error }}</p>
-    <template v-else>
-      <p v-if="customers.length === 0">No customers found.</p>
-      <div v-else class="admin-customers-wrapper">
-      <table class="admin-customers-table">
-        <thead>
-          <tr>
-            <th>Customer</th>
-            <th>Salesperson</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="customer in customers" :key="customer.id" class="admin-customer-row">
-            <td>
-              <span>{{ customer.fullName || customer.email }}</span>
-              <span class="admin-customer-email"> ({{ customer.email }})</span>
-            </td>
-            <td>
-              <select v-model="customer.pendingSalespersonId" class="salesperson-select">
-                <option value="">— None —</option>
-                <option v-for="sp in salespeople" :key="sp.id" :value="sp.id">
-                  {{ sp.fullName || sp.email }} ({{ sp.email }})
-                </option>
-              </select>
-            </td>
-            <td>
-              <button
-                :disabled="saving[customer.id]"
-                @click="save(customer)"
-                class="cta save-btn"
-              >Save</button>
-              <span
-                v-if="saveError[customer.id]"
-                class="save-error"
-                role="alert"
-              >{{ saveError[customer.id] }}</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div v-else class="admin-columns">
+      <div class="admin-col admin-col--salespeople">
+        <h2>Salespersons</h2>
+        <p v-if="salespeople.length === 0">No salespersons found.</p>
+        <ul v-else class="salesperson-list">
+          <li v-for="sp in salespeople" :key="sp.id" class="salesperson-item">
+            {{ sp.fullName || sp.email }}
+            <span class="admin-customer-email"> ({{ sp.email }})</span>
+          </li>
+        </ul>
       </div>
-    </template>
+      <div class="admin-col admin-col--customers">
+        <h2>Customers</h2>
+        <p v-if="customers.length === 0">No customers found.</p>
+        <div v-else class="admin-customers-wrapper">
+          <table class="admin-customers-table">
+            <thead>
+              <tr>
+                <th>Customer</th>
+                <th>Salesperson</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="customer in customers" :key="customer.id" class="admin-customer-row">
+                <td>
+                  <span>{{ customer.fullName || customer.email }}</span>
+                  <span class="admin-customer-email"> ({{ customer.email }})</span>
+                </td>
+                <td>
+                  <select v-model="customer.pendingSalespersonId" class="salesperson-select">
+                    <option value="">— None —</option>
+                    <option v-for="sp in salespeople" :key="sp.id" :value="sp.id">
+                      {{ sp.fullName || sp.email }} ({{ sp.email }})
+                    </option>
+                  </select>
+                </td>
+                <td>
+                  <button
+                    :disabled="saving[customer.id]"
+                    @click="save(customer)"
+                    class="cta save-btn"
+                  >Save</button>
+                  <span
+                    v-if="saveError[customer.id]"
+                    class="save-error"
+                    role="alert"
+                  >{{ saveError[customer.id] }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
 <style scoped>
+.admin-columns {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.admin-col--salespeople {
+  flex: 0 0 220px;
+}
+
+.admin-col--customers {
+  flex: 1;
+  min-width: 0;
+}
+
+.salesperson-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.salesperson-item {
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.9rem;
+}
+
 .admin-customers-wrapper {
   overflow-x: auto;
 }
