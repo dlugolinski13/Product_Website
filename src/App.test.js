@@ -43,6 +43,7 @@ describe('App', () => {
   beforeEach(() => {
     token.value = null;
     localStorage.clear();
+    document.documentElement.classList.remove('dark');
     saveCart.mockReset();
     discardSavedCart.mockReset();
     saveCart.mockResolvedValue(undefined);
@@ -59,7 +60,8 @@ describe('App', () => {
     expect(texts).not.toContain('Order History');
     expect(texts).not.toContain('Account');
     expect(wrapper.find('.cart-link').exists()).toBe(true);
-    expect(wrapper.find('nav button').exists()).toBe(false);
+    expect(wrapper.find('.theme-toggle').exists()).toBe(true);
+    expect(wrapper.find('.sign-out-btn').exists()).toBe(false);
   });
 
   it('shows the Account link, user email and Sign out for a logged-in customer, and no Upload Product link', async () => {
@@ -72,7 +74,7 @@ describe('App', () => {
     expect(texts).not.toContain('Order History');
     expect(wrapper.find('.user-email').text()).toBe('customer@example.com');
 
-    await wrapper.find('nav button').trigger('click');
+    await wrapper.find('.sign-out-btn').trigger('click');
     await flushPromises();
     expect(token.value).toBeNull();
     expect(router.currentRoute.value.path).toBe('/login');
@@ -118,7 +120,7 @@ describe('App', () => {
     await nextTick();
 
     expect(wrapper.find('[role="dialog"]').exists()).toBe(false);
-    await wrapper.find('nav button').trigger('click');
+    await wrapper.find('.sign-out-btn').trigger('click');
     await nextTick();
 
     expect(wrapper.find('[role="dialog"]').exists()).toBe(true);
@@ -133,7 +135,7 @@ describe('App', () => {
     cart.addItem({ id: 'p1', name: 'Widget', company_price: 10 });
     await nextTick();
 
-    await wrapper.find('nav button').trigger('click');
+    await wrapper.find('.sign-out-btn').trigger('click');
     await nextTick();
 
     const modalButtons = wrapper.find('[role="dialog"]').findAll('button');
@@ -154,7 +156,7 @@ describe('App', () => {
     cart.addItem({ id: 'p1', name: 'Widget', company_price: 10 });
     await nextTick();
 
-    await wrapper.find('nav button').trigger('click');
+    await wrapper.find('.sign-out-btn').trigger('click');
     await nextTick();
 
     const modalButtons = wrapper.find('[role="dialog"]').findAll('button');
@@ -172,7 +174,7 @@ describe('App', () => {
     token.value = makeToken({ sub: 'u1', role: 'customer', email: 'customer@example.com' });
     const { wrapper, router } = await mountApp();
 
-    await wrapper.find('nav button').trigger('click');
+    await wrapper.find('.sign-out-btn').trigger('click');
     await flushPromises();
 
     expect(wrapper.find('[role="dialog"]').exists()).toBe(false);
@@ -180,5 +182,28 @@ describe('App', () => {
     expect(router.currentRoute.value.path).toBe('/login');
     expect(saveCart).not.toHaveBeenCalled();
     expect(discardSavedCart).not.toHaveBeenCalled();
+  });
+
+  it('theme toggle is always visible and toggles dark mode class and localStorage', async () => {
+    const { wrapper } = await mountApp();
+    const toggle = wrapper.find('.theme-toggle');
+    expect(toggle.exists()).toBe(true);
+
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
+
+    await toggle.trigger('click');
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
+    expect(localStorage.getItem('theme')).toBe('dark');
+
+    await toggle.trigger('click');
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
+    expect(localStorage.getItem('theme')).toBe('light');
+  });
+
+  it('theme toggle initializes to dark when localStorage has theme=dark', async () => {
+    localStorage.setItem('theme', 'dark');
+    const { wrapper } = await mountApp();
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
+    expect(wrapper.find('.theme-toggle').exists()).toBe(true);
   });
 });
